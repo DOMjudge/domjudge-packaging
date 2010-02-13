@@ -1,3 +1,10 @@
+General
+-------
+- We build-depend on apache2-utils (htpasswd) and sharutils (uuencode),
+  both are used for password generation which passwords we subsequently
+  throw away. Better solution is probably to not b-d on them but to
+  disable the password generation e.g. via a patch.
+
 Domserver
 ---------
 - Move not-directly-called stuff out of PATH or /etc.
