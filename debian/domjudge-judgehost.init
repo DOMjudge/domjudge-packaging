@@ -1,8 +1,8 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          domjudge-judgehost
-# Required-Start:    $syslog
-# Required-Stop:     $syslog
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
 # Should-Start:      $network
 # Should-Stop:       $network
 # Default-Start:     2 3 4 5
