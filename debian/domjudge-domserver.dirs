@@ -2,3 +2,4 @@ var/lib/domjudge/images
 usr/share/dbconfig-common/data/domjudge-domserver/install
 usr/share/dbconfig-common/scripts/domjudge-domserver/install
 usr/share/dbconfig-common/data/domjudge-domserver/remove
+usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql
