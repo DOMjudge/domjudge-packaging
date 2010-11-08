@@ -1,8 +1,10 @@
 domjudge (3.0.4-1) unstable; urgency=low
 
   * New upstream release.
+  * Updated to policy version 3.9.1, include full text of BSD licence in
+    debian/copyright.
 
- -- Thijs Kinkhorst <thijs@debian.org>  Mon, 08 Nov 2010 22:16:24 +0100
+ -- Thijs Kinkhorst <thijs@debian.org>  Mon, 08 Nov 2010 22:28:52 +0100
 
 domjudge (3.0.2-1) unstable; urgency=low
 
