@@ -7,7 +7,9 @@ DJDC=`pwd`/debian/domjudge-doc
 
 include /usr/share/quilt/quilt.make
 
-build: patch build-stamp
+build: patch build-arch build-indep
+build-arch: build-stamp
+build-indep: build-stamp
 build-stamp:
 	dh_testdir
 
