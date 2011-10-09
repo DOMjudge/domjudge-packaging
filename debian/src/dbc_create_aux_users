@@ -11,6 +11,9 @@
 set -e
 
 # Create secrets file with appropriate permissions.
+if [ -f /etc/domjudge/dbpasswords.secret ]; then
+	mv /etc/domjudge/dbpasswords.secret /etc/domjudge/dbpasswords.secret.bak
+fi
 
 touch /etc/domjudge/dbpasswords.secret
 chgrp www-data /etc/domjudge/dbpasswords.secret
