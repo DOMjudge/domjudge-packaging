@@ -1,8 +1,8 @@
 This is the Debian packaging of DOMjudge, a programming contest jury system.
 
-DOMjudge is Copyright (c) 2004 - 2010 by The DOMjudge Developers.
-The DOMjudge developers are Thijs Kinkhorst, Peter van de Werken and
-Jaap Eldering.
+DOMjudge is Copyright (c) 2004 - 2011 by The DOMjudge Developers.
+The DOMjudge developers are Jaap Eldering, Thijs Kinkhorst,
+Peter van de Werken and Tobias Werth.
 
 DOMjudge, including its documentation, is free software; you can
 redistribute it and/or modify it under the terms of the GNU General
