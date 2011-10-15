@@ -113,7 +113,7 @@ install: build
 	# Upgrades
 	cp sql/upgrade/upgrade_3.0.0_3.1.0.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/3.1.0
 	cp sql/upgrade/upgrade_3.1.0_3.1.1.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/3.1.1
-	cp sql/upgrade/upgrade_3.1.1_3.1.2.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/3.1.2
+	cp sql/upgrade/upgrade_3.1.1_3.2.0.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/3.2.0
 
 # Build architecture-independent files here.
 binary-indep: build install
