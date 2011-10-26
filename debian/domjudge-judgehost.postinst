@@ -7,9 +7,6 @@ if ! getent passwd domjudge-run >/dev/null; then
 	adduser --quiet --system domjudge-run --home /nonexistant --no-create-home
 fi
 
-# Make sure that only 'domjudge' can run runguard
-chown root:domjudge /usr/sbin/runguard
-chmod 4750 /usr/sbin/runguard
 # Allow judgedaemon to write here, and only somewhat privileged users
 # (ones that may also read syslog) to inspect the logs and judgings
 chown domjudge:adm /var/log/domjudge /var/lib/domjudge /var/lib/domjudge/judgings
