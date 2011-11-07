@@ -1,14 +1,16 @@
 Author: <thijs@debian.org>
 Description: No description.
---- trunk.orig/judge/judgedaemon.main.php
-+++ trunk/judge/judgedaemon.main.php
-@@ -43,7 +43,8 @@
- 
- require(LIBDIR . '/init.php');
+Index: domjudge-3.2.0/judge/judgedaemon.main.php
+===================================================================
+--- domjudge-3.2.0.orig/judge/judgedaemon.main.php	2011-11-07 18:05:14.615995505 +0100
++++ domjudge-3.2.0/judge/judgedaemon.main.php	2011-11-07 18:05:25.083995260 +0100
+@@ -70,7 +70,8 @@
+ if ( isset($options['V']) ) version();
+ if ( isset($options['h']) ) usage();
  
 -setup_database_connection('jury');
 +#setup_database_connection('jury');
 +require(LIBJUDGEDIR . '/debian-database.php');
  
  $verbose = LOG_INFO;
- if ( DEBUG & DEBUG_JUDGE ) {
+ if ( isset($options['verbose']) ) $verbose = $options['verbose'];
