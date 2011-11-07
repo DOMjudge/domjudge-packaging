@@ -9,7 +9,7 @@ fi
 
 # Allow judgedaemon to write here, and only somewhat privileged users
 # (ones that may also read syslog) to inspect the logs and judgings
-chown domjudge:adm /var/log/domjudge /var/run/domjudge \
+chown domjudge:adm /var/log/domjudge \
 	/var/lib/domjudge /var/lib/domjudge/judgings
 
 chmod 0750 /var/log/domjudge /var/lib/domjudge/judgings

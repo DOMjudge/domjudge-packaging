@@ -13,13 +13,19 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/sbin/judgedaemon
 NAME=judgedaemon
-PIDFILE=/var/run/$NAME.pid
+RUNDIR=/var/run/domjudge/
+PIDFILE=$RUNDIR$NAME.pid
 DESC="DOMjudge Judgedaemon"
 RUNAS=domjudge
 
 test -x $DAEMON || exit 0
 
 . /lib/lsb/init-functions
+
+if [ ! -d $RUNDIR ]; then
+	mkdir -p $RUNDIR
+	chown $RUNAS $RUNDIR
+fi
 
 case "$1" in
   start)

@@ -64,7 +64,7 @@ install: build
 	#
 	dh_install
 	# clean up tmpdirs
-	rm -r $(DJDS)/tmp $(DJJH)/tmp
+	rmdir $(DJDS)/tmp $(DJJH)/tmp $(DJDS)/var/run/domjudge $(DJJH)/var/run/domjudge
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
 		rm COPYING* README README.country_flags ChangeLog logos/DOMjudgelogo.png
