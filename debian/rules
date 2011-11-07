@@ -105,9 +105,10 @@ install: build
 	chmod +x $(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/install/mysql
 	cp debian/src/db_clean.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/remove/mysql
 	# Upgrades
-	cp sql/upgrade/upgrade_3.0.0_3.1.0.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/3.1.0
-	cp sql/upgrade/upgrade_3.1.0_3.1.1.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/3.1.1
-	cp sql/upgrade/upgrade_3.1.1_3.2.0.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/3.2.0
+	for i in sql/upgrade/upgrade_*_*.sql; do \
+		T=`echo $$i|sed -r 's#sql/upgrade/upgrade_.*_(.*)\.sql#\1#'`; \
+		cp $$i $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/$$T; \
+	done
 
 # Build architecture-independent files here.
 binary-indep: build install
