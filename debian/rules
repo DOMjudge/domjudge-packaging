@@ -18,28 +18,20 @@ build-stamp:
 	# may not exist at all on the build system. We chown the
 	# files in postinst.
 	./configure \
-		--with-domjudge_docdir=/usr/share/doc/domjudge-doc \
+		--enable-fhs \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
 		\
-		--with-domserver_bindir=/usr/bin \
-		--with-domserver_etcdir=/etc/domjudge \
-		--with-domserver_wwwdir=/usr/share/domjudge/www \
-		--with-domserver_sqldir=/usr/share/domjudge/sql \
-		--with-domserver_libdir=/usr/share/domjudge \
-		--with-domserver_libwwwdir=/usr/share/domjudge/libwww \
-		--with-domserver_libsubmitdir=/usr/share/domjudge \
-		--with-domserver_logdir=/var/log/domjudge \
-		--with-domserver_rundir=/var/run \
-		--with-domserver_tmpdir=/tmp \
-		--with-domserver_submitdir=/var/lib/domjudge/submissions \
+		--with-domjudge_docdir=\$${prefix}/share/doc/domjudge-doc \
 		\
-		--with-judgehost_bindir=/usr/sbin \
-		--with-judgehost_etcdir=/etc/domjudge \
-		--with-judgehost_libdir=/usr/share/domjudge \
-		--with-judgehost_libjudgedir=/usr/lib/domjudge \
-		--with-judgehost_logdir=/var/log/domjudge \
-		--with-judgehost_rundir=/var/run \
-		--with-judgehost_tmpdir=/tmp \
-		--with-judgehost_judgedir=/var/lib/domjudge/judgings \
+		--with-domserver_libdir=\$${prefix}/share/domjudge \
+		--with-domserver_libwwwdir=\$${prefix}/share/domjudge/libwww \
+		--with-domserver_libsubmitdir=\$${prefix}/share/domjudge \
+		\
+		--with-judgehost_bindir=\$${prefix}/sbin \
+		--with-judgehost_libdir=\$${prefix}/share/domjudge \
+		--with-judgehost_libjudgedir=\$${prefix}/lib/domjudge \
 		\
 		--with-domjudge-user=root
 
@@ -72,7 +64,7 @@ install: build
 	#
 	dh_install
 	# clean up tmpdirs
-	rmdir $(DJDS)/tmp $(DJJH)/tmp $(DJDS)/var/run $(DJJH)/var/run
+	rm -r $(DJDS)/tmp $(DJJH)/tmp
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
 		rm COPYING* README README.country_flags ChangeLog logos/DOMjudgelogo.png
