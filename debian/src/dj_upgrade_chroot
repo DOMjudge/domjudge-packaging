@@ -1,6 +1,8 @@
 #!/bin/sh
 # $Id$
 
+set -e
+
 # Read command-line parameters:
 CHROOTDIR=/var/lib/domjudge/javachroot
 # To prevent (libc6) upgrade questions:
