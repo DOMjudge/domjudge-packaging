@@ -1,12 +1,14 @@
 DOMjudge packages for Debian
 ----------------------------
 
+General DOMjudge documentation is shipped in the domjudge-doc package. Once
+installed, the manuals are under /usr/share/doc/domjudge-doc. The following
+contains Debian packaging specific instructions.
+
+
 These packages make some assumptions about the system you want to install.
 The domserver package assumes the database server is on localhost and that
 you want to configure it automatically.
-
-Currently, when you install the domserver and judgehost on one system,
-you may still get some errors you need to manually resolve.
 
 DOMserver
 ---------
