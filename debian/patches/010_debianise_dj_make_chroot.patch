@@ -1,18 +1,22 @@
 Author: 
 Description: Update script to replace choices with Debian values
---- trunk.orig/etc/judgehost-config.php
-+++ trunk/etc/judgehost-config.php
+Index: domjudge-3.2.0/etc/judgehost-config.php
+===================================================================
+--- domjudge-3.2.0.orig/etc/judgehost-config.php	2011-11-08 07:28:18.287997333 +0100
++++ domjudge-3.2.0/etc/judgehost-config.php	2011-11-08 07:28:53.788000271 +0100
 @@ -13,7 +13,7 @@
  // leave empty to disable. This example script can be used to support
- // Sun Java with a chroot (edit the script first!).
+ // Oracle (Sun) Java with a chroot (edit the script first!).
  // define('CHROOT_SCRIPT', 'chroot-startstop.sh');
 -define('CHROOT_SCRIPT', '');
 +define('CHROOT_SCRIPT', 'chroot-startstop.sh');
  
  // Maximum seconds available for compiling
  define('COMPILETIME', 30);
---- trunk.orig/judge/chroot-startstop.sh
-+++ trunk/judge/chroot-startstop.sh
+Index: domjudge-3.2.0/judge/chroot-startstop.sh
+===================================================================
+--- domjudge-3.2.0.orig/judge/chroot-startstop.sh	2011-11-08 07:28:18.419998577 +0100
++++ domjudge-3.2.0/judge/chroot-startstop.sh	2011-11-08 07:28:53.788000271 +0100
 @@ -19,7 +19,7 @@
  SUBDIRMOUNTS="etc lib usr"
  
@@ -22,8 +26,10 @@ Description: Update script to replace choices with Debian values
  
  case "$1" in
  	start)
---- trunk.orig/misc-tools/dj_make_chroot
-+++ trunk/misc-tools/dj_make_chroot
+Index: domjudge-3.2.0/misc-tools/dj_make_chroot
+===================================================================
+--- domjudge-3.2.0.orig/misc-tools/dj_make_chroot	2011-11-08 07:28:18.331997279 +0100
++++ domjudge-3.2.0/misc-tools/dj_make_chroot	2011-11-08 07:28:53.788000271 +0100
 @@ -16,8 +16,8 @@
  set -e
  
@@ -35,7 +41,7 @@ Description: Update script to replace choices with Debian values
  
  # List of possible architectures to install chroot for:
  ARCHLIST="alpha,amd64,arm,armel,hppa,i386,ia64,mips,mipsel,powerpc,s390,sparc"
-@@ -65,6 +65,7 @@
+@@ -67,6 +67,7 @@
  [ -z "$ARCH" ]      && error "No architecture given."
  [ -e "$CHROOTDIR" ] && error "'$CHROOTDIR' already exists, remove manually."
  
@@ -43,7 +49,7 @@ Description: Update script to replace choices with Debian values
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -174,4 +175,6 @@
+@@ -176,4 +177,6 @@
  
  umount "$CHROOTDIR/proc"
  
