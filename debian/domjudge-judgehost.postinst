@@ -1,10 +1,10 @@
 #!/bin/sh -e
 
 if ! getent passwd domjudge >/dev/null; then
-	adduser --quiet --system domjudge --group --home /nonexistant --no-create-home
+	adduser --quiet --system domjudge --group --home /nonexistent --no-create-home
 fi
 if ! getent passwd domjudge-run >/dev/null; then
-	adduser --quiet --system domjudge-run --home /nonexistant --no-create-home
+	adduser --quiet --system domjudge-run --home /nonexistent --no-create-home
 fi
 
 # Allow judgedaemon to write here, and only somewhat privileged users
