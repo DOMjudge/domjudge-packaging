@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id$
 #
 # This script is called by dbconfig-common on package installation.
 # It's a bit of a hack to set up multiple users for DOMjudge which

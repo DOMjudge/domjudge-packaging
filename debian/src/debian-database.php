@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 
 	$credfile = ETCDIR . '/judgedaemon.dbconfig.php';
 	if (!include($credfile)) {
