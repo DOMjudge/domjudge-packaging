@@ -1,23 +1,18 @@
 Author: 
 Description: Update script to replace choices with Debian values
-Index: domjudge-3.2.0/etc/judgehost-config.php
-===================================================================
---- domjudge-3.2.0.orig/etc/judgehost-config.php	2011-11-08 07:28:18.287997333 +0100
-+++ domjudge-3.2.0/etc/judgehost-config.php	2011-11-08 07:28:53.788000271 +0100
-@@ -13,7 +13,7 @@
+diff -ur domjudge-3.3.0RC1.orig/etc/judgehost-config.php domjudge-3.3.0RC1/etc/judgehost-config.php
+--- domjudge-3.3.0RC1.orig/etc/judgehost-config.php	2012-04-30 13:37:40.000000000 +0200
++++ domjudge-3.3.0RC1/etc/judgehost-config.php	2012-05-20 23:17:41.126405876 +0200
+@@ -11,4 +11,4 @@
  // leave empty to disable. This example script can be used to support
  // Oracle (Sun) Java with a chroot (edit the script first!).
  // define('CHROOT_SCRIPT', 'chroot-startstop.sh');
 -define('CHROOT_SCRIPT', '');
 +define('CHROOT_SCRIPT', 'chroot-startstop.sh');
- 
- // Maximum seconds available for compiling
- define('COMPILETIME', 30);
-Index: domjudge-3.2.0/judge/chroot-startstop.sh
-===================================================================
---- domjudge-3.2.0.orig/judge/chroot-startstop.sh	2011-11-08 07:28:18.419998577 +0100
-+++ domjudge-3.2.0/judge/chroot-startstop.sh	2011-11-08 07:28:53.788000271 +0100
-@@ -19,7 +19,7 @@
+diff -ur domjudge-3.3.0RC1.orig/judge/chroot-startstop.sh domjudge-3.3.0RC1/judge/chroot-startstop.sh
+--- domjudge-3.3.0RC1.orig/judge/chroot-startstop.sh	2012-04-30 13:37:40.000000000 +0200
++++ domjudge-3.3.0RC1/judge/chroot-startstop.sh	2012-05-20 23:17:22.229785896 +0200
+@@ -18,7 +18,7 @@
  SUBDIRMOUNTS="etc lib usr"
  
  # Location where to bind mount from:
@@ -26,11 +21,11 @@ Index: domjudge-3.2.0/judge/chroot-startstop.sh
  
  case "$1" in
  	start)
-Index: domjudge-3.2.0/misc-tools/dj_make_chroot
-===================================================================
---- domjudge-3.2.0.orig/misc-tools/dj_make_chroot	2011-11-08 07:28:18.331997279 +0100
-+++ domjudge-3.2.0/misc-tools/dj_make_chroot	2011-11-08 07:28:53.788000271 +0100
-@@ -16,8 +16,8 @@
+Alleen in domjudge-3.3.0RC1/judge: chroot-startstop.sh.orig
+diff -ur domjudge-3.3.0RC1.orig/misc-tools/dj_make_chroot domjudge-3.3.0RC1/misc-tools/dj_make_chroot
+--- domjudge-3.3.0RC1.orig/misc-tools/dj_make_chroot	2012-04-30 13:37:40.000000000 +0200
++++ domjudge-3.3.0RC1/misc-tools/dj_make_chroot	2012-05-20 23:17:22.229785896 +0200
+@@ -15,8 +15,8 @@
  set -e
  
  # Read command-line parameters:
@@ -40,8 +35,8 @@ Index: domjudge-3.2.0/misc-tools/dj_make_chroot
 +ARCH=`dpkg --print-architecture`
  
  # List of possible architectures to install chroot for:
- ARCHLIST="alpha,amd64,arm,armel,hppa,i386,ia64,mips,mipsel,powerpc,s390,sparc"
-@@ -67,6 +67,7 @@
+ ARCHLIST="amd64,armel,i386,ia64,mips,mipsel,powerpc,s390,sparc"
+@@ -66,6 +66,7 @@
  [ -z "$ARCH" ]      && error "No architecture given."
  [ -e "$CHROOTDIR" ] && error "'$CHROOTDIR' already exists, remove manually."
  
@@ -49,10 +44,11 @@ Index: domjudge-3.2.0/misc-tools/dj_make_chroot
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -176,4 +177,6 @@
+@@ -175,4 +176,6 @@
  
  umount "$CHROOTDIR/proc"
  
 +mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot
 +
  exit 0
+Alleen in domjudge-3.3.0RC1/misc-tools: dj_make_chroot.orig

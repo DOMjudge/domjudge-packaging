@@ -1,6 +1,6 @@
 This is the Debian packaging of DOMjudge, a programming contest jury system.
 
-DOMjudge is Copyright (c) 2004 - 2011 by The DOMjudge Developers.
+DOMjudge is Copyright (c) 2004 - 2012 by The DOMjudge Developers.
 The DOMjudge developers are Jaap Eldering, Thijs Kinkhorst,
 Peter van de Werken and Tobias Werth.
 
@@ -29,6 +29,12 @@ licenced under the MIT/X11 licence:
  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+jscolor.js: copyright Jan Odvarko, is licenced under the GNU LGPL.
+On Debian systems, the licence text can be found in
+/usr/share/common-licenses/LGPL
+www/js/tabber.js is copyright Patrick Fitzgerald, and also licenced under
+the MIT licence, see above.
 
 A binary version of the dash shell (statically compiled)
 is distributed with the DOMjudge source (but not installed into
@@ -87,4 +93,10 @@ Copyright (from the Debian copyright file):
  WARRANTY; without even the implied warranty of MERCHANTABILITY or
  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  for more details.
+
+lib/ext/geshi in the source tarball is the GeSHi Syntax Highlighter,
+copyright Benny Baumann, Nigel McNie. Licenced under the GNU GPL version 2+.
+It's not installed into the binary packages. On Debian systems, the full
+text of this license can be found in the file
+/usr/share/common-licenses/GPL-2.
 
