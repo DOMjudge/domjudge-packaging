@@ -80,6 +80,7 @@ install: build
 		mv teams affiliations ../../../../../var/lib/domjudge/images/
 	# This we'll symlink from the system-copy
 	rm $(DJJH)/usr/lib/domjudge/sh-static
+	rm -r $(DJDS)/usr/lib/domjudge/ext/geshi/
 	# Makes no sense to include passwords generated on .deb build host
 	rm $(DJJH)/etc/domjudge/dbpasswords.secret \
 		$(DJDS)/etc/domjudge/dbpasswords.secret \
@@ -100,9 +101,6 @@ install: build
 	chmod 0440 $(DJJH)/etc/sudoers.d/domjudge
 	# Database configuration
 	cat sql/mysql_db_structure.sql sql/mysql_db_examples.sql > $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql
-	sed 's/ ON / ON domjudge./' sql/mysql_privileges.sql >> $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql
-	cp debian/src/dbc_create_aux_users $(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/install/mysql
-	chmod +x $(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/install/mysql
 	cp debian/src/db_clean.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/remove/mysql
 	# Upgrades
 	for i in sql/upgrade/upgrade_*_*.sql; do \

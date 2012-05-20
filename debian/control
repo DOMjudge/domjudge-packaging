@@ -23,7 +23,7 @@ Architecture: all
 Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
  libapache2-mod-php5 | php5-cgi | php5, php5-mysql, php5-cli, xsltproc,
  dbconfig-common, mysql-client, apache2-utils, ${misc:Depends}
-Recommends: ntp, mysql-server, phpmyadmin
+Recommends: ntp, mysql-server, phpmyadmin, php-geshi
 Description: programming contest jury system (server)
  DOMjudge is a jury system for running a programming contest. It allows
  teams to submit solutions to problems, which will be compiled, ran and
