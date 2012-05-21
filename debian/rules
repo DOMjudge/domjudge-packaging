@@ -68,9 +68,9 @@ install: build
 	rm $(DJDS)/etc/domjudge/common-config.php \
 		$(DJDS)/usr/share/domjudge/*.php $(DJDS)/usr/share/domjudge/alert
 	# Saviour lib.error.sh before we trash /u/s/d
-	mv $(DJJH)/usr/share/domjudge/lib.error.sh $(DJJH)/usr/lib/domjudge
 	# This is in domjudge-common
-	rm -r $(DJJH)/usr/share/domjudge $(DJJH)/etc/domjudge/common-config.php
+	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php
+	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
 	# We'd like these to be amendable by the admin
 	cd $(DJDS)/usr/share/domjudge/www/images/ && \
 		mv teams affiliations ../../../../../var/lib/domjudge/images/
