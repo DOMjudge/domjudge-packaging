@@ -1,0 +1,40 @@
+Author: <thijs@debian.org>
+Description: No description.
+Index: domjudge-3.3.0RC1/judge/judgedaemon.main.php
+===================================================================
+--- domjudge-3.3.0RC1.orig/judge/judgedaemon.main.php	2012-05-21 09:50:09.717338725 +0200
++++ domjudge-3.3.0RC1/judge/judgedaemon.main.php	2012-05-21 11:04:24.224534335 +0200
+@@ -44,7 +44,9 @@
+ if ( isset($options['V']) ) version();
+ if ( isset($options['h']) ) usage();
+ 
+-setup_database_connection('jury');
++#setup_database_connection('jury');
++$credfile = ETCDIR . '/judgedaemon.dbconfig.php';
++require(LIBDIR . '/debian-database.php');
+ 
+ $verbose = LOG_INFO;
+ if ( isset($options['verbose']) ) $verbose = $options['verbose'];
+Index: domjudge-3.3.0RC1/lib/use_db.php
+===================================================================
+--- domjudge-3.3.0RC1.orig/lib/use_db.php	2012-05-21 11:04:38.248543259 +0200
++++ domjudge-3.3.0RC1/lib/use_db.php	2012-05-21 11:13:48.803544477 +0200
+@@ -4,6 +4,7 @@
+ 
+ function setup_database_connection($privlevel)
+ {
++/*
+ 	$credfile = ETCDIR . '/dbpasswords.secret';
+ 	$credentials = @file($credfile);
+ 	if (!$credentials) {
+@@ -39,5 +40,10 @@
+ 	}
+ 
+ 	$DB->q('SET NAMES %s', DJ_CHARACTER_SET_MYSQL);
++
++*/
++
++	$credfile = ETCDIR . '/domserver.dbconfig.php';
++	require(LIBDIR . '/debian-database.php');
+ }
+ 

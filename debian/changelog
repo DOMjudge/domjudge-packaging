@@ -1,8 +1,10 @@
-domjudge (3.3.0~rc1-1) UNRELEASED; urgency=low
+domjudge (3.3.0~rc1-1) unstable; urgency=low
 
   * New upstream release candidate.
+  * Switch to dpkg-source 3.0 (quilt) format.
+  * Changes to packaging to cope with changed database user config.
 
- -- Thijs Kinkhorst <thijs@debian.org>  Sun, 20 May 2012 23:06:10 +0200
+ -- Thijs Kinkhorst <thijs@debian.org>  Mon, 21 May 2012 09:46:19 +0200
 
 domjudge (3.2.1-1) unstable; urgency=low
 

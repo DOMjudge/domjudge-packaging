@@ -10,6 +10,11 @@ fi
 
 
 if [ "$1" = "purge" ]; then
+        rm -f /etc/domjudge/domserver.dbconfig.php
+        if which ucf >/dev/null 2>&1; then
+                ucf --purge /etc/domjudge/domserver.dbconfig.php
+        fi
+
 	# Purge accumulated files (not entire /var/lib/domjudge
 	# since domjudge-judgehost may remain installed)
 	rm -rf /var/lib/domjudge/images /var/lib/domjudge/submissions \

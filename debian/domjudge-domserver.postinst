@@ -7,6 +7,9 @@ chmod 0770 /var/lib/domjudge/submissions
 . /usr/share/debconf/confmodule
 . /usr/share/dbconfig-common/dpkg/postinst.mysql 
 
+dbc_generate_include_owner="root:www-data"
+dbc_generate_include_perms="0640"
+dbc_generate_include=php:/etc/domjudge/domserver.dbconfig.php
 dbc_go domjudge-domserver $@
 
 . /etc/dbconfig-common/domjudge-domserver.conf
