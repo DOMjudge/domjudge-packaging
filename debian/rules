@@ -5,9 +5,7 @@ DJDS=`pwd`/debian/domjudge-domserver
 DJJH=`pwd`/debian/domjudge-judgehost
 DJDC=`pwd`/debian/domjudge-doc
 
-include /usr/share/quilt/quilt.make
-
-build: patch build-arch build-indep
+build: build-arch build-indep
 build-arch: build-stamp
 build-indep: build-stamp
 build-stamp:
@@ -43,14 +41,12 @@ build-stamp:
 
 	touch build-stamp
 
-clean: clean-patched unpatch
-clean-patched:
+clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp 
 	$(MAKE) distclean
 	dh_clean
-	cp /usr/share/doc/quilt/README.source debian/
 
 install:
 install: build

@@ -1,17 +1,19 @@
 Author: 
 Description: Update script to replace choices with Debian values
-diff -ur domjudge-3.3.0RC1.orig/etc/judgehost-config.php domjudge-3.3.0RC1/etc/judgehost-config.php
---- domjudge-3.3.0RC1.orig/etc/judgehost-config.php	2012-04-30 13:37:40.000000000 +0200
-+++ domjudge-3.3.0RC1/etc/judgehost-config.php	2012-05-20 23:17:41.126405876 +0200
+Index: b/etc/judgehost-config.php
+===================================================================
+--- a/etc/judgehost-config.php	2012-05-20 23:42:10.329794693 +0200
++++ b/etc/judgehost-config.php	2012-05-21 09:50:01.422352247 +0200
 @@ -11,4 +11,4 @@
  // leave empty to disable. This example script can be used to support
  // Oracle (Sun) Java with a chroot (edit the script first!).
  // define('CHROOT_SCRIPT', 'chroot-startstop.sh');
 -define('CHROOT_SCRIPT', '');
 +define('CHROOT_SCRIPT', 'chroot-startstop.sh');
-diff -ur domjudge-3.3.0RC1.orig/judge/chroot-startstop.sh domjudge-3.3.0RC1/judge/chroot-startstop.sh
---- domjudge-3.3.0RC1.orig/judge/chroot-startstop.sh	2012-04-30 13:37:40.000000000 +0200
-+++ domjudge-3.3.0RC1/judge/chroot-startstop.sh	2012-05-20 23:17:22.229785896 +0200
+Index: b/judge/chroot-startstop.sh
+===================================================================
+--- a/judge/chroot-startstop.sh	2012-05-20 23:42:10.353785854 +0200
++++ b/judge/chroot-startstop.sh	2012-05-21 09:50:01.433358990 +0200
 @@ -18,7 +18,7 @@
  SUBDIRMOUNTS="etc lib usr"
  
@@ -21,10 +23,10 @@ diff -ur domjudge-3.3.0RC1.orig/judge/chroot-startstop.sh domjudge-3.3.0RC1/judg
  
  case "$1" in
  	start)
-Alleen in domjudge-3.3.0RC1/judge: chroot-startstop.sh.orig
-diff -ur domjudge-3.3.0RC1.orig/misc-tools/dj_make_chroot domjudge-3.3.0RC1/misc-tools/dj_make_chroot
---- domjudge-3.3.0RC1.orig/misc-tools/dj_make_chroot	2012-04-30 13:37:40.000000000 +0200
-+++ domjudge-3.3.0RC1/misc-tools/dj_make_chroot	2012-05-20 23:17:22.229785896 +0200
+Index: b/misc-tools/dj_make_chroot
+===================================================================
+--- a/misc-tools/dj_make_chroot	2012-05-20 23:42:10.317788183 +0200
++++ b/misc-tools/dj_make_chroot	2012-05-21 09:50:01.445359310 +0200
 @@ -15,8 +15,8 @@
  set -e
  
@@ -51,4 +53,3 @@ diff -ur domjudge-3.3.0RC1.orig/misc-tools/dj_make_chroot domjudge-3.3.0RC1/misc
 +mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot
 +
  exit 0
-Alleen in domjudge-3.3.0RC1/misc-tools: dj_make_chroot.orig
