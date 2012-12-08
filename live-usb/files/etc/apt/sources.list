@@ -1,0 +1,14 @@
+# Standard Debian Squeeze and security repositories:
+
+# Use geolocation for close mirrors:
+deb     http://cdn.debian.net/debian/ squeeze main non-free contrib
+deb-src http://cdn.debian.net/debian/ squeeze main non-free contrib
+
+deb     http://security.debian.org/ squeeze/updates main contrib non-free
+deb-src http://security.debian.org/ squeeze/updates main contrib non-free
+
+# DOMjudge package repository:
+
+deb     http://non-gnu.uvt.nl/debian lenny uvt
+deb-src http://non-gnu.uvt.nl/debian lenny uvt
+

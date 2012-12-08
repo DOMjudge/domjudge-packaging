@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+# This file adds DOMjudge specific versions of the first linux menuentry.
+
+LINUX="`dirname $0`/10_linux"
+
+make_entry()
+{
+	INIT="$1"
+	NAME="$2"
+	shift 2
+	$LINUX | sed -n '1,/^}/ p' | \
+	sed -e 's/\(linux.* root=\)[^ ]* \(.*\)/\1LABEL=root \2'"${INIT:+ init $INIT} $@/" \
+	    -e "s/^menuentry '[^']*'/menuentry '$NAME'/"
+}
+
+make_entry 3 'DOMjudge domserver'
+make_entry 4 'DOMjudge judgehost'
+make_entry 5 'DOMjudge domserver \& judgehost'
