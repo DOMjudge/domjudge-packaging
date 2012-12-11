@@ -8,8 +8,8 @@ Index: domjudge-3.3.0RC1/judge/judgedaemon.main.php
  if ( isset($options['V']) ) version();
  if ( isset($options['h']) ) usage();
  
--setup_database_connection('jury');
-+#setup_database_connection('jury');
+-setup_database_connection();
++#setup_database_connection();
 +$credfile = ETCDIR . '/judgedaemon.dbconfig.php';
 +require(LIBDIR . '/debian-database.php');
  
@@ -21,7 +21,7 @@ Index: domjudge-3.3.0RC1/lib/use_db.php
 +++ domjudge-3.3.0RC1/lib/use_db.php	2012-05-21 11:13:48.803544477 +0200
 @@ -4,6 +4,7 @@
  
- function setup_database_connection($privlevel)
+ function setup_database_connection()
  {
 +/*
  	$credfile = ETCDIR . '/dbpasswords.secret';
