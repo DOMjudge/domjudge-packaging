@@ -1,0 +1,20 @@
+DOMjudge Debian packaging HOWTO
+-------------------------------
+
+Make sure you have installed the meta-package 'packaging-dev' and the
+DOMjudge build dependencies as specified in the admin manual.
+
+Take a domjudge-x.y.z.tar.gz tarball and rename/symlink it to
+domjudge_x.y.z.orig.tar.gz.
+
+Extract it. Copy in the debian/ directory into this directory and
+chdir to domjudge-x.y.z/.
+
+Run from that position
+  dch -v 3.3.4 -m "New upstream release."
+
+Run
+  debuild
+
+If everything was in order you will now get a .dsc (source package)
+and several .deb's (binary package). If not, find out why and fix it.
