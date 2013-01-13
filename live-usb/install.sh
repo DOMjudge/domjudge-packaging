@@ -41,9 +41,6 @@ sed -i -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
 	/etc/default/grub
 update-grub
 
-# Set hostname (after next reboot):
-echo "domjudge-live" > /etc/hostname
-
 # Add TTY 2-6 logins in runlevels 2-5:
 sed -i 's/^\([0-9]:23\)\(:respawn:\/sbin\/getty\)/\145\2/' /etc/inittab
 init q
