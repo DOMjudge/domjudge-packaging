@@ -24,7 +24,7 @@ fi
 
 # Unpack extra files:
 cd /
-tar xzfk $EXTRA
+tar xzf $EXTRA
 rm -f $EXTRA
 
 export DEBIAN_FRONTEND=noninteractive

@@ -4,7 +4,7 @@ default: $(EXTRA)
 
 $(EXTRA): FORCE
 	rm -f $(EXTRA)
-	cd files && tar czf ../$(EXTRA) .
+	cd files && chmod 1777 tmp && tar czf ../$(EXTRA) .
 
 FORCE:
 
