@@ -13,7 +13,7 @@
 
 
 # Add network firewalling for domjudge_run user:
-iptables -I OUTPUT -m owner --uid-owner 107 -j REJECT
+iptables -I OUTPUT -m owner --uid-owner `id -u domjudge-run` -j REJECT
 
 # Suppress writing to swapfile that might be on slow USB flash memory:
 sysctl -q -w vm.swappiness=10
