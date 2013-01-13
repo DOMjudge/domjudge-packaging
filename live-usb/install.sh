@@ -7,7 +7,7 @@
 # Run this script as:
 # $ install.sh <hostname>
 
-set -xe
+set -e
 
 EXTRA=/tmp/extra-files.tgz
 
@@ -33,6 +33,8 @@ export DEBIAN_FRONTEND=noninteractive
 echo -n "Adding UvT Debian APT archive key... "
 apt-key add /tmp/uvt_key-with-signatures.asc
 apt-get -q update
+
+echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
 # Fix some GRUB boot loader settings:
 sed -i -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
@@ -89,9 +91,12 @@ EOF
 
 apt-get install -q -y \
 	openssh-server mysql-server apache2 sharutils php-geshi \
-	gcc g++ openjdk-6-jdk openjdk-6-jre-headless
+	sudo gcc g++ openjdk-6-jdk openjdk-6-jre-headless
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
+
+# Add DOMjudge-live specific DB content:
+mysql -u domjudge_jury --password=$DBPASSWORD domjudge < /tmp/mysql_db_livedata.sql
 
 # Set MySQL server to listen on external IP and increase some parameters:
 sed -i -e 's/^#*\(bind-address.*=\) [0-9\.]*/\1 0.0.0.0/' \
