@@ -1,11 +1,11 @@
 # Installed by domjudge-judgehost
 
 domjudge ALL=(root) NOPASSWD: /usr/sbin/runguard *
-domjudge ALL=(root) NOPASSWD: /bin/cp -pR /dev/null ./dev/null
+domjudge ALL=(root) NOPASSWD: /bin/cp -pR /dev/null ../dev/null
 
 domjudge ALL=(root) NOPASSWD: /bin/mount -n -t proc --bind /proc proc
 domjudge ALL=(root) NOPASSWD: /bin/umount /var/lib/domjudge/javachroot*/proc
 domjudge ALL=(root) NOPASSWD: /bin/mount --bind /var/lib/domjudge/javachroot*/*
-domjudge ALL=(root) NOPASSWD: /bin/mount -o remount\,ro\,bind /var/lib/domjudge/judgings/*
+domjudge ALL=(root) NOPASSWD: /bin/mount -o remount\,ro /var/lib/domjudge/judgings/*
 domjudge ALL=(root) NOPASSWD: /bin/umount /var/lib/domjudge/judgings/*
 
