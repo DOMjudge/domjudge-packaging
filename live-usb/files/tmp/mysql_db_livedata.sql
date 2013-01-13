@@ -7,4 +7,6 @@
 
 INSERT INTO `judgehost` (`hostname`, `active`) VALUES ('domjudge-live', 1);
 
+UPDATE `language` SET `allow_submit` = 1 WHERE `langid` IN ('awk', 'hs', 'pas', 'pl', 'sh');
+
 UPDATE `team` SET `authtoken` = MD5('domjudge#domjudge') WHERE `login` = 'domjudge';

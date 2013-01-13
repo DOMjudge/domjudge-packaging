@@ -90,8 +90,8 @@ domjudge-judgehost	domjudge-judgehost/mysql/admin-pass	password	domjudge
 EOF
 
 apt-get install -q -y \
-	openssh-server mysql-server apache2 sharutils php-geshi \
-	sudo gcc g++ openjdk-6-jdk openjdk-6-jre-headless
+	openssh-server mysql-server apache2 sharutils php-geshi sudo \
+	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
 
