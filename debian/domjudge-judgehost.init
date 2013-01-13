@@ -28,6 +28,13 @@ if [ ! -d $RUNDIR ]; then
 	chown $RUNAS $RUNDIR
 fi
 
+# Close some file descriptors beyond stdio, because these cannot be
+# closed in the judgedaemon PHP script, workaround for Debian postinst
+# hanging on open fd.
+exec 3>&-
+exec 4>&-
+exec 5>&-
+
 case "$1" in
   start)
 	log_begin_msg "Starting $DESC: $NAME"
