@@ -43,6 +43,9 @@ sed -i -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
 	/etc/default/grub
 update-grub
 
+# Mount /tmp as tmpfs:
+sed -i '/^proc/a tmpfs		/tmp		tmpfs	size=512M,mode=1777	0	0' /etc/fstab
+
 # Add TTY 2-6 logins in runlevels 2-5:
 sed -i 's/^\([0-9]:23\)\(:respawn:\/sbin\/getty\)/\145\2/' /etc/inittab
 init q
