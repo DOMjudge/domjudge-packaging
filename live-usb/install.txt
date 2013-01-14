@@ -6,8 +6,8 @@ http://live.debian.net/ but just plain Debian installations that can
 be copied onto an USB stick and booted from there. That is, any
 changes made are persistently stored on the image.
 
-build Debian Squeeze image, boot netinst CD (e.g. in KVM) with boot
-options:
+build Debian Squeeze image, boot a netinst CD (e.g. in KVM) with
+kernel boot options:
 
 auto url=<webhost>/<path>/preseed.cfg
 
@@ -18,30 +18,18 @@ optionally copy SSH keys for easier access:
 
 $ ssh-copy-id root@<dhcp_hostname>
 
-then install domjudge-live specific stuff:
+then install domjudge-live specific stuff: first copy generated
+DOMjudge debian packages into the files/tmp folder, then run
 
 $ make && ./install.sh root@<dhcp_hostname>
 
 
 ==================
 
-/etc/init.d/domjudge-judgehost	use daemonize option, fixed in SVN
-
-packages added:
-
-domjudge-{doc,common,domserver,judgehost} + dependencies + recommends
-
-domjudge config:
-
-$ dj_make_chroot
-
-- enable languages
-- add judgehost
-
 TODO:
 
 cleanup ssh keys, /var/lib/domjudge, mysql DB
 
-starting judgedaemon from postinst hangs
-
 debian-live stuff? hostname...
+
+update dj-live script
