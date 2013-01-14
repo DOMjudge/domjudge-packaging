@@ -12,8 +12,8 @@ set -e
 EXTRA=/tmp/extra-files.tgz
 
 if [ -n "$1" ]; then
-	scp "$0" `dirname $0`/`basename $EXTRA` "$1:`dirname $EXTRA`"
-	ssh "$1" /tmp/`basename $0`
+	scp "$0" `dirname $0`/`basename $EXTRA` "root@$1:`dirname $EXTRA`"
+	ssh "root@$1" /tmp/`basename $0`
 	exit 0
 else
 	if [ ! -f $EXTRA ]; then
