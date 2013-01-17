@@ -1,0 +1,11 @@
+# Installed by DOMjudge live image
+
+/var/log/domjudge/*.log {
+        weekly
+        missingok
+        rotate 8
+        compress
+        notifempty
+	create 640 root adm
+        sharedscripts
+}
