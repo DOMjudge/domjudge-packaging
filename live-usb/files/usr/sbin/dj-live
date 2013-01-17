@@ -146,6 +146,12 @@ EOF
 		echo "File written: 'PWFILE'."
 		sync_dbconfig
 		;;
+	upgrade)
+		apt-get update
+		apt-get dist-upgrade -y
+		apt-get clean
+		dj_upgrade_chroot
+		;;
 
      *|help)
      cat <<EOF
@@ -155,6 +161,7 @@ Commands:
   rootpass    set system and MySQL database root passwords
   genpass     (re)generate DOMjudge DB user passwords
   syncjudge   synchronize DB information to a judgehost
+  upgrade     install (security) updates
   help        display this usage information
 
 The 'syncjudge' command must be called with a resolvable judgehost
