@@ -54,14 +54,6 @@ init q
 sed -i '/^#if \[ -f \/etc\/bash_completion/,/^#fi/ s/^#//' /etc/bash.bashrc
 sed -i '/^#export LS_OPTIONS/,/^#alias ls=/ s/^#//' /root/.bashrc
 
-# Write domjudge syslog to separate logfile:
-cat  >> /etc/rsyslog.conf <<EOF
-# DOMjudge also logs to the syslog local0 facility by default.
-# Redirect these to a separate logfile.
-
-local0.*			/var/log/domjudge/syslog.log
-EOF
-
 # Disable persistent storage and network udev rules:
 cd /lib/udev/rules.d
 mkdir disabled
@@ -106,22 +98,13 @@ apt-get clean
 # Add DOMjudge-live specific DB content:
 mysql -u domjudge_jury --password=$DBPASSWORD domjudge < /tmp/mysql_db_livedata.sql
 
-# Set MySQL server to listen on external IP and increase some parameters:
-sed -i -e 's/^#*\(bind-address.*=\) [0-9\.]*/\1 0.0.0.0/' \
-       -e 's/^#*\(max_connections.*=\) [0-9]*/\1 1000/' \
-       -e 's/^#*\(max_allowed_packet.*=\) .*/\1 128M/' \
-	/etc/mysql/my.cnf
-
 # Enable domserver/judgehost services at specific runlevels
 update-rc.d mysql              disable 2 4
 update-rc.d apache2            disable 2 4
 update-rc.d domjudge-judgehost disable 2 3
 
-# Allow larger file uploads:
-sed -i '/^#<IfModule mod_php/,/<\/IfModule/ s/^#//' /etc/domjudge/apache.conf
-
 # Include DOMjudge apache configuration snippet:
-ln -s /etc/domjudge/apache.conf /etc/apache2/sites-enabled/domjudge.conf
+ln -s /etc/domjudge/apache.conf /etc/apache2/conf.d/domjudge.conf
 
 # Move jury/plugin interface password files in place and fix
 # permissions (only do this after installing DOMjudge packages):
