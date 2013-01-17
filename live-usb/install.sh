@@ -93,10 +93,15 @@ domjudge-judgehost	domjudge-judgehost/mysql/admin-pass	password	domjudge
 EOF
 
 apt-get install -q -y \
-	openssh-server mysql-server apache2 sharutils php-geshi sudo \
-	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc
+	openssh-server mysql-server apache2 php-geshi sudo \
+	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc \
+	ntp phpmyadmin
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
+
+# do not have stuff listening that we don't use
+apt-get remove --purge portmap nfs-common
+apt-get clean
 
 # Add DOMjudge-live specific DB content:
 mysql -u domjudge_jury --password=$DBPASSWORD domjudge < /tmp/mysql_db_livedata.sql
