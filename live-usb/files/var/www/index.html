@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Description" CONTENT="DOMjudge-live image running on Debian GNU/Linux.">
+   <TITLE>DOMjudge-live</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EF" VLINK="#55188A" ALINK="#FF0000">
+
+<h1>DOMjudge-live</h1>
+
+<p>This host is running a DOMjudge-live USB image that contains a
+ready-to-use copy of the <a href="http://domjudge.sourceforge.net">
+DOMjudge programming contest jury system</a>. It runs on the
+<a href="http://www.debian.org">Debian GNU/Linux</a> operating system
+and the <a href="http://www.apache.org/">Apache</a> webserver.</p>
+
+<h2>Web interfaces</h2>
+
+<p>The following web interfaces are available:</p>
+<ul>
+<li><a href="/domjudge/public/">
+    <strong>Public interface:</strong></a> shows the scoreboard.</li>
+<li><a href="/domjudge/team/">
+    <strong>Team interface:</strong></a> allows a team to submit and
+    view submissions and clarifications, and view and the scoreboard.</li>
+<li><a href="/domjudge/jury/">
+    <strong>Jury/admin interface:</strong></a> the full set of options
+    available to judges/admins. Log in with user <em>jury</em> or
+    <em>admin</em> respectively, close your browser to log out. The
+    admin interface is a superset of the jury interface with
+    additional administrative options.</li>
+
+<li><strong>Plugin interface:</strong> this interface outputs various data
+    on the contest in XML format, to be used by plugins, e.g. for exporting it
+    to an external, fancier scoreboard or to gather statistics. There are
+    currently two datasets exported:
+    <ul>
+    <li><a href="/domjudge/plugin/scoreboard.php">
+        the scoreboard</a> and</li>
+    <li><a href="/domjudge/plugin/event.php">
+        a list of events.</a></li>
+    </ul>
+
+    Login with user <em>public</em> for the public view or <em>jury</em> for the
+    full jury view (e.g. a non-frozen scoreboard).
+    Note that especially the event list might be quite long and take a long time
+    to load in your browser.</li>
+</ul>
+
+<p>Note that initially all passwords are set equal to th respective
+usernames. Furthermore, a team account <em>domjudge</em> is
+preconfigured with equal password.</p>
+
+<h2>Feedback, bugs, contact</h2>
+
+<p>If you have any comments, bugs, problems, or would like to get into
+contact with the DOMjudge developers, then please see our website
+<a href="http://domjudge.sourceforge.net">domjudge.sourceforge.net</a>
+for more details, or contact us through the
+<a href="https://secure.a-eskwadraat.nl/mailman/listinfo/domjudge-devel">
+DOMjudge development mailinglist</a>.</p>
+
+
+</BODY>
+</HTML>
