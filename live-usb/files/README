@@ -1,0 +1,122 @@
+DOMjudge-live (USB) image
+=========================
+
+This DOMjudge-live system contains a ready-to-use copy of the DOMjudge
+programming contest jury system. It runs on the Debian GNU/Linux
+operating system and the Apache webserver.
+
+
+Booting the image
+-----------------
+
+The image contains a default minimal Debian squeeze installation with
+recently released DOMjudge Debian packages and dependencies added.
+Everything is preconfigured for running a (test) contest.
+
+The boot menu has 4 options: start any combination of domserver and/or
+judgehost. These correspond to runlevels (change with 'init <level>'):
+2 = plain Debian (no domserver or judgehost)
+3 = run domserver only
+4 = run judgehost only
+5 = run both domserver and judgehost (the default)
+
+A script 'dj-live' is included to perform some basic tasks, such as
+changing passwords from the defaults. Run it without arguments on the
+console for more information.
+
+If you want to run additional judgehosts on separate machines, then
+the DOMjudge database credentials need to synchronized by running on
+the instance used as domserver:
+
+$ dj-live <judgehost>
+
+for each judgehost. Some DNS/hostname configuration is recommended.
+Separate judgehosts must also be added in the jury web-interface.
+
+
+Accessing the web interfaces
+----------------------------
+
+The web interfaces for jury, team, and public can be found under
+http://<hostname>/domjudge/{jury,team,public} respectively. See also
+http://<hostname>/ for links to these and some basic information,
+including usernames and passwords to access the interfaces. Here
+<hostname> is the DNS name of the DOMjudge-live system.
+
+
+Running the image from a harddisk
+---------------------------------
+
+Instead of writing this image to an USB stick or similar, it can also
+be written to a harddisk or used as virtual machine image, e.g. to use
+it as the base of a more permanent DOMjudge instance. In that case you
+might want to resize the image beyond its preset size (currently
+3.7GB).
+
+When the image is written to a harddisk, it is probably easiest to
+boot from a rescue CD and run 'parted' or 'gparted' from it.
+
+Resizing an image file is easiest using the libguestfs tools.
+First, create a new image file of the preferred size and format, e.g.
+for a raw format:
+
+$ truncate -s 6G <resized.img>
+
+Then run 'virt-resize' from the libguestfs toolset:
+
+$ virt-resize --expand /dev/sda2 <original.img> <resized.img>
+
+This extends the partition that contains the root (ext4) filesystem,
+as well as the filesystem itself.
+
+
+Generating the image from sources
+---------------------------------
+
+NOTE: these images are not Debian-live systems in the sense of
+http://live.debian.net/ but just plain Debian installations that can
+be copied onto an USB stick and booted from there. That is, any
+changes made are persistently stored on the image.
+
+This image can be generated semi-automatically from sources. First
+obtain a copy of the DOMjudge packaging Git repository:
+
+$ git clone git://a-eskwadraat.nl/git/domjudge-packaging.git
+
+Then switch to the 'domjudge-packaging/live-usb' subdirectory.
+Copy the DOMjudge Debian packages of a recent release into the
+'files/tmp' subdirectory and run 'make' to generate 'extra-files.tgz'.
+
+Next, build a Debian Squeeze image. Download a Debian netinst CD for
+Squeeze/i386 from http://www.debian.org/CD/netinst/. Make the file
+'preseed.cfg' available on a URL that can be accessed in the next
+stage.
+
+Create a file (or use a real block device) of at least 4GB to put the
+image on. Now boot the netinst CD in a VM like qemu/kvm:
+
+$ kvm -boot d -cdrom <debian-netinst.iso> -hda <domjdge-live-target.img>
+
+hit ESCAPE on the Debian installer boot screen and specify the
+following kernel boot options:
+
+  auto url=<webhost>/<path>/preseed.cfg
+
+where the preseed.cfg file is made available at that url. Now a
+complete Debian system should automatically be installed onto the
+specified image.
+
+After rebooting the image, optionally copy SSH keys for easier access:
+
+$ ssh-copy-id root@<dhcp_hostname>
+
+Note that the root password is set to 'domjudge'.
+
+Then run the domjudge-live specific install script:
+
+$ ./install.sh <dhcp_hostname>
+
+This will copy and extract the generated file 'extra-files.tgz' onto
+the image and run 'install.sh' there. When this is finished, you
+should have a freshly generated DOMjudge-live image.
+
