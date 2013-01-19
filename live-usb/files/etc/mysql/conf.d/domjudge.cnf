@@ -1,5 +1,6 @@
 # Installed by DOMjudge live image
 
+[mysqld]
 bind-address       = 0.0.0.0
 max_connections    = 1000
 max_allowed_packet = 128M
