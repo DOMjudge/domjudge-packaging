@@ -94,7 +94,6 @@ dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
 
 # do not have stuff listening that we don't use
 apt-get remove -q -y --purge portmap nfs-common
-apt-get -q clean
 
 # Add DOMjudge-live specific DB content:
 mysql -u domjudge_jury --password=$DBPASSWORD domjudge < /tmp/mysql_db_livedata.sql
@@ -117,5 +116,19 @@ dj_make_chroot
 
 # Prebuild locate database (in background):
 /etc/cron.daily/mlocate &
+MLOC_PID=$!
+
+# Do some cleanup to prepare for creating a releasible image:
+apt-get -q clean
+rm -f /root/.ssh/authorized_keys /root/.bash_history
+
+# Remove SSH host keys to regenerate them on next first boot.
+rm -f /etc/ssh/ssh_host_*
+
+# Unmound swap and zero it to improve compressibility.
+swapoff -a
+cat /dev/zero > /dev/sda1 2>/dev/null || true
+
+wait $MLOC_PID
 
 echo "Done installing."
