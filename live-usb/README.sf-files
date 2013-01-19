@@ -1,0 +1,35 @@
+This directory contains DOMjudge-live (USB) images. These can be
+written to USB (or harddisk) and boot into a fully functional Debian
+GNU/Linux system with a working instance of DOMjudge installed on it.
+This can be used to check out DOMjudge without the need to install it,
+or to quickly run a (small) contest.
+
+The image integrity and authenticity can be checked with the detached
+GPG signature:
+
+$ gpg domjudge-live_YYYY-MM-DD.img.bz2.asc
+
+You can simply write the image to an USB stick with the command (as
+root in Linux):
+
+$ bzcat domjudge-live_YYYY-MM-DD.img.bz2 > /dev/sdX
+
+where sdX is the device of the USB stick, check e.g. with 'dmesg' and
+be careful not to overwrite your harddrive! Alternatively, it can also
+be run virtualized from e.g. QEMU, Xen, or VMware.
+
+The image contains a default minimal Debian Squeeze installation with
+recently released DOMjudge Debian packages and dependencies added.
+Everything is preconfigured for running a (test) contest.
+
+The boot menu has 4 options: start any combination of domserver and/or
+judgehost. These correspond to runlevels (change with 'init <level>'):
+2 = plain Debian (no domserver or judgehost)
+3 = run domserver only
+4 = run judgehost only
+5 = run both domserver and judgehost
+
+For more information, boot the default image and see the file /README
+and http://<hostname>/, or find the README file in the
+DOMjudge-packaging Git repository, under live-usb/ at:
+git://a-eskwadraat.nl/git/domjudge-packaging.git
