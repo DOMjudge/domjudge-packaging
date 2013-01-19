@@ -38,6 +38,7 @@ echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
 # Fix some GRUB boot loader settings:
 sed -i -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
+       -e 's/^\(GRUB_DEFAULT\)=.*/\1=3/' \
        -e 's/^#\(GRUB_\(DISABLE_LINUX_RECOVERY\|INIT_TUNE\)\)/\1/' \
        -e '/GRUB_GFXMODE/a GRUB_GFXPAYLOAD_LINUX=1024x786,640x480' \
 	/etc/default/grub
