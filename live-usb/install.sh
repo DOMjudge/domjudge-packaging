@@ -71,6 +71,11 @@ debconf-set-selections <<EOF
 mysql-server-5.1	mysql-server/root_password	password	domjudge
 mysql-server-5.1	mysql-server/root_password_again		password	domjudge
 
+phpmyadmin	phpmyadmin/mysql/admin-user	string	root
+phpmyadmin	phpmyadmin/mysql/admin-pass	password	domjudge
+phpmyadmin	phpmyadmin/reconfigure-webserver	multiselect	apache2
+phpmyadmin	phpmyadmin/database-type	select	mysql
+
 domjudge-domserver	domjudge-domserver/mysql/app-pass       password	$DBPASSWORD
 domjudge-domserver	domjudge-domserver/app-password-confirm	password	$DBPASSWORD
 domjudge-domserver	domjudge-domserver/dbconfig-install	boolean	true
