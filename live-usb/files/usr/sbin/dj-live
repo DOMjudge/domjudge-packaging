@@ -1,11 +1,11 @@
 #!/bin/bash
 # This script can be used to perform multiple tasks specifically
 # on DOMjudge live USB instances. It must be run as root.
+#
+# Note that this script assumes that the default database credentials
+# settings dbname=domjudge and dbuser=domjudge_jury are unchanged.
 
 set -e
-
-PWFILE=/etc/domjudge/dbpasswords.secret
-DBCONFIG=/etc/dbconfig-common/domjudge-judgehost.conf
 
 error()
 {
@@ -14,56 +14,6 @@ error()
 }
 
 [ `id -u` -eq 0 ] || error "this program must be run as root."
-
-# This function is copied from dj-setup-database code.
-update_dbpasswords()
-{
-	local OLDIFS="$IFS" user pass
-	IFS=":"
-	# Don't pipe $PWFILE into this while loop as that spawns a
-	# subshell and then variables are not retained in the original shell.
-	while read role host db user passwd; do
-		# Skip lines beginning with a '#'
-		[ "x$role" != "x${role###}" ] && continue
-		eval "${role}_DBHOST=$host"
-		eval "${role}_DBNAME=$db"
-		eval "${role}_DBUSER=$user"
-		eval "${role}_PASSWD=$passwd"
-		if [ "x$role" = xjury ]; then
-			DBHOST=$host
-			DBNAME=$db
-		fi
-	done < "$PWFILE"
-	IFS="$OLDIFS"
-	if [ -z "$jury_PASSWD" -o -z "$team_PASSWD" -o -z "$public_PASSWD" ]; then
-		error "no login info found for one of jury, team, public users."
-	fi
-
-	(
-	for role in jury team public plugin ; do
-		eval "user=\$${role}_DBUSER"
-		eval "pass=\$${role}_PASSWD"
-		echo "UPDATE user SET password=PASSWORD('$pass') WHERE user='$user';"
-	done
-	echo "FLUSH PRIVILEGES;"
-	) | mysql --defaults-file=/etc/mysql/debian.cnf mysql
-}
-
-# Synchronize new DB credentials with dbconfig-common data for judgedaemon.
-sync_dbconfig()
-{
-	local OLDIFS="$IFS"
-	IFS=":"
-    while read ROLE HOST DB USER PASS ; do
-		[ "x$ROLE" != "xjury" ] && continue
-		sed -i -e "s/^\(dbc_dbuser=\)'[^']*'/\1'$USER'/" \
-		       -e "s/^\(dbc_dbpass=\)'[^']*'/\1'$PASS'/" \
-		       -e "s/^\(dbc_dbname=\)'[^']*'/\1'$DB'/" \
-		       -e "s/^\(dbc_dbserver=\)'[^']*'/\1'$HOST'/" "$DBCONFIG"
-	done < "$PWFILE"
-	dbconfig-generate-include -f php -O root:domjudge -m 0640 "$DBCONFIG" \
-		/etc/domjudge/judgedaemon.dbconfig.php
-}
 
 case "$1" in
 	rootpass)
@@ -85,67 +35,115 @@ EOF
 
 		cat <<EOF
 
-You might also want to modify default/pre-generated passwords in the
-following files:
+You might also want to modify the default passwords in
 
-/etc/domjudge/dbpasswords.secret
-  This file contains the DOMjudge database user passwords. These are
-  for internal use only, but it is best to regenerate them with
-    $0 genpass
-  to prevent unauthorized access to the DOMjudge database. Also
-  propagate these changes to any other judgehosts with the command
-    $0 syncjudge <judgehost>
+  /etc/domjudge/htpasswd-{jury,plugin}
 
-/etc/domjudge/htpasswd-{jury,plugin}
-  These two files contain credentials for the DOMjudge jury and plugin
-  web-interfaces, respectively. The jury interface has users 'admin' and
-  'jury' preconfigured, while the plugin interface has 'jury' and 'public'.
-  The passwords are equal to the usernames. Edit these files to remove,
-  and use e.g. the following command to add new users:
-    htpasswd -m /etc/domjudge/htpasswd-jury <new-user>
+These two files contain credentials for the DOMjudge jury and plugin
+web-interfaces, respectively. The jury interface has users 'admin' and
+'jury' preconfigured, while the plugin interface has 'jury' and
+'public'. The passwords are equal to the usernames. Edit these files
+to remove these, and use e.g. the following command to add new users:
+
+  htpasswd -m /etc/domjudge/htpasswd-jury <new-user>
+
+
+Furthermore, the files
+
+  /etc/domjudge/{domserver,judgedaemon}.dbconfig.php
+
+contain the DOMjudge database user password. These are for internal
+use only, and were generated on first boot of this image. They can be
+regenerated with
+
+  $0 genpass
+
+This also updates the files /etc/dbconfig-common/domjudge-*.conf.
+Propagate these passwords to any judgehosts with the command
+
+  $0 syncjudge <judgehost>
+
+to allow each judgehost to access the database on this host.
 
 EOF
 		;;
 
 	genpass)
-		[ -e "$PWFILE" ] && echo "Replacing old passwords file..."
-		echo "Generating new credentials in '$PWFILE'..."
-		(
-		echo "# Format: '<role>:<db_host>:<db_name>:<user>:<password>'"
-		for group in team jury public plugin; do
-			printf "$group:localhost:domjudge:domjudge_$group:"
-			head -c12 /dev/urandom | uuencode -m /dev/stdout | tail -n +2 | \
-				head -c16 | tr '/+' 'Aa'
-			echo
+		echo "Generating new DOMjudge database credentials..."
+		PW=`head -c12 /dev/urandom | uuencode -m /dev/stdout | tail -n +2 | \
+			head -c16 | tr '/+' 'Aa'`
+
+		for f in /etc/dbconfig-common/domjudge-{domserver,judgehost}.conf ; do
+			sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$PW'/" \
+			       -e "s/^\(dbc_dbserver\)=.*/\1=''/" $f
 		done
-		) > "$PWFILE"
-		update_dbpasswords
-		sync_dbconfig
-		echo "DOMjudge database passwords updated."
+
+		# Generate new DOMjudge include snippets from dbconfig:
+		dbconfig-generate-include -f php -O root:www-data -m 0640 \
+			/etc/dbconfig-common/domjudge-domserver.conf \
+			/etc/domjudge/domserver.dbconfig.php
+		dbconfig-generate-include -f php -O root:domjudge -m 0640 \
+			/etc/dbconfig-common/domjudge-judgehost.conf \
+			/etc/domjudge/judgedaemon.dbconfig.php
+
+		# Use Debian administrative credentials to login to the MySQL server.
+		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
+UPDATE user SET password=PASSWORD('$PW') WHERE user='$USR';
+FLUSH PRIVILEGES;
+EOF
+
+		cat <<EOF
+DOMjudge database passwords updated.
+
+You may also want to propagate these changes to any other judgehosts.
+
+EOF
+		;;
+
+	syncjudge-remote)
+		echo "Synchronizing passwords on '$HOSTNAME' to DB host '$3'..."
+
+		sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$2'/" \
+		       -e "s/^\(dbc_dbserver\)=.*/\1='$3'/" \
+			/etc/dbconfig-common/domjudge-judgehost.conf
+
+		# Generate new DOMjudge include snippet from dbconfig:
+		dbconfig-generate-include -f php -O root:domjudge -m 0640 \
+			/etc/dbconfig-common/domjudge-judgehost.conf \
+			/etc/domjudge/judgedaemon.dbconfig.php
+
+		# Restart judgedaemon on remote judgehost:
+		/etc/init.d/domjudge-judgehost stop || true
+		/etc/init.d/domjudge-judgehost start
 		;;
 
 	syncjudge)
 		JUDGEHOST="$2"
 		[ -z "$JUDGEHOST" ] && error "required argument <judgehost> missing."
-		[ -r "$PWFILE" ] || error "file not found: '$PWFILE'."
 
 		echo "Synchronizing judgehost '$JUDGEHOST'..."
+
+		PW=`grep '^dbc_dbpass=' /etc/dbconfig-common/domjudge-domserver.conf | \
+			sed "s/^dbc_dbpass='\(.*\)'/\1/"`
+
+		# Determine our resolvable hostname:
 		ADDR=`/sbin/ip addr show eth0 | grep 'inet ' | sed 's/.*inet \([0-9\.]*\).*/\1/'`
 		HOST=`dig +short -x $ADDR`
-		cat "$PWFILE" | sed "s/:localhost:/:${HOST:-$ADDR}:/" #| \
-#			ssh "$JUDGEHOST" "dj-live syncjudge-local "
+		HOST=${HOST:-$ADDR}
+
+		# First make sure that remote hosts can connect to MySQL:
+		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
+UPDATE db SET host='%' WHERE db='domjudge';
+UPDATE user SET host='%' WHERE user='domjudge_jury';
+FLUSH PRIVILEGES;
+EOF
+
+		# Now update the DB credentials on the judgehost:
+		ssh "$JUDGEHOST" "dj-live syncjudge-remote '$PW' '$HOST'"
 
 		echo "Database information synchronized to '$JUDGEHOST'."
 		;;
 
-# This command is for internal use only: it is run over SSH at the
-# judgehost from the syncjudge command.
-	syncjudge-local)
-		DOMSERVER="$2"
-		cat | s> "$PWFILE"
-		echo "File written: 'PWFILE'."
-		sync_dbconfig
-		;;
 	upgrade)
 		apt-get update
 		apt-get dist-upgrade -y
@@ -161,7 +159,7 @@ Commands:
   rootpass    set system and MySQL database root passwords
   genpass     (re)generate DOMjudge DB user passwords
   syncjudge   synchronize DB information to a judgehost
-  upgrade     install (security) updates
+  upgrade     install system (security) updates
   help        display this usage information
 
 The 'syncjudge' command must be called with a resolvable judgehost
