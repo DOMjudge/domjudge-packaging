@@ -93,8 +93,8 @@ apt-get install -q -y \
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
 
 # do not have stuff listening that we don't use
-apt-get remove --purge portmap nfs-common
-apt-get clean
+apt-get remove -q -y --purge portmap nfs-common
+apt-get -q clean
 
 # Add DOMjudge-live specific DB content:
 mysql -u domjudge_jury --password=$DBPASSWORD domjudge < /tmp/mysql_db_livedata.sql
