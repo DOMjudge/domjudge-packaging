@@ -64,7 +64,7 @@ cd -
 
 # Pregenerate random password for DOMjudge database, so that we can
 # set it the same for domserver and judgehost packages.
-DBPASSWORD=`date +%s | sha256sum | base64 | head -c 20`
+DBPASSWORD=`head -c12 /dev/urandom | base64 | head -c 16 | tr '/+' 'Aa'`
 
 # Install packages including DOMjudge:
 debconf-set-selections <<EOF
