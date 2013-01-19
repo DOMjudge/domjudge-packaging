@@ -1,0 +1,15 @@
+TODO
+====
+
+/var/lib/domjudge, mysql DB
+
+dynamically/on first boot set: hostname, DB passwords, ...
+use debian-live for this?
+
+update dj-live script:
+- automatically add judgehost entry on sync?
+
+documentation:
+- using as VM image
+- installing/resizing to HD
+- additional packages: phpmyadmin, other?
