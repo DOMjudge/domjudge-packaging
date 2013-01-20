@@ -116,6 +116,10 @@ ln -s /etc/domjudge/apache.conf /etc/apache2/conf.d/domjudge.conf
 mv /tmp/htpasswd-jury /tmp/htpasswd-plugin /etc/domjudge
 chown root:www-data /etc/domjudge/htpasswd-*
 
+# Make some files available in the doc root
+ln -s /usr/share/doc/domjudge/examples/*.pdf /var/www/
+ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/
+
 # Build DOMjudge chroot environment:
 dj_make_chroot
 
