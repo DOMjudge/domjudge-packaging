@@ -44,8 +44,8 @@ including usernames and passwords to access the interfaces. Here
 <hostname> is the DNS name of the DOMjudge-live system.
 
 
-Running the image from a harddisk
----------------------------------
+Running the image from a harddisk or as virtual machine
+-------------------------------------------------------
 
 Instead of writing this image to an USB stick or similar, it can also
 be written to a harddisk or used as virtual machine image, e.g. to use

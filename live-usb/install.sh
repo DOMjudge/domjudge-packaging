@@ -63,7 +63,7 @@ mv 75-cd-aliases-generator.rules     disabled
 cd -
 
 # Pregenerate random password for DOMjudge database, so that we can
-# set it the same for domserver and judgehost packages.
+# set it the same for domserver and judgehost packages:
 DBPASSWORD=`head -c12 /dev/urandom | base64 | head -c 16 | tr '/+' 'Aa'`
 
 # Install packages including DOMjudge:
@@ -97,7 +97,7 @@ apt-get install -q -y \
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
 
-# do not have stuff listening that we don't use
+# Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
 
 # Add DOMjudge-live specific DB content:
@@ -123,14 +123,14 @@ dj_make_chroot
 /etc/cron.daily/mlocate &
 MLOC_PID=$!
 
-# Do some cleanup to prepare for creating a releasible image:
+# Do some cleanup to prepare for creating a releasable image:
 apt-get -q clean
 rm -f /root/.ssh/authorized_keys /root/.bash_history
 
-# Remove SSH host keys to regenerate them on next first boot.
+# Remove SSH host keys to regenerate them on next first boot:
 rm -f /etc/ssh/ssh_host_*
 
-# Unmound swap and zero it to improve compressibility.
+# Unmount swap and zero it to improve compressibility:
 swapoff -a
 cat /dev/zero > /dev/sda1 2>/dev/null || true
 
