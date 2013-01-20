@@ -24,14 +24,30 @@ A script 'dj-live' is included to perform some basic tasks, such as
 changing passwords from the defaults. Run it without arguments on the
 console for more information.
 
+
+Running separate judgehosts
+---------------------------
+
 If you want to run additional judgehosts on separate machines, then
-the DOMjudge database credentials need to synchronized by running on
-the instance used as domserver:
+the DOMjudge database credentials on the domserver need to
+synchronized to each judgehost.
 
-$ dj-live <judgehost>
+Some DNS/hostname configuration also is required. First of all, each
+judgehost must be assigned a new, unique hostname (which need not
+necessarily match its DNS name) and this must be added as a judgehost
+entry in the jury web-interface.
 
-for each judgehost. Some DNS/hostname configuration is recommended.
-Separate judgehosts must also be added in the jury web-interface.
+The above tasks can be performed by running on the instance used as
+domserver:
+
+$ dj-live syncjudge <judgehost-DNSname> <judgehost-hostname>
+
+for each judgehost machine. The first argument must be an IP address
+or resolvable DNS name for the system and the hostname of the system
+will be set to the second argument, and added as a database entry.
+
+Although IP addresses can be used, it will probably be convenient to
+setup some DNS configuration for these machines.
 
 
 Accessing the web interfaces

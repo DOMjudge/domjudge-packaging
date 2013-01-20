@@ -61,7 +61,7 @@ regenerated with
 This also updates the files /etc/dbconfig-common/domjudge-*.conf.
 Propagate these passwords to any judgehosts with the command
 
-  $0 syncjudge <judgehost>
+  $0 syncjudge <judgehost> [<new-hostname>]
 
 to allow each judgehost to access the database on this host.
 
@@ -102,6 +102,12 @@ EOF
 	syncjudge-remote)
 		echo "Synchronizing passwords on '$HOSTNAME' to DB host '$3'..."
 
+		if [ -n "$4" ]; then
+			echo "$4" > /etc/hostname
+			hostname -F /etc/hostname
+			echo "Set hostname to '`hostname`'"
+		fi
+
 		sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$2'/" \
 		       -e "s/^\(dbc_dbserver\)=.*/\1='$3'/" \
 			/etc/dbconfig-common/domjudge-judgehost.conf
@@ -118,6 +124,7 @@ EOF
 
 	syncjudge)
 		JUDGEHOST="$2"
+		NEWHOSTNAME="$3"
 		[ -z "$JUDGEHOST" ] && error "required argument <judgehost> missing."
 
 		echo "Synchronizing judgehost '$JUDGEHOST'..."
@@ -130,15 +137,34 @@ EOF
 		HOST=`dig +short -x $ADDR`
 		HOST=${HOST:-$ADDR}
 
-		# First make sure that remote hosts can connect to MySQL:
+		# First make sure that remote hosts can connect to MySQL, and
+		# add a judgehost entry to the DOMjudge database:
 		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
 UPDATE db SET host='%' WHERE db='domjudge';
 UPDATE user SET host='%' WHERE user='domjudge_jury';
 FLUSH PRIVILEGES;
 EOF
 
+		# Setup a master SSH connection with multiplexing. This
+		# requires only one authentication, the next two share this
+		# master connection.
+		mkdir -p ~/.ssh/multi
+		ssh -NTfM -S ~/.ssh/multi/master-%r@%h:%p "$JUDGEHOST"
+		sleep 1
+		SSHPID=`ssh -S ~/.ssh/multi/master-%r@%h:%p -O check "$JUDGEHOST" 2>&1 | \
+			sed 's/^.*pid=\([0-9]*\)).*/\1/'`
+
 		# Now update the DB credentials on the judgehost:
-		ssh "$JUDGEHOST" "dj-live syncjudge-remote '$PW' '$HOST'"
+		ssh -S ~/.ssh/multi/master-%r@%h:%p \
+			"$JUDGEHOST" "dj-live syncjudge-remote '$PW' '$HOST' $NEWHOSTNAME"
+
+		HOST=`ssh -S ~/.ssh/multi/master-%r@%h:%p "$JUDGEHOST" hostname`
+
+		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf domjudge <<EOF
+INSERT IGNORE INTO judgehost (hostname) VALUES ('$HOST');
+EOF
+
+		kill -HUP $SSHPID
 
 		echo "Database information synchronized to '$JUDGEHOST'."
 		;;
@@ -163,6 +189,13 @@ Commands:
 
 The 'syncjudge' command must be called with a resolvable judgehost
 hostname as argument. The relevant data is synchronized over SSH.
+Additionally, a second argument is used to set the local hostname,
+which must be unique from all other judgehosts. For example, run
+
+  $0 syncjudge somehost.example.com judgehost1
+
+to configure the DOMjudge-live system reachable at somehost.example.com
+as a judgehost identified as 'judgehost1'. 
 
 EOF
 	 exit 0
