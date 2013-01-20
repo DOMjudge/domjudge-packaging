@@ -69,6 +69,12 @@ $ virt-resize --expand /dev/sda2 <original.img> <resized.img>
 This extends the partition that contains the root (ext4) filesystem,
 as well as the filesystem itself.
 
+For VirtualBox: running the following command gives you a VDI image
+which can be loaded directly by VirtualBox:
+
+$ vboxmanage convertfromraw domjudge-live_YYYY-MM-DD.img \
+	domjudge-live_YYYY-MM-DD.vdi
+
 
 Generating the image from sources
 ---------------------------------

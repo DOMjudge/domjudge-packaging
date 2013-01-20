@@ -30,6 +30,5 @@ judgehost. These correspond to runlevels (change with 'init <level>'):
 5 = run both domserver and judgehost
 
 For more information, boot the default image and see the file /README
-and http://<hostname>/, or find the README file in the
-DOMjudge-packaging Git repository, under live-usb/ at:
-git://a-eskwadraat.nl/git/domjudge-packaging.git
+and http://<hostname>/, or view it via Gitweb at
+https://secure.a-eskwadraat.nl/gitweb?p=domjudge-packaging.git;a=blob_plain;f=live-usb/files/README
