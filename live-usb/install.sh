@@ -123,6 +123,10 @@ ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/
 # Build DOMjudge chroot environment:
 dj_make_chroot
 
+# Workaround: put nameserver in chroot, it will otherwise have the nameserver
+# of the build system which will not work elsewhere.
+echo "nameserver 8.8.8.8" > /var/lib/domjudge/javachroot/etc/resolv.conf
+
 # Prebuild locate database (in background):
 /etc/cron.daily/mlocate &
 MLOC_PID=$!
