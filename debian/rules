@@ -93,7 +93,10 @@ install: build
 		$(DJDS)/var/log/domjudge
 	chmod g+w $(DJDS)/var/lib/domjudge/submissions \
 		$(DJDS)/var/log/domjudge
-	cp debian/domjudge-judgehost.sudoers $(DJJH)/etc/sudoers.d/domjudge
+	sed -i 's#^root #domjudge #' $(DJJH)/etc/domjudge/sudoers-domjudge
+	sed -i 's#/\*/proc#/var/lib/domjudge/javachroot*/proc#' $(DJJH)/etc/domjudge/sudoers-domjudge
+	sed -i 's#/chroot/domjudge/\*#/var/lib/domjudge/javachroot*/*#' $(DJJH)/etc/domjudge/sudoers-domjudge
+	mv $(DJJH)/etc/domjudge/sudoers-domjudge $(DJJH)/etc/sudoers.d/domjudge
 	chmod 0440 $(DJJH)/etc/sudoers.d/domjudge
 	# Database configuration
 	cat sql/mysql_db_structure.sql sql/mysql_db_examples.sql > $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql
