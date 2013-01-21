@@ -7,7 +7,7 @@
 dpkg-reconfigure openssh-server
 
 # Generate new random password for domjudge database user.
-/usr/sbin/dj-live genpass
+/usr/sbin/dj-live genpass > /dev/null
 
 exit 0
 
