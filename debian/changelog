@@ -1,6 +1,8 @@
 domjudge (3.3.4-1) unstable; urgency=low
 
   * New upstream release.
+  * Drop sharutils build-dependency.
+  * Update to Debian policy 3.9.4, no changes.
 
  -- Thijs Kinkhorst <thijs@debian.org>  Mon, 21 Jan 2013 20:24:34 +0100
 
