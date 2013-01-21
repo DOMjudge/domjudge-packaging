@@ -8,6 +8,8 @@ Build-Depends-Indep: linuxdoc-tools, transfig,
  texlive-latex-recommended, texlive-latex-extra
 Homepage: http://domjudge.sourceforge.net/
 Standards-Version: 3.9.4
+Vcs-Git: git://a-eskwadraat.nl/git/domjudge-packaging.git
+Vcs-Browser: https://secure.a-eskwadraat.nl/gitweb?p=domjudge-packaging.git
 
 Package: domjudge-common
 Architecture: all
