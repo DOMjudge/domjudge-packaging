@@ -87,7 +87,7 @@ EOF
 
 		# Use Debian administrative credentials to login to the MySQL server.
 		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
-UPDATE user SET password=PASSWORD('$PW') WHERE user='$USR';
+UPDATE user SET password=PASSWORD('$PW') WHERE user='domjudge_jury';
 FLUSH PRIVILEGES;
 EOF
 
