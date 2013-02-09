@@ -132,10 +132,11 @@ EOF
 		PW=`grep '^dbc_dbpass=' /etc/dbconfig-common/domjudge-domserver.conf | \
 			sed "s/^dbc_dbpass='\(.*\)'/\1/"`
 
-		# Determine our resolvable hostname:
+		# Try to determine our resolvable hostname, fallback to IP address:
 		ADDR=`/sbin/ip addr show eth0 | grep 'inet ' | sed 's/.*inet \([0-9\.]*\).*/\1/'`
-		HOST=`dig +short -x $ADDR`
-		HOST=${HOST:-$ADDR}
+		if ! HOST=`dig +short -x $ADDR` || [ -z "$HOST" ]; then
+			HOST=$ADDR
+		fi
 
 		# First make sure that remote hosts can connect to MySQL, and
 		# add a judgehost entry to the DOMjudge database:
