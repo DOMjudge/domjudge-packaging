@@ -6,8 +6,7 @@ TODO
 dynamically/on first boot set: hostname, DB passwords, ...
 use debian-live for this?
 
-update dj-live script:
-- automatically add judgehost entry on sync?
+spurious problems judgedaemon not starting: pidfile problem?
 
 documentation:
 - using as VM image
