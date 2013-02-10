@@ -118,8 +118,8 @@ EOF
 			/etc/domjudge/judgedaemon.dbconfig.php
 
 		# Restart judgedaemon on remote judgehost:
-		/etc/init.d/domjudge-judgehost stop || true
-		/etc/init.d/domjudge-judgehost start
+		service domjudge-judgehost stop || true
+		service domjudge-judgehost start
 		;;
 
 	syncjudge)

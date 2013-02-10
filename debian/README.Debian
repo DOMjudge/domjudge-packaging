@@ -15,7 +15,7 @@ DOMserver
 After installation, take these steps:
 0) Edit files under /etc/domjudge and change variables to your liking.
 1) ln -s /etc/domjudge/apache.conf /etc/apache2/conf.d/domjudge.conf &&
-   /etc/init.d/apache2 reload
+   service apache2 reload
 2) Edit /etc/sudoers and add "#includedir /etc/sudoers.d/"
    if that's not already present.
 
