@@ -136,13 +136,12 @@ cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
 # of the build system which will not work elsewhere.
 echo "nameserver 8.8.8.8" > $CHROOTDIR/etc/resolv.conf
 
-# Prebuild locate database (in background):
-/etc/cron.daily/mlocate &
-MLOC_PID=$!
-
 # Do some cleanup to prepare for creating a releasable image:
 apt-get -q clean
 rm -f /root/.ssh/authorized_keys /root/.bash_history
+
+# Prebuild locate database:
+/etc/cron.daily/mlocate
 
 # Remove SSH host keys to regenerate them on next first boot:
 rm -f /etc/ssh/ssh_host_*
@@ -153,11 +152,12 @@ DOMjudge-live image generated on `date`
 DOMjudge Debian package version `dpkg -s domjudge-common | sed -n 's/^Version: //p'`
 EOF
 
-# Unmount swap and zero it to improve compressibility:
+# Unmount swap and zero empty space to improve compressibility:
 swapoff -a
 cat /dev/zero > /dev/sda1 2>/dev/null || true
-
-wait $MLOC_PID
+cat /dev/zero > /zerofile 2>/dev/null || true
+sync
+rm -f /zerofile
 
 echo "Done installing, halting system..."
 
