@@ -97,7 +97,7 @@ for a raw format:
 
 $ truncate -s 6G <resized.img>
 
-Then run 'virt-resize' from the libguestfs toolset:
+Then run 'virt-resize' from the libguestfs toolset (as root):
 
 $ virt-resize --expand /dev/sda2 <original.img> <resized.img>
 
