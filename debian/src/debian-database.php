@@ -6,6 +6,4 @@
 
 	global $DB;
 
-	$DB = new db ($dbname, $dbserver, $dbuser, $dbpass);
-
-	$DB->q('SET NAMES %s', DJ_CHARACTER_SET_MYSQL);
+	$DB = new db ($dbname, $dbserver, $dbuser, $dbpass, null, DJ_MYSQL_CONNECT_FLAGS);

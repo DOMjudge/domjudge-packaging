@@ -1,21 +1,17 @@
 Author: 
 Description: Update script to replace choices with Debian values
-Index: b/etc/judgehost-config.php
-===================================================================
---- a/etc/judgehost-config.php	2012-05-20 23:42:10.329794693 +0200
-+++ b/etc/judgehost-config.php	2012-05-21 09:50:01.422352247 +0200
-@@ -11,4 +11,4 @@
+--- a/etc/judgehost-config.php
++++ b/etc/judgehost-config.php
+@@ -14,4 +14,4 @@
  // leave empty to disable. This example script can be used to support
  // Oracle (Sun) Java with a chroot (edit the script first!).
  // define('CHROOT_SCRIPT', 'chroot-startstop.sh');
 -define('CHROOT_SCRIPT', '');
 +define('CHROOT_SCRIPT', 'chroot-startstop.sh');
-Index: b/judge/chroot-startstop.sh
-===================================================================
---- a/judge/chroot-startstop.sh	2012-05-20 23:42:10.353785854 +0200
-+++ b/judge/chroot-startstop.sh	2012-05-21 09:50:01.433358990 +0200
-@@ -18,7 +18,7 @@
- SUBDIRMOUNTS="etc lib usr"
+--- a/judge/chroot-startstop.sh
++++ b/judge/chroot-startstop.sh
+@@ -21,7 +21,7 @@
+ SUBDIRMOUNTS="etc usr lib lib64"
  
  # Location where to bind mount from:
 -CHROOTORIGINAL="/chroot/domjudge"
@@ -23,10 +19,8 @@ Index: b/judge/chroot-startstop.sh
  
  case "$1" in
  	start)
-Index: b/misc-tools/dj_make_chroot
-===================================================================
---- a/misc-tools/dj_make_chroot	2012-05-20 23:42:10.317788183 +0200
-+++ b/misc-tools/dj_make_chroot	2012-05-21 09:50:01.445359310 +0200
+--- a/misc-tools/dj_make_chroot
++++ b/misc-tools/dj_make_chroot
 @@ -15,8 +15,8 @@
  set -e
  
@@ -36,9 +30,9 @@ Index: b/misc-tools/dj_make_chroot
 +CHROOTDIR=/var/lib/domjudge/javachroot.new
 +ARCH=`dpkg --print-architecture`
  
- # List of possible architectures to install chroot for:
- ARCHLIST="amd64,armel,i386,ia64,mips,mipsel,powerpc,s390,sparc"
-@@ -66,6 +66,7 @@
+ # Debian release to bootstrap:
+ RELEASE="wheezy"
+@@ -68,6 +68,7 @@
  [ -z "$ARCH" ]      && error "No architecture given."
  [ -e "$CHROOTDIR" ] && error "'$CHROOTDIR' already exists, remove manually."
  
@@ -46,7 +40,7 @@ Index: b/misc-tools/dj_make_chroot
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -175,4 +176,6 @@
+@@ -185,4 +186,6 @@
  
  umount "$CHROOTDIR/proc"
  
