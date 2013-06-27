@@ -95,6 +95,7 @@ EOF
 apt-get install -q -y \
 	openssh-server mysql-server apache2 php-geshi sudo \
 	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc \
+	python-minimal python3-minimal gnat gfortran lua5.1 \
 	mono-gmcs ntp phpmyadmin
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
@@ -125,9 +126,11 @@ ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/
 # Build DOMjudge chroot environment:
 dj_make_chroot
 
-# Add packages to chroot for C#, python, bash language support
+# Add packages to chroot for additional language support
 mount --bind /proc $CHROOTDIR/proc
-chroot $CHROOTDIR /bin/sh -c "apt-get -q -y install python mono-runtime bash-static"
+chroot $CHROOTDIR /bin/sh -c \
+	"apt-get -q -y install python-minimal python3-minimal mono-runtime \
+		bash-static gnat gfortran lua5.1"
 umount $CHROOTDIR/proc
 # Copy (static) bash binary to location that is available within chroot
 cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
