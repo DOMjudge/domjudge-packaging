@@ -14,6 +14,7 @@ EXTRA=/tmp/extra-files.tgz
 CHROOTDIR=/var/lib/domjudge/javachroot
 
 if [ -n "$1" ]; then
+	make -C `dirname $0` `basename $EXTRA`
 	scp "$0" `dirname $0`/`basename $EXTRA` "root@$1:`dirname $EXTRA`"
 	ssh "root@$1" /tmp/`basename $0`
 	exit 0
@@ -35,6 +36,7 @@ export DEBIAN_FRONTEND=noninteractive
 echo -n "Adding UvT Debian APT archive key... "
 apt-key add /tmp/uvt_key-with-signatures.asc
 apt-get -q update
+apt-get -q upgrade
 
 echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
@@ -96,7 +98,7 @@ apt-get install -q -y \
 	openssh-server mysql-server apache2 php-geshi sudo \
 	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc \
 	python-minimal python3-minimal gnat gfortran lua5.1 \
-	mono-gmcs ntp phpmyadmin
+	mono-gmcs ntp phpmyadmin debootstrap
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
 
@@ -140,6 +142,7 @@ cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
 echo "nameserver 8.8.8.8" > $CHROOTDIR/etc/resolv.conf
 
 # Do some cleanup to prepare for creating a releasable image:
+echo "Doing final cleanup, this can take a while..."
 apt-get -q clean
 rm -f /root/.ssh/authorized_keys /root/.bash_history
 
