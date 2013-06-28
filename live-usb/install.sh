@@ -58,7 +58,7 @@ init q
 
 # Enable Bash autocompletion and ls colors:
 sed -i '/^#if \[ -f \/etc\/bash_completion/,/^#fi/ s/^#//' /etc/bash.bashrc
-sed -i '/^#export LS_OPTIONS/,/^#alias ls=/ s/^#//' /root/.bashrc
+sed -i '/^# *export LS_OPTIONS/,/^# *alias ls=/ s/^# *//' /root/.bashrc
 
 # Disable persistent storage and network udev rules:
 cd /lib/udev/rules.d
@@ -132,7 +132,7 @@ dj_make_chroot
 # Add packages to chroot for additional language support
 mount --bind /proc $CHROOTDIR/proc
 chroot $CHROOTDIR /bin/sh -c \
-	"apt-get -q -y install python-minimal python3-minimal mono-runtime \
+	"apt-get -q -y install python-minimal python3-minimal mono-gmcs \
 		bash-static gnat gfortran lua5.1"
 umount $CHROOTDIR/proc
 # Copy (static) bash binary to location that is available within chroot
@@ -141,6 +141,10 @@ cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
 # Workaround: put nameserver in chroot, it will otherwise have the nameserver
 # of the build system which will not work elsewhere.
 echo "nameserver 8.8.8.8" > $CHROOTDIR/etc/resolv.conf
+
+# Add domjudge,domjudge-run users to chroot (needed for Python):
+grep ^domjudge /etc/passwd >> $CHROOTDIR/etc/passwd
+grep ^domjudge /etc/shadow >> $CHROOTDIR/etc/shadow
 
 # Do some cleanup to prepare for creating a releasable image:
 echo "Doing final cleanup, this can take a while..."
