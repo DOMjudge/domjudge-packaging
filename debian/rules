@@ -97,7 +97,8 @@ install: build
 	mv $(DJJH)/etc/domjudge/sudoers-domjudge $(DJJH)/etc/sudoers.d/domjudge
 	chmod 0440 $(DJJH)/etc/sudoers.d/domjudge
 	# Database configuration
-	cat sql/mysql_db_structure.sql sql/mysql_db_examples.sql > $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql
+	cat sql/mysql_db_structure.sql sql/mysql_db_defaultdata.sql \
+		sql/mysql_db_examples.sql > $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql
 	cp debian/src/db_clean.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/remove/mysql
 	# Upgrades
 	for i in sql/upgrade/upgrade_*_*.sql; do \
