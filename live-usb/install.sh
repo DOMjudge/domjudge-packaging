@@ -43,6 +43,7 @@ echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 # Fix some GRUB boot loader settings:
 sed -i -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
        -e 's/^\(GRUB_DEFAULT\)=.*/\1=3/' \
+       -e 's/^\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 cgroup_enable=memory swapaccount=1"/' \
        -e 's/^#\(GRUB_\(DISABLE.*_RECOVERY\|INIT_TUNE\)\)/\1/' \
        -e '/GRUB_GFXMODE/a GRUB_GFXPAYLOAD_LINUX=1024x786,640x480' \
 	/etc/default/grub
@@ -98,7 +99,7 @@ apt-get install -q -y \
 	openssh-server mysql-server apache2 php-geshi sudo \
 	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc \
 	python-minimal python3-minimal gnat gfortran lua5.1 \
-	mono-gmcs ntp phpmyadmin debootstrap
+	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
 
