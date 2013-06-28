@@ -5,8 +5,8 @@
 -- externally (e.g. to 'domjudge').
 
 
-INSERT INTO `judgehost` (`hostname`, `active`) VALUES ('domjudge-live', 1);
+REPLACE INTO `judgehost` (`hostname`, `active`) VALUES ('domjudge-live', 1);
 
-UPDATE `language` SET `allow_submit` = 1 WHERE `langid` IN ('adb', 'awk', 'bash', 'csharp', 'f95', 'hs', 'lua', 'pas', 'pl', 'py', 'py2', 'py3', 'sh', );
+UPDATE `language` SET `allow_submit` = 1 WHERE `langid` IN ('adb', 'awk', 'bash', 'csharp', 'f95', 'hs', 'lua', 'pas', 'pl', 'py', 'py2', 'py3', 'sh');
 
 UPDATE `team` SET `authtoken` = MD5('domjudge#domjudge') WHERE `login` = 'domjudge';
