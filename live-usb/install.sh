@@ -102,7 +102,8 @@ apt-get install -q -y \
 	openssh-server mysql-server apache2 php-geshi sudo \
 	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc \
 	python-minimal python3-minimal gnat gfortran lua5.1 \
-	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1
+	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
+	enscript lpr
 
 dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
 
