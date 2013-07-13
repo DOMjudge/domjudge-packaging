@@ -157,11 +157,18 @@ rm -f /root/.ssh/authorized_keys /root/.bash_history
 # Remove SSH host keys to regenerate them on next first boot:
 rm -f /etc/ssh/ssh_host_*
 
-# Generate version/date stamp:
-cat > /etc/domjudge-live_version <<EOF
+# Replace /etc/issue with live image specifics:
+mv /etc/issue /etc/issue.orig
+cat > /etc/issue.djlive <<EOF
+DOMjudge-live running on `cat /etc/issue.orig`
+
 DOMjudge-live image generated on `date`
 DOMjudge Debian package version `dpkg -s domjudge-common | sed -n 's/^Version: //p'`
+
 EOF
+cp /etc/issue.djlive /etc/issue.djlive-default-passwords
+cat /tmp/domjudge-default-passwords >> /etc/issue.djlive-default-passwords
+ln -s /etc/issue.djlive-default-passwords /etc/issue
 
 # Unmount swap and zero empty space to improve compressibility:
 swapoff -a

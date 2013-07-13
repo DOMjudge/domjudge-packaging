@@ -31,7 +31,8 @@ FLUSH PRIVILEGES;
 EOF
 		echo "MySQL root password updated."
 
-		mv /etc/domjudge-default-passwords{,-disabled}
+		rm /etc/issue
+		ln -s /etc/issue.djlive /etc/issue
 
 		cat <<EOF
 
