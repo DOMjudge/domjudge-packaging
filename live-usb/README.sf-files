@@ -22,13 +22,6 @@ The image contains a default minimal Debian Squeeze installation with
 recently released DOMjudge Debian packages and dependencies added.
 Everything is preconfigured for running a (test) contest.
 
-The boot menu has 4 options: start any combination of domserver and/or
-judgehost. These correspond to runlevels (change with 'init <level>'):
-2 = plain Debian (no domserver or judgehost)
-3 = run domserver only
-4 = run judgehost only
-5 = run both domserver and judgehost
-
 For more information, boot the default image and see the file /README
 and http://<hostname>/, or view it via Gitweb at
-https://secure.a-eskwadraat.nl/gitweb?p=domjudge-packaging.git;a=blob_plain;f=live-usb/files/README
+https://www.a-eskwadraat.nl/gitweb?p=domjudge-packaging.git;a=blob_plain;f=live-usb/files/README
