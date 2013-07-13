@@ -15,6 +15,6 @@ make_entry()
 	    -e "s/^menuentry '[^']*'/menuentry '$NAME'/"
 }
 
+make_entry 5 'DOMjudge domserver \& judgehost'
 make_entry 3 'DOMjudge domserver'
 make_entry 4 'DOMjudge judgehost'
-make_entry 5 'DOMjudge domserver \& judgehost'
