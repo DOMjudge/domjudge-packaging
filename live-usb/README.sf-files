@@ -1,8 +1,8 @@
-This directory contains DOMjudge-live (USB) images. These can be
-written to USB (or harddisk) and boot into a fully functional Debian
-GNU/Linux system with a working instance of DOMjudge installed on it.
-This can be used to check out DOMjudge without the need to install it,
-or to quickly run a (small) contest.
+This directory contains DOMjudge-live images. These can be written to
+USB or harddisk, or directly used as VM image. They boot into a fully
+functional Debian GNU/Linux system with a working instance of DOMjudge
+installed on it. This can be used to check out DOMjudge without the need
+to install it, or to quickly run a (small) contest.
 
 The image integrity and authenticity can be checked with the detached
 GPG signature:
@@ -18,7 +18,7 @@ where sdX is the device of the USB stick, check e.g. with 'dmesg' and
 be careful not to overwrite your harddrive! Alternatively, it can also
 be run virtualized from e.g. QEMU, Xen, or VMware.
 
-The image contains a default minimal Debian Squeeze installation with
+The image contains a default minimal Debian GNU/Linux installation with
 recently released DOMjudge Debian packages and dependencies added.
 Everything is preconfigured for running a (test) contest.
 

@@ -1,5 +1,5 @@
-DOMjudge-live (USB) image
-=========================
+DOMjudge-live image
+===================
 
 This DOMjudge-live system contains a ready-to-use copy of the DOMjudge
 programming contest jury system. It runs on the Debian GNU/Linux
@@ -82,7 +82,7 @@ including usernames and passwords to access the interfaces. Here
 Running the image from a harddisk or as virtual machine
 -------------------------------------------------------
 
-Instead of writing this image to an USB stick or similar, it can also
+This image can be written to an USB stick or similar, but it can also
 be written to a harddisk or used as virtual machine image, e.g. to use
 it as the base of a more permanent DOMjudge instance. In that case you
 might want to resize the image beyond its preset size (currently
