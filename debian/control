@@ -6,9 +6,9 @@ Build-Depends: libcurl4-gnutls-dev, libboost-regex-dev, libgmp3-dev,
  debhelper (>= 9), apache2-utils, libcgroup-dev
 Build-Depends-Indep: linuxdoc-tools, transfig,
  texlive-latex-recommended, texlive-latex-extra
-Homepage: http://domjudge.sourceforge.net/
+Homepage: http://www.domjudge.org
 Standards-Version: 3.9.4
-Vcs-Git: git://a-eskwadraat.nl/git/domjudge-packaging.git
+Vcs-Git: https://github.com/DOMjudge/domjudge-packaging.git
 Vcs-Browser: https://secure.a-eskwadraat.nl/gitweb?p=domjudge-packaging.git
 
 Package: domjudge-common

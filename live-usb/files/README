@@ -122,7 +122,7 @@ changes made are persistently stored on the image.
 This image can be generated semi-automatically from sources. First
 obtain a copy of the DOMjudge packaging Git repository:
 
-$ git clone git://a-eskwadraat.nl/git/domjudge-packaging.git
+$ git clone https://github.com/DOMjudge/domjudge-packaging.git
 
 Then switch to the 'domjudge-packaging/live-usb' subdirectory.
 Copy the DOMjudge Debian packages of a recent release into the
