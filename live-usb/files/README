@@ -9,7 +9,7 @@ operating system and the Apache webserver.
 Booting the image
 -----------------
 
-The image contains a default minimal Debian squeeze installation with
+The image contains a default minimal Debian Wheezy installation with
 recently released DOMjudge Debian packages and dependencies added.
 Everything is preconfigured for running a (test) contest.
 
@@ -128,8 +128,8 @@ Then switch to the 'domjudge-packaging/live-usb' subdirectory.
 Copy the DOMjudge Debian packages of a recent release into the
 'files/tmp' subdirectory and run 'make' to generate 'extra-files.tgz'.
 
-Next, build a Debian Squeeze image. Download a Debian netinst CD for
-Squeeze/i386 from http://www.debian.org/CD/netinst/. Make the file
+Next, build a Debian Wheezy image. Download a Debian netinst CD for
+Wheezy/i386 from http://www.debian.org/CD/netinst/. Make the file
 'preseed.cfg' available on a URL that can be accessed in the next
 stage.
 
