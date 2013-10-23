@@ -41,7 +41,7 @@ is distributed with the DOMjudge source (but not installed into
 any of the binary packages).
 The dash shell was taken from the Debian package dash version
 0.5.5.1-6, see http://packages.debian.org/squeeze/dash-udeb. The sources
-can be (re-)obtained from: http://domjudge.sourceforce.net/sources/
+can be (re-)obtained from: http://www.domjudge.org/sources/
 Copyright (from the Debian copyright file):
 
  Copyright (c) 1989-1994
