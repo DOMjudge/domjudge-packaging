@@ -24,4 +24,4 @@ Everything is preconfigured for running a (test) contest.
 
 For more information, boot the default image and see the file /README
 and http://<hostname>/, or view it via Gitweb at
-https://www.a-eskwadraat.nl/gitweb?p=domjudge-packaging.git;a=blob_plain;f=live-usb/files/README
+http://www.domjudge.org/gitweb?p=domjudge-packaging.git;a=blob_plain;f=live-usb/files/README
