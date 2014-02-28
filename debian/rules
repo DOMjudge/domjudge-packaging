@@ -33,8 +33,8 @@ build-stamp:
 		\
 		--with-domjudge-user=root
 
-	# 'make build' bouwt ook zeer tijdrovende misc-tools dir,
-	# niet doen dus.
+	# 'make build' also builds the very time-consuming misc-tools,
+	# skip that for now.
 	#$(MAKE) build
 	$(MAKE) domserver
 	$(MAKE) judgehost
