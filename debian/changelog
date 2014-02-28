@@ -1,3 +1,9 @@
+domjudge (3.4.2-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Fri, 28 Feb 2014 14:17:33 +0100
+
 domjudge (3.4.0-1) unstable; urgency=low
 
   * New upstream release.
