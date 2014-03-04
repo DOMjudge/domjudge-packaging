@@ -12,8 +12,10 @@
 # By default this script does nothing.
 
 
-# Add network firewalling for domjudge_run user:
-iptables -I OUTPUT -m owner --uid-owner `id -u domjudge-run` -j REJECT
+# Add network firewalling for domjudge-run users:
+for i in '' -0 -1 -2 -3 ; do
+	iptables -I OUTPUT -m owner --uid-owner `id -u domjudge-run$i` -j REJECT
+done
 
 # Suppress writing to swapfile that might be on slow USB flash memory:
 sysctl -q -w vm.swappiness=10

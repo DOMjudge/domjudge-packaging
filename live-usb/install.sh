@@ -145,6 +145,11 @@ cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
 # of the build system which will not work elsewhere.
 echo "nameserver 8.8.8.8" > $CHROOTDIR/etc/resolv.conf
 
+# Add extra domjudge-run-X users for running multiple judgedaemons:
+for i in 0 1 2 3 ; do
+	adduser --quiet --system domjudge-run-$i --home /nonexistent --no-create-home
+done
+
 # Add domjudge,domjudge-run users to chroot (needed for Python):
 grep ^domjudge /etc/passwd >> $CHROOTDIR/etc/passwd
 grep ^domjudge /etc/shadow >> $CHROOTDIR/etc/shadow
