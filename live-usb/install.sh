@@ -36,7 +36,7 @@ export DEBIAN_FRONTEND=noninteractive
 echo -n "Adding UvT Debian APT archive key... "
 apt-key add /tmp/uvt_key-with-signatures.asc
 apt-get -q update
-apt-get -q upgrade
+apt-get -q -y upgrade
 
 echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
