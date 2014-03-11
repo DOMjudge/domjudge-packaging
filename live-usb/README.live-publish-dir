@@ -25,3 +25,11 @@ Everything is preconfigured for running a (test) contest.
 For more information, boot the default image and see the file /README
 and http://<hostname>/, or view it via Gitweb at
 http://www.domjudge.org/gitweb?p=domjudge-packaging.git;a=blob_plain;f=live-usb/files/README
+
+
+The images contain the following versions of software:
+
+date        Debian          DOMjudge
+=====================================
+2013-07-25  7.1 (Wheezy)    3.4.0
+2014-03-04  7.4 (Wheezy)    3.4.2
