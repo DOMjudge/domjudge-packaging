@@ -32,16 +32,44 @@ Description: Update script to replace choices with Debian values
  
  # Debian release to bootstrap:
  RELEASE="wheezy"
-@@ -68,6 +68,7 @@
- [ -z "$ARCH" ]      && error "No architecture given."
- [ -e "$CHROOTDIR" ] && error "'$CHROOTDIR' already exists, remove manually."
+@@ -84,6 +84,7 @@
+ 	rm -rf "$CHROOTDIR"
+ fi
  
 +rm -rf "$CHROOTDIR"
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -185,4 +186,6 @@
+@@ -219,4 +220,6 @@
+ umount "$CHROOTDIR/dev/pts"
+ umount "$CHROOTDIR/proc"
  
++mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot
++
+ exit 0
+--- a/misc-tools/dj_make_ubuntu_chroot
++++ b/misc-tools/dj_make_ubuntu_chroot
+@@ -15,8 +15,8 @@
+ set -e
+ 
+ # Read command-line parameters:
+-CHROOTDIR=$1
+-ARCH=$2
++CHROOTDIR=/var/lib/domjudge/javachroot.new
++ARCH=`dpkg --print-architecture`
+ 
+ # Ubuntu release (codename) to bootstrap:
+ RELEASE="precise"
+@@ -84,6 +84,7 @@
+ 	rm -rf "$CHROOTDIR"
+ fi
+ 
++rm -rf "$CHROOTDIR"
+ mkdir -p "$CHROOTDIR"
+ cd "$CHROOTDIR"
+ CHROOTDIR="$PWD"
+@@ -222,4 +223,6 @@
+ umount "$CHROOTDIR/dev/pts"
  umount "$CHROOTDIR/proc"
  
 +mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot

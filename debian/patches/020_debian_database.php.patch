@@ -1,18 +1,5 @@
 Author: <thijs@debian.org>
 Description: No description.
---- a/judge/judgedaemon.main.php
-+++ b/judge/judgedaemon.main.php
-@@ -54,7 +54,9 @@
- define ('LOGFILE', LOGDIR.'/judge.'.$myhost.'.log');
- require(LIBDIR . '/init.php');
- 
--setup_database_connection();
-+#setup_database_connection();
-+$credfile = ETCDIR . '/judgedaemon.dbconfig.php';
-+require(LIBDIR . '/debian-database.php');
- 
- $verbose = LOG_INFO;
- if ( isset($options['verbose']) ) {
 --- a/lib/use_db.php
 +++ b/lib/use_db.php
 @@ -4,6 +4,7 @@

@@ -3,7 +3,7 @@ Priority: extra
 Section: misc
 Maintainer: Thijs Kinkhorst <thijs@debian.org>
 Build-Depends: libcurl4-gnutls-dev, libboost-regex-dev, libgmp3-dev,
- debhelper (>= 9), apache2-utils, libcgroup-dev
+ debhelper (>= 9), libcgroup-dev
 Build-Depends-Indep: linuxdoc-tools, transfig,
  texlive-latex-recommended, texlive-latex-extra
 Homepage: http://www.domjudge.org
@@ -24,7 +24,7 @@ Package: domjudge-domserver
 Architecture: all
 Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
  libapache2-mod-php5 | php5-cgi | php5, php5-mysql, php5-cli, php5-json,
- xsltproc, dbconfig-common, mysql-client, apache2-utils, ${misc:Depends}
+ xsltproc, dbconfig-common, mysql-client, ${misc:Depends}
 Recommends: ntp, mysql-server | virtual-mysql-server, phpmyadmin, php-geshi
 Description: programming contest jury system (server)
  DOMjudge is a jury system for running a programming contest. It allows

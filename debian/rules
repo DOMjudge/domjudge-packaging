@@ -76,11 +76,8 @@ install: build
 		mv teams affiliations ../../../../../var/lib/domjudge/images/
 	# This we'll symlink from the system-copy
 	rm $(DJJH)/usr/lib/domjudge/sh-static
-	rm -r $(DJDS)/usr/lib/domjudge/ext/geshi/
 	# Makes no sense to include passwords generated on .deb build host
-	rm $(DJJH)/etc/domjudge/dbpasswords.secret \
-		$(DJDS)/etc/domjudge/dbpasswords.secret \
-		$(DJDS)/etc/domjudge/htpasswd-jury \
+	rm $(DJDS)/etc/domjudge/dbpasswords.secret \
 		$(DJDS)/etc/domjudge/gendbpasswords \
 		$(DJDS)/usr/bin/dj-setup-database
 	# TODO: Why is runguard in /usr/sbin? It's never called directly?
