@@ -14,10 +14,4 @@ dbc_go domjudge-domserver $@
 
 . /etc/dbconfig-common/domjudge-domserver.conf
 
-if [ ! -f /etc/domjudge/htpasswd-jury ]; then
-	htpasswd -c -b /etc/domjudge/htpasswd-jury domjudge_jury $dbc_dbpass
-	chmod 0640 /etc/domjudge/htpasswd-jury
-	chgrp www-data /etc/domjudge/htpasswd-jury
-fi
-
 #DEBHELPER#
