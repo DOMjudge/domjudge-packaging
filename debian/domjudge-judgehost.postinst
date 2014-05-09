@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+. /usr/share/debconf/confmodule
+
 if ! getent passwd domjudge >/dev/null; then
 	adduser --quiet --system domjudge --group --home /nonexistent --no-create-home
 fi
@@ -15,6 +17,21 @@ chown domjudge:adm /var/log/domjudge \
 chmod 0750 /var/log/domjudge /var/lib/domjudge/judgings
 # must be accessible to webserver for submitdir
 chmod 0751 /var/lib/domjudge
+
+# set up restapi credentials
+db_get domjudge/api_endpoint
+API_URL="$RET"
+
+db_get domjudge/api_endpoint_user
+API_USER="$RET"
+
+db_get domjudge/api_endpoint_pass
+API_PASS="$RET"
+
+touch /etc/domjudge/restapi.secret
+chmod 640 /etc/domjudge/restapi.secret
+chgrp domjudge /etc/domjudge/restapi.secret
+printf "$API_URL\t$API_USER\t$API_PASS\n" > /etc/domjudge/restapi.secret
 
 #DEBHELPER#
 
