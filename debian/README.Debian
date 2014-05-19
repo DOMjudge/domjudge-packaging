@@ -32,7 +32,7 @@ it as follows:
 # su domjudge -s /bin/sh -c /usr/sbin/judgedaemon
 This may also be helpful to diagnose errors.
 
-You probably want to use the separate chroot for Sun Java judging.
+You probably want to use the separate chroot for Oracle Java judging.
 To bootstrap this chroot, run 'dj_make_chroot' as root.
 Note that when you apply Debian security updates to your system, the
 chroot is not automatically updated. To upgrade it, use the command
