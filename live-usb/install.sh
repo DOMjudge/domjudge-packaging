@@ -41,7 +41,7 @@ apt-get -q -y upgrade
 echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
 # Make sure that root fs UUID is unique for each new image version:
-tune2fs -U random /dev/root
+tune2fs -U random /dev/disk/by-label/root
 
 # Fix some GRUB boot loader settings:
 sed -i -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
