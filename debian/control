@@ -3,7 +3,7 @@ Priority: extra
 Section: misc
 Maintainer: Thijs Kinkhorst <thijs@debian.org>
 Build-Depends: libcurl4-gnutls-dev, libboost-regex-dev, libgmp3-dev,
- debhelper (>= 9), libcgroup-dev
+ debhelper (>= 9), libcgroup-dev, bisonc++, flexc++, zip
 Build-Depends-Indep: linuxdoc-tools, transfig,
  texlive-latex-recommended, texlive-latex-extra
 Homepage: http://www.domjudge.org
@@ -72,4 +72,3 @@ Description: programming contest jury system (documentation)
  .
  This package contains the documentation for administrators, judges
  and teams.
-
