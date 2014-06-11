@@ -8,6 +8,16 @@ if [ -f /usr/share/dbconfig-common/dpkg/postrm.mysql ]; then
     dbc_go domjudge-domserver $@
 fi
 
+COMMON_STATE=$(dpkg-query -f '${Status}' -W 'apache2.2-common' 2>/dev/null | awk '{print $3}' || true)
+
+if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
+  . /usr/share/apache2/apache2-maintscript-helper
+  apache2_invoke disconf domjudge
+elif [ "$COMMON_STATE" = "installed" ] || [ "$COMMON_STATE" = "unpacked" ] ; then
+  rm -f /etc/apache2/conf.d/domjudge.conf
+fi
+rm -f /etc/apache2/conf-available/domjudge.conf
+
 
 if [ "$1" = "purge" ]; then
         rm -f /etc/domjudge/domserver.dbconfig.php
@@ -18,7 +28,7 @@ if [ "$1" = "purge" ]; then
 	# Purge accumulated files (not entire /var/lib/domjudge
 	# since domjudge-judgehost may remain installed)
 	rm -rf /var/lib/domjudge/images /var/lib/domjudge/submissions \
-		/etc/domjudge/dbpasswords.secret 
+		/etc/domjudge/dbpasswords.secret
 fi
 
 
