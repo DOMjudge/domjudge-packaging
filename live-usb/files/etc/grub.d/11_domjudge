@@ -10,7 +10,7 @@ make_entry()
 	INIT="$1"
 	NAME="$2"
 	shift 2
-	$LINUX | sed -n '1,/^}/ p' | \
+	$LINUX | sed -n '/^menuentry /,/^}/ p' | \
 	sed -e 's/\(linux.* root=.*\)/\1'"${INIT:+ init $INIT} $@/" \
 	    -e "s/^menuentry '[^']*'/menuentry '$NAME'/"
 }
