@@ -8,15 +8,18 @@ fi
 if ! getent passwd domjudge-run >/dev/null; then
 	adduser --quiet --system domjudge-run --home /nonexistent --no-create-home
 fi
+for $i in 0 1 2 3 4 5 6 7 8; do
+	if ! getent passwd domjudge-run-$i >/dev/null; then
+		adduser --quiet --system domjudge-run-$i --home /nonexistent --no-create-home
+	fi
+done
 
 # Allow judgedaemon to write here, and only somewhat privileged users
 # (ones that may also read syslog) to inspect the logs and judgings
 chown domjudge:adm /var/log/domjudge \
 	/var/lib/domjudge /var/lib/domjudge/judgings
 
-chmod 0750 /var/log/domjudge /var/lib/domjudge/judgings
-# must be accessible to webserver for submitdir
-chmod 0751 /var/lib/domjudge
+chmod 0751 /var/log/domjudge /var/lib/domjudge/judgings
 
 # set up restapi credentials
 db_get domjudge/api_endpoint
@@ -34,4 +37,3 @@ chgrp domjudge /etc/domjudge/restapi.secret
 printf "$API_URL\t$API_USER\t$API_PASS\n" > /etc/domjudge/restapi.secret
 
 #DEBHELPER#
-

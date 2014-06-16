@@ -13,7 +13,7 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/sbin/judgedaemon
 NAME=judgedaemon
-OPTIONS='-d -v3'
+OPTIONS='-d -v3 -n 0'
 RUNDIR=/var/run/domjudge/
 PIDFILE=$RUNDIR$NAME.pid
 DESC="DOMjudge Judgedaemon"
