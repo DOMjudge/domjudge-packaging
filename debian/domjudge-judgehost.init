@@ -28,6 +28,28 @@ if [ ! -d $RUNDIR ]; then
 	chown $RUNAS $RUNDIR
 fi
 
+# Make sure cgroups are mounted where we expect them
+if [ ! -d /cgroup/memory/domjudge ]; then
+	/usr/sbin/create_cgroups
+fi
+
+# Check for required cgroup feature
+if [ ! -f /cgroup/memory/domjudge/memory.memsw.limit_in_bytes ]; then
+	echo "Error: Swapaccounting support missing from cgroups. Unable to continue.
+
+To fix this, please make the following changes:
+1. In /etc/default/grub, add 'swapaccount=1' to GRUB_CMDLINE_LINUX_DEFAULT
+2. Run update-grub
+3. Reboot" >&2
+exit 0
+fi
+
+# Check that the chroot is created/set up properly
+if [ ! -d /var/lib/domjudge/javachroot ]; then
+	echo "Warning: chroot not created. Run dj_make_chroot or dj_make_ubuntu_chroot to create it."
+fi
+
+
 # Close some file descriptors beyond stdio, because these cannot be
 # closed in the judgedaemon PHP script, workaround for Debian postinst
 # hanging on open fd.

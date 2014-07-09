@@ -19,6 +19,7 @@ After installation, take these steps:
    if that's not already present.
 4) Setup cgroup support...
    Edit /etc/default/grub to add 'swapaccount=1' for DEFAULT_LINUX_OPTS
+   (GRUB_CMDLINE_LINUX_DEFAULT on ubuntu). Then run 'sudo update-grub'
    Run cgroups_create(possibly set up as an init script)
 
 

@@ -76,8 +76,6 @@ install: build
 		mv teams affiliations ../../../../../var/lib/domjudge/images/
 	# This we'll symlink from the system-copy
 	rm $(DJJH)/usr/lib/domjudge/sh-static
-	# spyc(in ext) is only used by the judgehost
-	rm -r $(DJDS)/usr/lib/domjudge/ext
 	# Makes no sense to include passwords generated on .deb build host
 	rm $(DJDS)/etc/domjudge/dbpasswords.secret \
     $(DJDS)/etc/domjudge/restapi.secret \
