@@ -72,7 +72,8 @@ apt-get -q -y upgrade
 echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
 # Make sure that root fs UUID is unique for each new image version:
-tune2fs -U random /dev/disk/by-label/root
+# FIXME: this doesn't work on Debian jessie on a mounted FS.
+tune2fs -U random /dev/disk/by-label/root || true
 
 # Fix some GRUB boot loader settings:
 sed -i -e 's/^\(GRUB_DEFAULT\)=.*/\1=1/' \
