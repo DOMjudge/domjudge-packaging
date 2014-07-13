@@ -17,6 +17,9 @@ EXTRA=/tmp/extra-files.tgz
 
 CHROOTDIR=/var/lib/domjudge/javachroot
 
+# Install the latest 3.4 release by default:
+DJDEBVERSION=3.4.4-1
+
 # Check if this script is started from the host:
 if [ "$1" != "ON_TARGET" ]; then
 	if [ -z "$1" ]; then
