@@ -99,7 +99,6 @@ sed -i '/^# *export LS_OPTIONS/,/^# *alias ls=/ s/^# *//' /root/.bashrc
 cd /lib/udev/rules.d
 mkdir disabled
 mv 75-persistent-net-generator.rules disabled
-mv 75-cd-aliases-generator.rules     disabled
 cd -
 
 # Pregenerate random password for DOMjudge database, so that we can
@@ -132,7 +131,7 @@ EOF
 
 apt-get install -q -y \
 	openssh-server mysql-server apache2 php-geshi sudo \
-	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc \
+	gcc g++ openjdk-7-jdk openjdk-7-jre-headless fp-compiler ghc \
 	python-minimal python3-minimal gnat gfortran lua5.1 \
 	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
 	enscript lpr
@@ -154,7 +153,7 @@ update-rc.d apache2            disable 2 4
 update-rc.d domjudge-judgehost disable 2 3
 
 # Include DOMjudge apache configuration snippet:
-ln -s /etc/domjudge/apache.conf /etc/apache2/conf.d/domjudge.conf
+ln -s /etc/domjudge/apache.conf /etc/apache2/conf-enabled/domjudge.conf
 
 # Move jury/plugin interface password files in place and fix
 # permissions (only do this after installing DOMjudge packages):
