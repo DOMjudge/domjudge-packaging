@@ -5,7 +5,11 @@
 # script there.
 
 # Run this script as:
-# $ install.sh <hostname>
+# $ install.sh <hostname> [options]
+#
+# options:
+#  -p <proxy>     APT proxy URL to use during installation
+#  -v <version>   Debian package version of DOMjudge to install
 
 set -e
 
@@ -13,17 +17,44 @@ EXTRA=/tmp/extra-files.tgz
 
 CHROOTDIR=/var/lib/domjudge/javachroot
 
-if [ -n "$1" ]; then
-	make -C `dirname $0` `basename $EXTRA`
-	scp "$0" `dirname $0`/`basename $EXTRA` "root@$1:`dirname $EXTRA`"
-	ssh "root@$1" /tmp/`basename $0`
-	exit 0
-else
-	if [ ! -f $EXTRA ]; then
-		echo "Error: file '$EXTRA' not found; did you specify the target hostname?"
+# Check if this script is started from the host:
+if [ "$1" != "ON_TARGET" ]; then
+	if [ -z "$1" ]; then
+		echo "Error: no target hostname specified."
 		exit 1
 	fi
+	TARGET="$1"
+	shift
+	make -C `dirname $0` `basename $EXTRA`
+	scp "$0" `dirname $0`/`basename $EXTRA` "root@$TARGET:`dirname $EXTRA`"
+	ssh "root@$TARGET" "/tmp/`basename $0` ON_TARGET $@"
+	exit 0
 fi
+
+# We're on the target system here, skip first argument 'ON_TARGET':
+shift
+
+while getopts ':p:v:' OPT ; do
+	case $OPT in
+		p)	DEBPROXY="$OPTARG" ;;
+		v)	DJDEBVERSION="$OPTARG" ;;
+		:)
+			echo "Error: option '$OPTARG' requires an argument."
+			exit 1
+			;;
+		?)
+			echo "Error: unknown option '$OPTARG'."
+			exit 1
+			;;
+		*)
+			echo "Error: unknown error reading option '$OPT', value '$OPTARG'."
+			exit 1
+			;;
+	esac
+done
+shift $((OPTIND-1))
+
+export DEBPROXY DJDEBVERSION
 
 # Unpack extra files:
 cd /
@@ -104,7 +135,10 @@ apt-get install -q -y \
 	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
 	enscript lpr
 
-dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
+USEVERSION="${DJDEBVERSION:+=$DJDEBVERSION}"
+apt-get install -q -y \
+	domjudge-domserver${USEVERSION} domjudge-doc${USEVERSION} \
+	domjudge-judgehost${USEVERSION}
 
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
