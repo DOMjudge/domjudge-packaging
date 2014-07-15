@@ -9,7 +9,7 @@ operating system and the Apache webserver.
 Booting the image
 -----------------
 
-The image contains a default minimal Debian Wheezy installation with
+The image contains a default minimal Debian installation with
 recently released DOMjudge Debian packages and dependencies added.
 Everything is preconfigured for running a (test) contest.
 
@@ -115,21 +115,14 @@ Generating the image from sources
 ---------------------------------
 
 NOTE: these images are not Debian-live systems in the sense of
-http://live.debian.net/ but just plain Debian installations that can
+http://live.debian.net/ but plain Debian installations that can
 be copied onto an USB stick and booted from there. That is, any
-changes made are persistently stored on the image.
+changes are persistently stored on the image.
 
-This image can be generated semi-automatically from sources. First
-obtain a copy of the DOMjudge packaging Git repository:
+This image can be generated semi-automatically from sources.
 
-$ git clone https://github.com/DOMjudge/domjudge-packaging.git
-
-Then switch to the 'domjudge-packaging/live-usb' subdirectory.
-Copy the DOMjudge Debian packages of a recent release into the
-'files/tmp' subdirectory and run 'make' to generate 'extra-files.tgz'.
-
-Next, build a Debian Wheezy image. Download a Debian netinst CD for
-Wheezy/i386 from http://www.debian.org/CD/netinst/. Make the file
+First, build a Debian image. Download a Debian netinst CD for
+Wheezy/amd64 from http://www.debian.org/CD/netinst/. Make the file
 'preseed.cfg' available on a URL that can be accessed in the next
 stage.
 
@@ -153,11 +146,16 @@ $ ssh-copy-id root@<dhcp_hostname>
 
 Note that the root password is set to 'domjudge'.
 
+Next, obtain a copy of the DOMjudge packaging Git repository:
+
+$ git clone https://github.com/DOMjudge/domjudge-packaging.git
+
+and chdir to the 'domjudge-packaging/live-usb' subdirectory.
 Then run the domjudge-live specific install script:
 
 $ ./install.sh <dhcp_hostname>
 
-This will copy and extract the generated file 'extra-files.tgz' onto
-the image and run 'install.sh' there. When this is finished, you
-should have a freshly generated DOMjudge-live image.
-
+This will generate 'extra-files.tgz' from the subtree 'files',
+copy and extract it onto the image and run 'install.sh' there.
+When this is finished, you should have a freshly generated
+DOMjudge-live image.
