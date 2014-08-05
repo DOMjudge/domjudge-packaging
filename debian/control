@@ -4,7 +4,7 @@ Section: misc
 Maintainer: DOMjudge Developers <domjudge@a-eskwadraat.nl>
 Uploaders: Keith Johnson <kj@ubergeek42.com>
 Build-Depends: libcurl4-gnutls-dev, libboost-regex-dev, libgmp3-dev,
- debhelper (>= 9), libcgroup-dev, bisonc++, flexc++, zip
+ debhelper (>= 9), libcgroup-dev, zip, libjsoncpp-dev
 Build-Depends-Indep: linuxdoc-tools, transfig,
  texlive-latex-recommended, texlive-latex-extra
 Homepage: http://www.domjudge.org
