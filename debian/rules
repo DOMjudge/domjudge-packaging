@@ -38,6 +38,7 @@ build-stamp:
 	#$(MAKE) build
 	$(MAKE) domserver
 	$(MAKE) judgehost
+	$(MAKE) docs
 
 	touch build-stamp
 
