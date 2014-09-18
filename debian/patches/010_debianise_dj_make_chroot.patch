@@ -21,8 +21,8 @@ Description: Update script to replace choices with Debian values
  	start)
 --- a/misc-tools/dj_make_chroot
 +++ b/misc-tools/dj_make_chroot
-@@ -15,8 +15,8 @@
- set -e
+@@ -23,8 +23,8 @@
+ trap cleanup EXIT
  
  # Read command-line parameters:
 -CHROOTDIR=$1
@@ -32,7 +32,7 @@ Description: Update script to replace choices with Debian values
  
  # Debian release to bootstrap:
  RELEASE="wheezy"
-@@ -87,6 +87,7 @@
+@@ -95,6 +95,7 @@
  	rm -rf "$CHROOTDIR"
  fi
  
@@ -40,7 +40,7 @@ Description: Update script to replace choices with Debian values
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -222,4 +223,6 @@
+@@ -230,4 +231,6 @@
  umount "$CHROOTDIR/dev/pts"
  umount "$CHROOTDIR/proc"
  
@@ -49,7 +49,7 @@ Description: Update script to replace choices with Debian values
  exit 0
 --- a/misc-tools/dj_make_ubuntu_chroot
 +++ b/misc-tools/dj_make_ubuntu_chroot
-@@ -27,8 +27,8 @@
+@@ -23,8 +23,8 @@
  trap cleanup EXIT
  
  # Read command-line parameters:
@@ -60,7 +60,7 @@ Description: Update script to replace choices with Debian values
  
  # Ubuntu release (codename) to bootstrap:
  RELEASE="$(lsb_release -c -s)"
-@@ -99,6 +99,7 @@
+@@ -95,6 +95,7 @@
  	rm -rf "$CHROOTDIR"
  fi
  
@@ -68,10 +68,27 @@ Description: Update script to replace choices with Debian values
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -239,4 +240,6 @@
+@@ -235,4 +236,6 @@
  umount "$CHROOTDIR/sys"
  umount "$CHROOTDIR/proc"
  
 +mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot
 +
  exit 0
+--- a/misc-tools/dj_make_ubuntu_java_chroot
++++ b/misc-tools/dj_make_ubuntu_java_chroot
+@@ -2,11 +2,11 @@
+ # This script will install Oracle(Sun) Java 8 into an existing chroot
+ set -e
+ 
+-CHROOTDIR=$1
+-ARCH=$2
++CHROOTDIR=/var/lib/domjudge/javachroot
++ARCH=`dpkg --print-architecture`
+ 
+ if [ ! -d "$CHROOTDIR" ]; then
+-    dj_make_ubuntu_chroot "$CHROOTDIR" "$ARCH"
++    dj_make_ubuntu_chroot
+ fi
+ 
+ function cleanup {

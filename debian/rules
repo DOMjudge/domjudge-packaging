@@ -58,43 +58,57 @@ install: build
 	$(MAKE) DESTDIR=$(DJDS) install-domserver
 	$(MAKE) DESTDIR=$(DJJH) install-judgehost
 	$(MAKE) DESTDIR=$(DJDC) install-docs
-	#
+
 	dh_install
+
 	# clean up tmpdirs
 	rmdir $(DJDS)/tmp $(DJJH)/tmp $(DJDS)/var/run/domjudge $(DJJH)/var/run/domjudge
+
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
 		rm COPYING* README README.country_flags ChangeLog logos/DOMjudgelogo.png
+
 	# This must be shipped in domjudge-common
 	rm $(DJDS)/etc/domjudge/common-config.php \
 		$(DJDS)/usr/share/domjudge/*.php $(DJDS)/usr/share/domjudge/alert
-	# Saviour lib.error.sh before we trash /u/s/d
+
 	# This is in domjudge-common
-	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php
+	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
+	      $(DJDS)/usr/lib/domjudge/ext $(DJJH)/usr/lib/domjudge/ext
+
+	# Saviour lib.error.sh before we trash /u/s/d
 	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
+
 	# We'd like these to be amendable by the admin
 	cd $(DJDS)/usr/share/domjudge/www/images/ && \
 		mv teams affiliations ../../../../../var/lib/domjudge/images/
+
 	# This we'll symlink from the system-copy
 	rm $(DJJH)/usr/lib/domjudge/sh-static
+
 	# Makes no sense to include passwords generated on .deb build host
 	rm $(DJDS)/etc/domjudge/dbpasswords.secret \
-    $(DJDS)/etc/domjudge/restapi.secret \
+    	$(DJDS)/etc/domjudge/restapi.secret \
 		$(DJDS)/etc/domjudge/gendbpasswords \
 		$(DJDS)/usr/bin/dj-setup-database
+
 	# TODO: Why is runguard in /usr/sbin? It's never called directly?
 	# Doesn't really hurt currently.
-	#
+
 	# Needs to be web-writable:
 	chgrp www-data $(DJDS)/var/lib/domjudge/submissions \
 		$(DJDS)/var/log/domjudge
 	chmod g+w $(DJDS)/var/lib/domjudge/submissions \
 		$(DJDS)/var/log/domjudge
+
+	# Fixup sudoers file to match our assumptions for user/chroot location
 	sed -i 's#^root #domjudge #' $(DJJH)/etc/domjudge/sudoers-domjudge
 	sed -i 's#/\*/proc#/var/lib/domjudge/javachroot*/proc#' $(DJJH)/etc/domjudge/sudoers-domjudge
 	sed -i 's#/chroot/domjudge/\*#/var/lib/domjudge/javachroot*/*#' $(DJJH)/etc/domjudge/sudoers-domjudge
 	mv $(DJJH)/etc/domjudge/sudoers-domjudge $(DJJH)/etc/sudoers.d/domjudge
 	chmod 0440 $(DJJH)/etc/sudoers.d/domjudge
+
+
 	# Database configuration
 	cat sql/mysql_db_structure.sql sql/mysql_db_defaultdata.sql \
 		sql/mysql_db_files_defaultdata.sql > $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql

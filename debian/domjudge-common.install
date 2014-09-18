@@ -1,4 +1,5 @@
 etc/common-config.php	etc/domjudge
 lib/*.php		usr/share/domjudge
 lib/alert		usr/share/domjudge
+lib/ext         usr/lib/domjudge
 debian/src/debian-database.php usr/share/domjudge
