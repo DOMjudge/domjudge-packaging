@@ -5,7 +5,11 @@
 # script there.
 
 # Run this script as:
-# $ install.sh <hostname>
+# $ install.sh <hostname> [options]
+#
+# options:
+#  -p <proxy>     APT proxy URL to use during installation
+#  -v <version>   Debian package version of DOMjudge to install
 
 set -e
 
@@ -13,17 +17,44 @@ EXTRA=/tmp/extra-files.tgz
 
 CHROOTDIR=/var/lib/domjudge/javachroot
 
-if [ -n "$1" ]; then
-	make -C `dirname $0` `basename $EXTRA`
-	scp "$0" `dirname $0`/`basename $EXTRA` "root@$1:`dirname $EXTRA`"
-	ssh "root@$1" /tmp/`basename $0`
-	exit 0
-else
-	if [ ! -f $EXTRA ]; then
-		echo "Error: file '$EXTRA' not found; did you specify the target hostname?"
+# Check if this script is started from the host:
+if [ "$1" != "ON_TARGET" ]; then
+	if [ -z "$1" ]; then
+		echo "Error: no target hostname specified."
 		exit 1
 	fi
+	TARGET="$1"
+	shift
+	make -C `dirname $0` `basename $EXTRA`
+	scp "$0" `dirname $0`/`basename $EXTRA` "root@$TARGET:`dirname $EXTRA`"
+	ssh "root@$TARGET" "/tmp/`basename $0` ON_TARGET $@"
+	exit 0
 fi
+
+# We're on the target system here, skip first argument 'ON_TARGET':
+shift
+
+while getopts ':p:v:' OPT ; do
+	case $OPT in
+		p)	DEBPROXY="$OPTARG" ;;
+		v)	DJDEBVERSION="$OPTARG" ;;
+		:)
+			echo "Error: option '$OPTARG' requires an argument."
+			exit 1
+			;;
+		?)
+			echo "Error: unknown option '$OPTARG'."
+			exit 1
+			;;
+		*)
+			echo "Error: unknown error reading option '$OPT', value '$OPTARG'."
+			exit 1
+			;;
+	esac
+done
+shift $((OPTIND-1))
+
+export DEBPROXY DJDEBVERSION
 
 # Unpack extra files:
 cd /
@@ -41,10 +72,12 @@ apt-get -q -y upgrade
 echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
 # Make sure that root fs UUID is unique for each new image version:
-tune2fs -U random /dev/root
+# FIXME: this doesn't work on Debian jessie on a mounted FS.
+tune2fs -U random /dev/disk/by-label/root || true
 
 # Fix some GRUB boot loader settings:
-sed -i -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
+sed -i -e 's/^\(GRUB_DEFAULT\)=.*/\1=1/' \
+       -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
        -e 's/^\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 cgroup_enable=memory swapaccount=1"/' \
        -e 's/^#\(GRUB_\(DISABLE.*_RECOVERY\|INIT_TUNE\)\)/\1/' \
        -e '/GRUB_GFXMODE/a GRUB_GFXPAYLOAD_LINUX=1024x786,640x480' \
@@ -66,7 +99,6 @@ sed -i '/^# *export LS_OPTIONS/,/^# *alias ls=/ s/^# *//' /root/.bashrc
 cd /lib/udev/rules.d
 mkdir disabled
 mv 75-persistent-net-generator.rules disabled
-mv 75-cd-aliases-generator.rules     disabled
 cd -
 
 # Pregenerate random password for DOMjudge database, so that we can
@@ -99,12 +131,15 @@ EOF
 
 apt-get install -q -y \
 	openssh-server mysql-server apache2 php-geshi sudo \
-	gcc g++ openjdk-6-jdk openjdk-6-jre-headless fp-compiler ghc \
+	gcc g++ openjdk-7-jdk openjdk-7-jre-headless fp-compiler ghc \
 	python-minimal python3-minimal gnat gfortran lua5.1 \
 	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
 	enscript lpr
 
-dpkg -i /tmp/domjudge-*.deb || apt-get -q update && apt-get install -f -q -y
+USEVERSION="${DJDEBVERSION:+=$DJDEBVERSION}"
+apt-get install -q -y \
+	domjudge-domserver${USEVERSION} domjudge-doc${USEVERSION} \
+	domjudge-judgehost${USEVERSION}
 
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
@@ -118,7 +153,7 @@ update-rc.d apache2            disable 2 4
 update-rc.d domjudge-judgehost disable 2 3
 
 # Include DOMjudge apache configuration snippet:
-ln -s /etc/domjudge/apache.conf /etc/apache2/conf.d/domjudge.conf
+ln -s /etc/domjudge/apache.conf /etc/apache2/conf-enabled/domjudge.conf
 
 # Move jury/plugin interface password files in place and fix
 # permissions (only do this after installing DOMjudge packages):
@@ -130,7 +165,7 @@ ln -s /usr/share/doc/domjudge-doc/examples/*.pdf /var/www/
 ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/
 
 # Build DOMjudge chroot environment:
-dj_make_chroot
+dj_make_chroot $CHROOTDIR `dpkg --print-architecture`
 
 # Add packages to chroot for additional language support
 mount --bind /proc $CHROOTDIR/proc

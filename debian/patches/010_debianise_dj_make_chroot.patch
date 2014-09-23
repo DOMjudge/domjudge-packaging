@@ -1,5 +1,7 @@
-Author: 
-Description: Update script to replace choices with Debian values
+Author: Thijs Kinkhorst <thijs@debian.org>
+Description: Update config and scripts to replace choices with Debian values.
+Forwarded: not-needed
+
 --- a/etc/judgehost-config.php
 +++ b/etc/judgehost-config.php
 @@ -14,4 +14,4 @@

@@ -1,6 +1,10 @@
 TODO
 ====
 
+fix upgrade problems to Debian Jessie/DOMjudge 4.0:
+- regenerate UUID for root filesystem
+- update included dj-setup-database script
+
 /var/lib/domjudge, mysql DB
 
 dynamically/on first boot set: hostname, DB passwords, ...
