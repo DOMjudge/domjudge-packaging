@@ -36,18 +36,9 @@ EOF
 
 		cat <<EOF
 
-You might also want to modify the default passwords in
-
-  /etc/domjudge/htpasswd-{jury,plugin}
-
-These two files contain credentials for the DOMjudge jury and plugin
-web-interfaces, respectively. The jury interface has users 'admin' and
-'jury' preconfigured, while the plugin interface has 'jury' and
-'public'. The passwords are equal to the usernames. Edit these files
-to remove these, and use e.g. the following command to add new users:
-
-  htpasswd -m /etc/domjudge/htpasswd-jury <new-user>
-
+You might also want to modify the default passwords for the web interfaces.
+The jury interface has users 'admin' and 'jury' preconfigured The passwords are
+equal to the usernames. Change these in the web interface.
 
 Furthermore, the files
 
