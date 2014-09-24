@@ -130,7 +130,7 @@ domjudge-judgehost	domjudge-judgehost/mysql/admin-pass	password	domjudge
 EOF
 
 apt-get install -q -y \
-	openssh-server mysql-server apache2 php-geshi sudo \
+	openssh-server mysql-server apache2 sudo \
 	gcc g++ openjdk-7-jdk openjdk-7-jre-headless fp-compiler ghc \
 	python-minimal python3-minimal gnat gfortran lua5.1 \
 	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \

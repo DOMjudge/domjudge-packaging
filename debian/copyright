@@ -94,9 +94,11 @@ Copyright (from the Debian copyright file):
  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  for more details.
 
-lib/ext/geshi in the source tarball is the GeSHi Syntax Highlighter,
-copyright Benny Baumann, Nigel McNie. Licenced under the GNU GPL version 2+.
-It's not installed into the binary packages. On Debian systems, the full
-text of this license can be found in the file
-/usr/share/common-licenses/GPL-2.
+lib/ext/spyc/spyc.php is copyright 2005-2006 Chris Wanstrath,
+2006-2011 Vlad Andersen and licenced under the MIT License.
 
+www/js/ace is copyright (c) 2010, Ajax.org B.V. and licenced under
+the BSD license.
+
+www/js/flot is copyright (c) 2007-2014 IOLA and Ole Laursen and
+licenced under the MIT License.
