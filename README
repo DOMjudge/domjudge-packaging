@@ -16,8 +16,8 @@ domjudge_x.y.z.orig.tar.gz.
 Extract it. Copy in the debian/ directory into this directory and
 chdir to domjudge-x.y.z/.
 
-Run from that position
-  dch -v 3.3.4 -m "New upstream release."
+Run from that position something like
+  dch -v x.y.z -m "New upstream release."
 
 Run
   debuild
@@ -29,10 +29,10 @@ and several .deb's (binary package). If not, find out why and fix it.
 DOMjudge live USB image
 -----------------------
 
-Under /live-usb some packaging scripts are available to build an USB
-image to run DOMjudge from without installing it. This image is based
-on Debian and the DOMjudge Debian packages.
+Under /live-usb some packaging scripts are available to build a VM
+image to run DOMjudge from without installing it; this can for example
+be installed on a USB stick or run with Qemu, virtualbox or VMware.
+This image is based on Debian and the DOMjudge Debian packages.
 
-See /live-usb/README for more details. Note that a lot of the
-process of generating a complete USB image is automated, but not
-completely.
+See /live-usb/README for more details. Note that most of the process
+of generating a complete image is automated, but not completely.
