@@ -133,7 +133,7 @@ apt-get install -q -y \
 	gcc g++ openjdk-7-jdk openjdk-7-jre-headless fp-compiler ghc \
 	python-minimal python3-minimal gnat gfortran lua5.1 \
 	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
-	enscript lpr
+	enscript lpr zip unzip
 
 USEVERSION="${DJDEBVERSION:+=$DJDEBVERSION}"
 apt-get install -q -y \
@@ -150,14 +150,6 @@ mysql -u domjudge_jury --password=$DBPASSWORD domjudge < /tmp/mysql_db_livedata.
 update-rc.d mysql              disable 2 4
 update-rc.d apache2            disable 2 4
 update-rc.d domjudge-judgehost disable 2 3
-
-# Include DOMjudge apache configuration snippet:
-ln -s /etc/domjudge/apache.conf /etc/apache2/conf-enabled/domjudge.conf
-
-# Move jury/plugin interface password files in place and fix
-# permissions (only do this after installing DOMjudge packages):
-mv /tmp/htpasswd-jury /tmp/htpasswd-plugin /etc/domjudge
-chown root:www-data /etc/domjudge/htpasswd-*
 
 # Make some files available in the doc root
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
@@ -184,7 +176,8 @@ for i in 0 1 2 3 ; do
 	adduser --quiet --system domjudge-run-$i --home /nonexistent --no-create-home
 done
 
-# Add domjudge,domjudge-run users to chroot (needed for Python):
+# Add domjudge,domjudge-run users to chroot:
+# FIXME: needed for Python when $HOME is set, fixed in DOMjudge >= 4.1
 grep ^domjudge /etc/passwd >> $CHROOTDIR/etc/passwd
 grep ^domjudge /etc/shadow >> $CHROOTDIR/etc/shadow
 
