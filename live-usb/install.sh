@@ -164,7 +164,7 @@ ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
 ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/html/
 
 # Build DOMjudge chroot environment:
-dj_make_chroot $CHROOTDIR `dpkg --print-architecture`
+dj_make_chroot
 
 # Add packages to chroot for additional language support
 mount --bind /proc $CHROOTDIR/proc
