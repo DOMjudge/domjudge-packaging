@@ -64,8 +64,8 @@ rm -f $EXTRA
 export DEBIAN_FRONTEND=noninteractive
 
 # Add UvT Debian archive key:
-echo -n "Adding UvT Debian APT archive key... "
-apt-key add /tmp/uvt_key-with-signatures.asc
+echo -n "Adding DOMjudge APT archive key... "
+apt-key add /tmp/domjudge-apt-key.asc
 apt-get -q update
 apt-get -q -y upgrade
 

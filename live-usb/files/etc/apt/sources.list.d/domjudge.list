@@ -1,2 +1,3 @@
 # DOMjudge package repository:
-deb     http://non-gnu.uvt.nl/debian squeeze uvt
+deb	http://www.domjudge.org/debian	unstable/
+deb-src	http://www.domjudge.org/debian	unstable/
