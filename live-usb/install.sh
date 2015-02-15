@@ -78,7 +78,6 @@ tune2fs -U random /dev/disk/by-label/root || true
 # Fix some GRUB boot loader settings:
 sed -i -e 's/^\(GRUB_DEFAULT\)=.*/\1=1/' \
        -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
-       -e 's/^\(GRUB_CMDLINE_LINUX_DEFAULT=".*\)"/\1 cgroup_enable=memory swapaccount=1"/' \
        -e 's/^#\(GRUB_\(DISABLE.*_RECOVERY\|INIT_TUNE\)\)/\1/' \
        -e '/GRUB_GFXMODE/a GRUB_GFXPAYLOAD_LINUX=1024x786,640x480' \
 	/etc/default/grub
