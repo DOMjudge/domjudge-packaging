@@ -30,13 +30,9 @@ if [ -e /etc/domjudge-default-passwords ]; then
 	cat /etc/domjudge-default-passwords
 fi
 
-# Mount Linux cgroup pseudo filesystems (this isn't automatically done
-# in Debian):
-mkdir -p /cgroup
-cd /cgroup
+# Initialize Linux cgroup pseudo filesystems for DOMjudge:
+cd /sys/fs/cgroup
 for i in cpu cpuset cpuacct devices memory ; do
-	mkdir -p $i
-	mount -t cgroup cgroup -o $i $i
 	mkdir -p $i/domjudge
 	chown -R domjudge $i/domjudge
 done

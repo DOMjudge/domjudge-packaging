@@ -71,12 +71,8 @@ apt-get -q -y upgrade
 
 echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
-# Make sure that root fs UUID is unique for each new image version:
-# FIXME: this doesn't work on Debian jessie on a mounted FS.
-tune2fs -U random /dev/disk/by-label/root || true
-
 # Fix some GRUB boot loader settings:
-sed -i -e 's/^\(GRUB_DEFAULT\)=.*/\1=1/' \
+sed -i -e 's/^\(GRUB_DEFAULT\)=.*/\1=2/' \
        -e 's/^\(GRUB_TIMEOUT\)=.*/\1=15/' \
        -e 's/^#\(GRUB_\(DISABLE.*_RECOVERY\|INIT_TUNE\)\)/\1/' \
        -e '/GRUB_GFXMODE/a GRUB_GFXPAYLOAD_LINUX=1024x786,640x480' \
@@ -85,10 +81,6 @@ update-grub
 
 # Mount /tmp as tmpfs:
 sed -i '/^proc/a tmpfs		/tmp		tmpfs	size=512M,mode=1777	0	0' /etc/fstab
-
-# Add TTY 2-6 logins in runlevels 2-5:
-sed -i 's/^\([0-9]:23\)\(:respawn:\/sbin\/getty\)/\145\2/' /etc/inittab
-init q
 
 # Enable Bash autocompletion and ls colors:
 sed -i '/^#if \[ -f \/etc\/bash_completion/,/^#fi/ s/^#//' /etc/bash.bashrc
