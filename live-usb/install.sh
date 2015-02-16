@@ -135,8 +135,19 @@ apt-get install -q -y \
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
 
-# Add DOMjudge-live specific DB content:
-mysql -u domjudge_jury --password=$DBPASSWORD domjudge < /tmp/mysql_db_livedata.sql
+# Generate REST API password and set it for judgehost user:
+cd /etc/domjudge/
+./genrestapicredentials > restapi.secret
+RESTPW=`tail -n1 restapi.secret | sed 's/.*[[:space:]]//'`
+echo "UPDATE \`user\` SET \`password\` = MD5('judgehost#$RESTPW') \
+WHERE \`username\` = 'judgehost';" >> /tmp/mysql_db_livedata.sql
+cd -
+
+# Add DOMjudge-live specific and sample DB content:
+cat /tmp/mysql_db_livedata.sql \
+    /usr/share/domjudge/sql/mysql_db_examples.sql \
+    /usr/share/domjudge/sql/mysql_db_files_examples.sql \
+| mysql -u root --password=domjudge domjudge
 
 # Enable domserver/judgehost services at specific runlevels
 update-rc.d mysql              disable 2 4
