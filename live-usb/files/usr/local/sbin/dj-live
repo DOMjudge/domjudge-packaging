@@ -3,7 +3,7 @@
 # on DOMjudge live USB instances. It must be run as root.
 #
 # Note that this script assumes that the default database credentials
-# settings dbname=domjudge and dbuser=domjudge_jury are unchanged.
+# settings dbname=domjudge and dbuser=domjudge_sql are unchanged.
 
 set -e
 
@@ -37,129 +37,61 @@ EOF
 		cat <<EOF
 
 You might also want to modify the default passwords for the web interfaces.
-The jury interface has users 'admin' and 'jury' preconfigured The passwords are
-equal to the usernames. Change these in the web interface.
+The jury interface has user 'admin' with password 'admin' preconfigured.
+This can be changed in the web interface.
 
 Furthermore, the files
 
-  /etc/domjudge/{domserver,judgedaemon}.dbconfig.php
+  /etc/domjudge/domserver.dbconfig.php
+  /etc/domjudge/restapi.secret
 
-contain the DOMjudge database user password. These are for internal
-use only, and were generated on first boot of this image. They can be
-regenerated with
+contain the DOMjudge database user and REST API passwords, respectively.
+These are for internal use only, and were generated on first boot of this
+image. They can be regenerated with
 
   $0 genpass
 
-This also updates the files /etc/dbconfig-common/domjudge-*.conf.
-Propagate these passwords to any judgehosts with the command
-
-  $0 syncjudge <judgehost> [<new-hostname>]
-
-to allow each judgehost to access the database on this host.
+This also updates the file /etc/dbconfig-common/domjudge-domserver.conf.
+The file /etc/domjudge/restapi.secret must be copied to any other judgehost
+machines used, and the URL adapted to point to the main DOMjudge server.
 
 EOF
 		;;
 
 	genpass)
-		echo "Generating new DOMjudge database credentials..."
+		printf "Generating new DOMjudge database credentials..."
 		PW=`head -c12 /dev/urandom | base64 | head -c16 | tr '/+' 'Aa'`
 
-		for f in /etc/dbconfig-common/domjudge-{domserver,judgehost}.conf ; do
-			sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$PW'/" \
-			       -e "s/^\(dbc_dbserver\)=.*/\1=''/" $f
-		done
+		sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$PW'/" \
+		       -e "s/^\(dbc_dbserver\)=.*/\1=''/" \
+		    /etc/dbconfig-common/domjudge-domserver.conf
 
-		# Generate new DOMjudge include snippets from dbconfig:
+		# Generate new DOMjudge include snippet from dbconfig:
 		dbconfig-generate-include -f php -O root:www-data -m 0640 \
 			/etc/dbconfig-common/domjudge-domserver.conf \
 			/etc/domjudge/domserver.dbconfig.php
-		dbconfig-generate-include -f php -O root:domjudge -m 0640 \
-			/etc/dbconfig-common/domjudge-judgehost.conf \
-			/etc/domjudge/judgedaemon.dbconfig.php
 
 		# Use Debian administrative credentials to login to the MySQL server.
 		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
-UPDATE user SET password=PASSWORD('$PW') WHERE user='domjudge_jury';
+UPDATE user SET password=PASSWORD('$PW') WHERE user='domjudge_sql';
 FLUSH PRIVILEGES;
 EOF
 
-		cat <<EOF
-DOMjudge database passwords updated.
+		echo " done."
 
-You may also want to propagate these changes to any other judgehosts.
+		echo "Generating new DOMjudge REST API password..."
 
-EOF
-		;;
+		# Generate REST API password and set it for judgehost user:
+		/etc/domjudge/genrestapicredentials > /etc/domjudge/restapi.secret
 
-	syncjudge-remote)
-		echo "Synchronizing passwords on '$HOSTNAME' to DB host '$3'..."
-
-		if [ -n "$4" ]; then
-			echo "$4" > /etc/hostname
-			hostname -F /etc/hostname
-			echo "Set hostname to '`hostname`'"
-		fi
-
-		sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$2'/" \
-		       -e "s/^\(dbc_dbserver\)=.*/\1='$3'/" \
-			/etc/dbconfig-common/domjudge-judgehost.conf
-
-		# Generate new DOMjudge include snippet from dbconfig:
-		dbconfig-generate-include -f php -O root:domjudge -m 0640 \
-			/etc/dbconfig-common/domjudge-judgehost.conf \
-			/etc/domjudge/judgedaemon.dbconfig.php
-
-		# Restart judgedaemon on remote judgehost:
-		service domjudge-judgehost stop || true
-		service domjudge-judgehost start
-		;;
-
-	syncjudge)
-		JUDGEHOST="$2"
-		NEWHOSTNAME="$3"
-		[ -z "$JUDGEHOST" ] && error "required argument <judgehost> missing."
-
-		echo "Synchronizing judgehost '$JUDGEHOST'..."
-
-		PW=`grep '^dbc_dbpass=' /etc/dbconfig-common/domjudge-domserver.conf | \
-			sed "s/^dbc_dbpass='\(.*\)'/\1/"`
-
-		# Try to determine our resolvable hostname, fallback to IP address:
-		ADDR=`/sbin/ip addr show eth0 | grep 'inet ' | sed 's/.*inet \([0-9\.]*\).*/\1/'`
-		if ! HOST=`dig +short -x $ADDR` || [ -z "$HOST" ]; then
-			HOST=$ADDR
-		fi
-
-		# First make sure that remote hosts can connect to MySQL, and
-		# add a judgehost entry to the DOMjudge database:
-		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
-UPDATE db SET host='%' WHERE db='domjudge';
-UPDATE user SET host='%' WHERE user='domjudge_jury';
-FLUSH PRIVILEGES;
-EOF
-
-		# Setup a master SSH connection with multiplexing. This
-		# requires only one authentication, the next two share this
-		# master connection.
-		mkdir -p ~/.ssh/multi
-		ssh -NTfM -S ~/.ssh/multi/master-%r@%h:%p "$JUDGEHOST"
-		sleep 1
-		SSHPID=`ssh -S ~/.ssh/multi/master-%r@%h:%p -O check "$JUDGEHOST" 2>&1 | \
-			sed 's/^.*pid=\([0-9]*\)).*/\1/'`
-
-		# Now update the DB credentials on the judgehost:
-		ssh -S ~/.ssh/multi/master-%r@%h:%p \
-			"$JUDGEHOST" "dj-live syncjudge-remote '$PW' '$HOST' $NEWHOSTNAME"
-
-		HOST=`ssh -S ~/.ssh/multi/master-%r@%h:%p "$JUDGEHOST" hostname`
+		RESTPW=`tail -n1 /etc/domjudge/restapi.secret | sed 's/.*[[:space:]]//'`
 
 		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf domjudge <<EOF
-INSERT IGNORE INTO judgehost (hostname) VALUES ('$HOST');
+UPDATE user SET password=MD5('judgehost#$RESTPW') WHERE username='judgehost';
 EOF
 
-		kill -HUP $SSHPID
+		echo " done."
 
-		echo "Database information synchronized to '$JUDGEHOST'."
 		;;
 
 	upgrade)
@@ -175,20 +107,9 @@ Usage: $0 <command> [argument]...
 
 Commands:
   rootpass    set system and MySQL database root passwords
-  genpass     (re)generate DOMjudge DB user passwords
-  syncjudge   synchronize DB information to a judgehost
+  genpass     (re)generate DOMjudge DB user and REST API passwords
   upgrade     install system (security) updates
   help        display this usage information
-
-The 'syncjudge' command must be called with a resolvable judgehost
-hostname as argument. The relevant data is synchronized over SSH.
-Additionally, a second argument is used to set the local hostname,
-which must be unique from all other judgehosts. For example, run
-
-  $0 syncjudge somehost.example.com judgehost1
-
-to configure the DOMjudge-live system reachable at somehost.example.com
-as a judgehost identified as 'judgehost1'. 
 
 EOF
 	 exit 0
