@@ -23,7 +23,7 @@ sysctl -q -w vm.swappiness=10
 # Run script specific for first-time booting this image:
 if [ -x /etc/first-boot.sh ]; then
 	/etc/first-boot.sh
-	rm -f /etc/first-boot.sh
+	mv /etc/first-boot.sh /etc/first-boot-done.sh
 fi
 
 if [ -e /etc/domjudge-default-passwords ]; then
