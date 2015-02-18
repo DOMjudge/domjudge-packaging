@@ -23,9 +23,8 @@ recently released DOMjudge Debian packages and dependencies added.
 Everything is preconfigured for running a (test) contest.
 
 For more information, boot the default image and see the file /README
-and http://<hostname>/, or view it via Gitweb at
-http://www.domjudge.org/gitweb?p=domjudge-packaging.git;a=blob_plain;f=live-usb/files/README
-
+and http://<hostname>/, or view it online at
+https://github.com/DOMjudge/domjudge-packaging/blob/master/live-image/files/README
 
 The images contain the following versions of software:
 

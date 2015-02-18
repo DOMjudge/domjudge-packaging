@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script can be used to perform multiple tasks specifically
-# on DOMjudge live USB instances. It must be run as root.
+# on DOMjudge-live image instances. It must be run as root.
 #
 # Note that this script assumes that the default database credentials
 # settings dbname=domjudge and dbuser=domjudge_sql are unchanged.

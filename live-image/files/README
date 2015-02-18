@@ -117,7 +117,7 @@ Next, obtain a copy of the DOMjudge packaging Git repository:
 
 $ git clone https://github.com/DOMjudge/domjudge-packaging.git
 
-and chdir to the 'domjudge-packaging/live-usb' subdirectory.
+and chdir to the 'domjudge-packaging/live-image' subdirectory.
 Then run the domjudge-live specific install script:
 
 $ ./install.sh <dhcp_hostname>

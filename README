@@ -26,13 +26,13 @@ If everything was in order you will now get a .dsc (source package)
 and several .deb's (binary package). If not, find out why and fix it.
 
 
-DOMjudge live USB image
------------------------
+DOMjudge-live image
+-------------------
 
-Under /live-usb some packaging scripts are available to build a VM
+Under /live-image some packaging scripts are available to build a VM
 image to run DOMjudge from without installing it; this can for example
 be installed on a USB stick or run with Qemu, virtualbox or VMware.
 This image is based on Debian and the DOMjudge Debian packages.
 
-See /live-usb/README for more details. Note that most of the process
+See /live-image/README for more details. Note that most of the process
 of generating a complete image is automated, but not completely.
