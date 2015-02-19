@@ -215,6 +215,10 @@ cat /dev/zero > /zerofile 2>/dev/null || true
 sync
 rm -f /zerofile
 
+# Recreate swap partition and use label to mount swap:
+mkswap -L swap /dev/sda1
+sed -i 's/^UUID=[a-z0-9-]* *\(.*swap.*\)$/LABEL=swap      \1/' /etc/fstab
+
 echo "Done installing, halting system..."
 
 halt
