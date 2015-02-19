@@ -135,6 +135,10 @@ apt-get install -q -y \
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
 
+# Fix chroot-start-stop.sh script bug, fixed in DOMjudge master:
+sed -i 's/-t proc //' /usr/lib/domjudge/chroot-startstop.sh
+sed -i 's/-t proc //' /etc/sudoers.d/domjudge
+
 # Generate REST API password and set it for judgehost user:
 cd /etc/domjudge/
 ./genrestapicredentials > restapi.secret
