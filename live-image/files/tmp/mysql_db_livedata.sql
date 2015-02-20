@@ -4,6 +4,13 @@
 -- data, but preferably use 'dj-setup-database'. Database should be set
 -- externally (e.g. to 'domjudge').
 
-
+-- Enable most languages available:
 UPDATE `language` SET `allow_submit` = 1 WHERE `langid` IN ('adb', 'awk', 'bash', 'csharp', 'f95', 'hs', 'lua', 'pas', 'pl', 'py', 'py2', 'py3', 'sh');
 
+-- Associate admin user to team 'DOMjudge':
+REPLACE INTO `userrole` (`userid`, `roleid`)
+  SELECT `userid`, `roleid` FROM `user` INNER JOIN `role`
+  WHERE `username` = 'admin' AND `role` = 'team';
+
+UPDATE `user`, `team` SET `user`.`teamid` = `team`.`teamid`
+  WHERE `user`.`username` = 'admin' AND `team`.`name` = 'DOMjudge';
