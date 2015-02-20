@@ -40,10 +40,9 @@ Accessing the web interfaces
 ----------------------------
 
 The web interfaces for jury, team, and public can be found under
-http://<hostname>/domjudge/{jury,team,public} respectively. See also
-http://<hostname>/ for links to these and some basic information,
-including usernames and passwords to access the interfaces. Here
-<hostname> is the DNS name of the DOMjudge-live system.
+http://<hostname>/domjudge/{jury,team,public} respectively. Here
+<hostname> is the DNS name of the DOMjudge-live system. Initially
+there is the user 'admin' with password 'admin'.
 
 
 Running the image from a harddisk or as virtual machine
@@ -88,6 +87,12 @@ changes are persistently stored on the image.
 
 This image can be generated semi-automatically from sources.
 
+Obtain a copy of the DOMjudge packaging Git repository:
+
+$ git clone https://github.com/DOMjudge/domjudge-packaging.git
+
+and chdir to the 'domjudge-packaging/live-image' subdirectory.
+
 First, build a Debian image. Download a Debian netinst CD for
 Jessie/amd64 from http://www.debian.org/CD/netinst/. Make the file
 'preseed.cfg' available on a URL that can be accessed in the next
@@ -96,7 +101,7 @@ stage.
 Create a file (or use a real block device) of at least 4GB to put the
 image on. Now boot the netinst CD in a VM like qemu/kvm:
 
-$ kvm -boot d -cdrom <debian-netinst.iso> -hda <domjdge-live-target.img>
+$ kvm -boot d -cdrom <debian-netinst.iso> -hda <domjudge-live-target.img>
 
 hit ESCAPE on the Debian installer boot screen and specify the
 following kernel boot options:
@@ -113,12 +118,7 @@ $ ssh-copy-id root@<dhcp_hostname>
 
 Note that the root password is set to 'domjudge'.
 
-Next, obtain a copy of the DOMjudge packaging Git repository:
-
-$ git clone https://github.com/DOMjudge/domjudge-packaging.git
-
-and chdir to the 'domjudge-packaging/live-image' subdirectory.
-Then run the domjudge-live specific install script:
+Now run the DOMjudge-live specific install script:
 
 $ ./install.sh <dhcp_hostname>
 
