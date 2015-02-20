@@ -153,10 +153,9 @@ cat /tmp/mysql_db_livedata.sql \
     /usr/share/domjudge/sql/mysql_db_files_examples.sql \
 | mysql -u root --password=domjudge domjudge
 
-# Enable domserver/judgehost services at specific runlevels
-update-rc.d mysql              disable 2 4
-update-rc.d apache2            disable 2 4
-update-rc.d domjudge-judgehost disable 2 3
+# Configure domserver/judgehost systemd target (aka. "runlevels"):
+systemctl set-default multi-user.target
+systemctl disable apache2.service mysql.service domjudge-judgehost.service
 
 # Make some files available in the doc root
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/

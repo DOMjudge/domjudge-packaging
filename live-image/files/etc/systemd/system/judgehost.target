@@ -1,0 +1,8 @@
+[Unit]
+Description=Multi-User System with DOMjudge judgedaemon
+Documentation=man:systemd.special(7)
+Requires=multi-user.target
+Conflicts=rescue.service rescue.target
+After=basic.target rescue.service rescue.target
+AllowIsolate=yes
+Wants=domjudge-judgehost.service

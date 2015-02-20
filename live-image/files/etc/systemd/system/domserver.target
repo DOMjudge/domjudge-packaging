@@ -1,0 +1,8 @@
+[Unit]
+Description=Multi-User System with DOMjudge server
+Documentation=man:systemd.special(7)
+Requires=multi-user.target
+Conflicts=rescue.service rescue.target
+After=basic.target rescue.service rescue.target
+AllowIsolate=yes
+Wants=apache2.service mysql.service

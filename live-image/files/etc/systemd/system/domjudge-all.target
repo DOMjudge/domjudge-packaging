@@ -1,0 +1,7 @@
+[Unit]
+Description=Multi-User System with complete DOMjudge system
+Documentation=man:systemd.special(7)
+Requires=domserver.target judgehost.target
+Conflicts=rescue.service rescue.target
+After=basic.target rescue.service rescue.target
+AllowIsolate=yes

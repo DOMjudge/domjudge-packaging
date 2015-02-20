@@ -13,13 +13,18 @@ The image contains a default minimal Debian installation with
 recently released DOMjudge Debian packages and dependencies added.
 Everything is preconfigured for running a (test) contest.
 
-The boot menu has 4 options: start any combination of domserver and/or
-judgehost. These correspond to runlevels (change with 'init <level>'):
-2 = plain Debian (no domserver or judgehost)
-3 = run domserver only
-4 = run judgehost only
-5 = run both domserver and judgehost (the default)
-FIXME: the grub boot entries don't match these numbers anymore!
+The boot menu has multiple options to start any combination of
+domserver and/or judgehost. These correspond to systemd targets
+(a.k.a. sysV "runlevels") and can be changed by executing
+
+# systemctl isolate <target>.target
+
+where <target> is one of:
+
+default      = plain Debian (no domserver or judgehost)
+domjudge-all = run both domserver and judgehost (the default)
+domserver    = run domserver only
+judgehost    = run judgehost with judgedaemon only
 
 A script 'dj-live' is included to perform some basic tasks, such as
 changing passwords from the defaults. Run it without arguments on the

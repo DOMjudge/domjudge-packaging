@@ -7,14 +7,14 @@ LINUX="`dirname $0`/10_linux"
 
 make_entry()
 {
-	INIT="$1"
+	TARGET="$1"
 	NAME="$2"
 	shift 2
 	$LINUX | sed -n '/^menuentry /,/^}/ p' | \
-	sed -e 's/\(linux.* root=.*\)/\1'"${INIT:+ init $INIT} $@/" \
+	sed -e 's/\(linux.* root=.*\)/\1'"${TARGET:+ systemd.unit=$TARGET.target} $@/" \
 	    -e "s/^menuentry '[^']*'/menuentry '$NAME'/"
 }
 
-make_entry 5 'DOMjudge domserver \& judgehost'
-make_entry 3 'DOMjudge domserver'
-make_entry 4 'DOMjudge judgehost'
+make_entry domjudge-all 'DOMjudge domserver \& judgehost'
+make_entry domserver    'DOMjudge domserver'
+make_entry judgehost    'DOMjudge judgehost'
