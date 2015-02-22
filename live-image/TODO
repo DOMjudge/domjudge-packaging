@@ -2,17 +2,14 @@ TODO
 ====
 
 fix upgrade problems to Debian Jessie/DOMjudge 4.0:
-- regenerate UUID for root filesystem
-- update included dj-setup-database script
-
-/var/lib/domjudge, mysql DB
+- regenerate UUID for root filesystem?
 
 dynamically/on first boot set: hostname, DB passwords, ...
 use debian-live for this?
 
-spurious problems judgedaemon not starting: pidfile problem?
-
 documentation:
 - using as VM image
 - installing/resizing to HD
-- additional packages: phpmyadmin, other?
+- additional packages?
+
+Fix webpage redirects to DJ interfaces?
