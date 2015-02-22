@@ -3,7 +3,8 @@
 # Provides:          domjudge-judgehost
 # Required-Start:    $remote_fs $syslog $network
 # Required-Stop:     $remote_fs $syslog
-# Should-Stop:       $network
+# Should-Start:      $all
+# Should-Stop:       $all
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: DOMjudge Judgedaemon
