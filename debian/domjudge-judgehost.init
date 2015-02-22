@@ -18,6 +18,8 @@ RUNDIR=/var/run/domjudge/
 PIDFILE=$RUNDIR$NAME.pid
 DESC="DOMjudge Judgedaemon"
 RUNAS=domjudge
+CHROOTDIR=/var/lib/domjudge/javachroot
+CGROUPDIR=/cgroup
 
 test -x $DAEMON || exit 0
 
@@ -29,12 +31,12 @@ if [ ! -d $RUNDIR ]; then
 fi
 
 # Make sure cgroups are mounted where we expect them
-if [ ! -d /cgroup/memory/domjudge ]; then
+if [ ! -d $CGROUPDIR/memory/domjudge ]; then
 	/usr/sbin/create_cgroups
 fi
 
 # Check for required cgroup feature
-if [ ! -f /cgroup/memory/domjudge/memory.memsw.limit_in_bytes ]; then
+if [ ! -f $CGROUPDIR/memory/domjudge/memory.memsw.limit_in_bytes ]; then
 	echo "Error: Swapaccounting support missing from cgroups. Unable to continue.
 
 To fix this, please make the following changes:
@@ -45,7 +47,7 @@ exit 0
 fi
 
 # Check that the chroot is created/set up properly
-if [ ! -d /var/lib/domjudge/javachroot ]; then
+if [ ! -d $CHROOTDIR ]; then
 	echo "Warning: chroot not created. Run dj_make_chroot or dj_make_ubuntu_chroot to create it."
 fi
 
@@ -60,8 +62,8 @@ exec 5>&-
 case "$1" in
   start)
 	log_begin_msg "Starting $DESC: $NAME"
-	if [ -d /var/lib/domjudge/javachroot ]; then
-		mount -t proc proc /var/lib/domjudge/javachroot/proc
+	if [ -d $CHROOTDIR ]; then
+		mount -t proc proc $CHROOTDIR/proc
 	fi
 	start-stop-daemon --start --quiet --chuid $RUNAS --pidfile "$PIDFILE" --exec $DAEMON -- $OPTIONS
 	log_end_msg $?
@@ -69,8 +71,8 @@ case "$1" in
   stop)
 	log_begin_msg "Stopping $DESC: $NAME"
 	start-stop-daemon --stop --quiet --retry 5 --pidfile $PIDFILE
-	if [ -d /var/lib/domjudge/javachroot ]; then
-		umount /var/lib/domjudge/javachroot/proc || true
+	if [ -d $CHROOTDIR ]; then
+		umount $CHROOTDIR/proc || true
 	fi
 	log_end_msg $?
 	;;
