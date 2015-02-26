@@ -164,6 +164,9 @@ systemctl disable apache2.service mysql.service domjudge-judgehost.service
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
 ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/html/
 
+# Fix chroot build script to use current Jessie release
+sed -i 's/^RELEASE=.*$/RELEASE="jessie"/' /usr/sbin/dj_make_chroot
+
 # Build DOMjudge chroot environment:
 dj_make_chroot
 
