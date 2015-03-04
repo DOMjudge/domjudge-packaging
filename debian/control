@@ -45,6 +45,7 @@ Depends: domjudge-common (= ${source:Version}), php5-cli,
  unzip, ${shlibs:Depends}, ${misc:Depends}
 Recommends: ntp, sudo, debootstrap, gcc, g++, openjdk-7-jre-headless
 Suggests: ghc, fp-compiler
+Conflicts: apport
 Description: programming contest jury system (judgehost)
  DOMjudge is a jury system for running a programming contest. It allows
  teams to submit solutions to problems, which will be compiled, ran and
