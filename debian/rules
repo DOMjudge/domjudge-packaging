@@ -30,6 +30,7 @@ build-stamp:
 		--with-judgehost_bindir=\$${prefix}/sbin \
 		--with-judgehost_libdir=\$${prefix}/share/domjudge \
 		--with-judgehost_libjudgedir=\$${prefix}/lib/domjudge \
+		--with-judgehost_chrootdir=/var/lib/domjudge/javachroot \
 		\
 		--with-domjudge-user=root
 

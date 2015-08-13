@@ -24,7 +24,7 @@ Description: common files for the DOMjudge programming contest jury system
 Package: domjudge-domserver
 Architecture: all
 Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
- libapache2-mod-php5, php5-mysql, php5-cli, php5-json,
+ libapache2-mod-php5, php5-mysql, php5-cli, php5-json, php5-gd,
  zip, unzip, dbconfig-common, mysql-client, ${misc:Depends}
 Recommends: php5-curl, ntp, mysql-server | virtual-mysql-server, phpmyadmin
 Description: programming contest jury system (server)

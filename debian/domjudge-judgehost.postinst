@@ -34,6 +34,6 @@ API_PASS="$RET"
 touch /etc/domjudge/restapi.secret
 chmod 640 /etc/domjudge/restapi.secret
 chgrp domjudge /etc/domjudge/restapi.secret
-printf "$API_URL\t$API_USER\t$API_PASS\n" > /etc/domjudge/restapi.secret
+printf "default\t$API_URL\t$API_USER\t$API_PASS\n" > /etc/domjudge/restapi.secret
 
 #DEBHELPER#

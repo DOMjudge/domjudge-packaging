@@ -1,3 +1,2 @@
 010_debianise_dj_make_chroot.patch
 020_debian_database.php.patch
-030_use_apache24.patch
