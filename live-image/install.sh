@@ -141,7 +141,7 @@ sed -i 's/-t proc //' /usr/lib/domjudge/chroot-startstop.sh
 sed -i 's/-t proc //' /etc/sudoers.d/domjudge
 
 # Fix judgedaemon init script, fixed in Debian packaging:
-sed -i '/^# Should-/a  apache2/' /etc/init.d/domjudge-judgehost
+sed -i '/^# Should-/ s/$/ apache2 mysql/' /etc/init.d/domjudge-judgehost
 
 # Generate REST API password and set it for judgehost user:
 cd /etc/domjudge/
