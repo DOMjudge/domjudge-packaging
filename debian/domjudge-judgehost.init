@@ -3,8 +3,8 @@
 # Provides:          domjudge-judgehost
 # Required-Start:    $remote_fs $syslog $network
 # Required-Stop:     $remote_fs $syslog
-# Should-Start:      $all
-# Should-Stop:       $all
+# Should-Start:      $all $network apache2 nginx mysql
+# Should-Stop:       $all $network apache2 nginx mysql
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: DOMjudge Judgedaemon
@@ -48,7 +48,7 @@ fi
 
 # Check that the chroot is created/set up properly
 if [ ! -d $CHROOTDIR ]; then
-	echo "Warning: chroot not created. Run dj_make_chroot or dj_make_ubuntu_chroot to create it."
+	echo "Warning: chroot $CHROOTDIR not created. Run dj_make_chroot or dj_make_ubuntu_chroot to create it."
 fi
 
 
@@ -65,7 +65,7 @@ case "$1" in
 	if [ -d $CHROOTDIR ]; then
 		mount -t proc proc $CHROOTDIR/proc
 	fi
-	start-stop-daemon --start --quiet --chuid $RUNAS --pidfile "$PIDFILE" --exec $DAEMON -- $OPTIONS
+	start-stop-daemon --start --quiet --chuid $RUNAS --pidfile "$PIDFILE" --exec "$DAEMON" -- $OPTIONS
 	log_end_msg $?
 	;;
   stop)
@@ -79,7 +79,7 @@ case "$1" in
   reload|force-reload|restart)
 	log_begin_msg "Restarting $DESC: $NAME"
 	if start-stop-daemon --stop --quiet --retry 5 --pidfile $PIDFILE; then
-		start-stop-daemon --start --quiet --chuid $RUNAS --pidfile "$PIDFILE" --exec $DAEMON -- $OPTIONS
+		start-stop-daemon --start --quiet --chuid $RUNAS --pidfile "$PIDFILE" --exec "$DAEMON" -- $OPTIONS
 	fi
 	log_end_msg $?
 	;;
