@@ -165,6 +165,12 @@ systemctl disable apache2.service mysql.service domjudge-judgehost.service
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
 ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/html/
 
+# Fix chroot build script to install CA certificates before trying to
+# copy files into /etc/ssl and don't try to chmod file that doesn't
+# exist in Debian Jessie:
+sed -i 's/^\(INCLUDEDEBS=".*\)"$/\1,ca-certificates"/' /usr/sbin/dj_make_chroot
+sed -i 's, /usr/lib/pt_chown,,' /usr/sbin/dj_make_chroot
+
 # Build DOMjudge chroot environment:
 dj_make_chroot
 
