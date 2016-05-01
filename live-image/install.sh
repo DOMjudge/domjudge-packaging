@@ -128,10 +128,17 @@ apt-get install -q -y \
 	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
 	enscript lpr zip unzip
 
-USEVERSION="${DJDEBVERSION:+=$DJDEBVERSION}"
-apt-get install -q -y \
-	domjudge-domserver${USEVERSION} domjudge-doc${USEVERSION} \
-	domjudge-judgehost${USEVERSION}
+# Use DOMjudge debian packages if present under /tmp:
+if [ -f /tmp/domjudge-domserver_*.deb ]; then
+	dpkg -i /tmp/domjudge-common_*.deb    /tmp/domjudge-doc_*.deb \
+	        /tmp/domjudge-domserver_*.deb /tmp/domjudge-judgehost_*.deb \
+	|| apt-get -q -y -f install
+else
+	USEVERSION="${DJDEBVERSION:+=$DJDEBVERSION}"
+	apt-get install -q -y \
+	        domjudge-domserver${USEVERSION} domjudge-doc${USEVERSION} \
+	        domjudge-judgehost${USEVERSION}
+fi
 
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
