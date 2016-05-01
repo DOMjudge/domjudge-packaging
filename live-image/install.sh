@@ -136,13 +136,6 @@ apt-get install -q -y \
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
 
-# Fix chroot-start-stop.sh script bug, fixed in DOMjudge master:
-sed -i 's/-t proc //' /usr/lib/domjudge/chroot-startstop.sh
-sed -i 's/-t proc //' /etc/sudoers.d/domjudge
-
-# Fix judgedaemon init script, fixed in Debian packaging:
-sed -i '/^# Should-/ s/$/ apache2 mysql/' /etc/init.d/domjudge-judgehost
-
 # Generate REST API password and set it for judgehost user:
 cd /etc/domjudge/
 ./genrestapicredentials > restapi.secret
@@ -164,9 +157,6 @@ systemctl disable apache2.service mysql.service domjudge-judgehost.service
 # Make some files available in the doc root
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
 ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/html/
-
-# Fix chroot build script to use current Jessie release
-sed -i 's/^RELEASE=.*$/RELEASE="jessie"/' /usr/sbin/dj_make_chroot
 
 # Build DOMjudge chroot environment:
 dj_make_chroot
