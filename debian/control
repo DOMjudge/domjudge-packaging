@@ -8,7 +8,7 @@ Build-Depends: libcurl4-gnutls-dev, libboost-regex-dev,
 Build-Depends-Indep: linuxdoc-tools,
  texlive-latex-recommended, texlive-latex-extra
 Homepage: https://www.domjudge.org
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 Vcs-Git: https://github.com/DOMjudge/domjudge-packaging.git
 Vcs-Browser: https://www.domjudge.org/gitweb?p=domjudge-packaging.git
 
@@ -24,9 +24,12 @@ Description: common files for the DOMjudge programming contest jury system
 Package: domjudge-domserver
 Architecture: all
 Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
- libapache2-mod-php5, php5-mysql, php5-cli, php5-json, php5-gd,
- zip, unzip, dbconfig-common, virtual-mysql-client, ${misc:Depends}
-Recommends: php5-curl, ntp, mysql-server | virtual-mysql-server, phpmyadmin
+ libapache2-mod-php | libapache2-mod-php5, php-mysql | php5-mysql,
+ php-cli | php5-cli, php-json | php5-json, php-gd | php5-gd,
+ zip, unzip, dbconfig-common, mysql-client | virtual-mysql-client,
+ ${misc:Depends}
+Recommends: php-curl | php5-curl, ntp, mysql-server | virtual-mysql-server,
+ phpmyadmin
 Description: programming contest jury system (server)
  DOMjudge is a jury system for running a programming contest. It allows
  teams to submit solutions to problems, which will be compiled, ran and
@@ -40,9 +43,10 @@ Description: programming contest jury system (server)
 
 Package: domjudge-judgehost
 Architecture: any
-Depends: domjudge-common (= ${source:Version}), php5-cli,
- php5-json, php5-curl, procps, bash-static, adduser, lsb-base,
- unzip, ${shlibs:Depends}, ${misc:Depends}
+Depends: domjudge-common (= ${source:Version}), php-cli | php5-cli,
+ php-json | php5-json, php-curl | php5-curl, procps, bash-static,
+ adduser, lsb-base, unzip,
+ ${shlibs:Depends}, ${misc:Depends}
 Recommends: ntp, sudo, debootstrap, gcc, g++, openjdk-7-jre-headless
 Suggests: ghc, fp-compiler
 Conflicts: apport
