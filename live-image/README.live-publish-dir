@@ -18,9 +18,10 @@ where sdX is the device of the USB stick, check e.g. with 'dmesg' and
 be careful not to overwrite your harddrive! Alternatively, it can also
 be run virtualized from e.g. QEMU, Xen, or VMware.
 
-The image contains a default minimal Debian GNU/Linux installation with
-recently released DOMjudge Debian packages and dependencies added.
-Everything is preconfigured for running a (test) contest.
+Each image contains a default minimal Debian GNU/Linux installation
+(amd64 architecture) with recently released DOMjudge Debian packages
+and dependencies added. Everything is preconfigured for running a
+(test) contest.
 
 For more information, boot the default image and see the file /README
 and http://<hostname>/, or view it online at
@@ -30,7 +31,8 @@ The images contain the following versions of software:
 
 date        Debian          DOMjudge
 =====================================
-2013-07-25  7.1 (Wheezy)    3.4.0
 2014-03-04  7.4 (Wheezy)    3.4.2
 2014-07-13  7.6 (Wheezy)    3.4.4
 2015-02-21  8.0RC1 (Jessie) 4.0.2
+2015-08-23  8.1 (Jessie)    5.0.0
+2016-05-02  8.4 (Jessie)    5.1.1
