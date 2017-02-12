@@ -2,7 +2,7 @@ Source: domjudge
 Priority: extra
 Section: misc
 Maintainer: DOMjudge Developers <team@domjudge.org>
-Uploaders: Keith Johnson <kj@ubergeek42.com>, Thijs Kinkhorst <thijs@debian.org>
+Uploaders: Jaap Eldering <jaap@jaapeldering.nl>, Keith Johnson <kj@ubergeek42.com>, Thijs Kinkhorst <thijs@debian.org>
 Build-Depends: libcurl4-gnutls-dev, libboost-regex-dev,
  debhelper (>= 9), libcgroup-dev, zip, libjsoncpp-dev
 Build-Depends-Indep: linuxdoc-tools,
