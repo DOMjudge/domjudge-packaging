@@ -21,7 +21,7 @@ Forwarded: not-needed
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -325,4 +326,8 @@ umount "$CHROOTDIR/dev/pts"
+@@ -325,5 +326,9 @@ umount "$CHROOTDIR/dev/pts"
  umount "$CHROOTDIR/sys"
  umount "$CHROOTDIR/proc"
  
@@ -29,4 +29,5 @@ Forwarded: not-needed
 +	mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot
 +fi
 +
+ echo "Done building chroot in $CHROOTDIR"
  exit 0
