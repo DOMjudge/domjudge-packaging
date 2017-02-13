@@ -18,25 +18,21 @@ Extract it. Copy in the `debian` directory into this directory and
 chdir to `domjudge-x.y.z/`.
 
 Run from that position something like
-    dch -v x.y.z-1 -m "New upstream release."
+`dch -v x.y.z-1 -m "New upstream release."`
 
-Run
-    debuild
+Run `debuild`.
 
 If everything was in order you will now get a .dsc (source package)
 and several .deb's (binary package). If not, find out why and fix it.
 
 Finally, if you're one of the DOMjudge maintainers, upload the package
 to the DOMjudge Debian repository. When the packages are available on
-domjudge@domjudge, run something like
-   dput domjudge_x.y.z-1_amd64.changes
+domjudge@domjudge, run something like `dput domjudge_x.y.z-1_amd64.changes`.
 Alternatively, set up `~/.dput.cf` to upload from your machine.
-Then as domjudge@domjudge run
-     mini-dinstall
+Then as domjudge@domjudge run `mini-dinstall`.
 
 
 ## DOMjudge-live image
-
 
 Under `live-image` some packaging scripts are available to build a VM
 image to run DOMjudge from without installing it; this can for example
