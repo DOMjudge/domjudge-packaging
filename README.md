@@ -18,7 +18,7 @@ Extract it. Copy in the `debian` directory into this directory and
 chdir to `domjudge-x.y.z/`.
 
 Run from that position something like
-`dch -v x.y.z-1 -m "New upstream release."`
+`dch -v x.y.z-1 "New upstream release."`
 
 Run `debuild`.
 
