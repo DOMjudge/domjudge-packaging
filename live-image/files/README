@@ -18,10 +18,12 @@ domserver and/or judgehost. These correspond to systemd targets
 systemctl isolate <target>.target
 ```
 where `<target>` is one of:
+```
   default      = plain Debian (no domserver or judgehost)
   domjudge-all = run both domserver and judgehost (the default)
   domserver    = run domserver only
   judgehost    = run judgehost with judgedaemon only
+```
 
 A script `dj-live` is included to perform some basic tasks, such as
 changing passwords from the defaults. Run it without arguments on the
@@ -105,9 +107,9 @@ kvm -boot d -cdrom <debian-netinst.iso> -hda <domjudge-live-target.img>
 ```
 hit ESCAPE on the Debian installer boot screen and specify the
 following kernel boot options:
-
+```
   auto url=<webhost>/<path>/preseed.cfg
-
+```
 where the `preseed.cfg` file is made available at that url. Now a
 complete Debian system should automatically be installed onto the
 specified image.
