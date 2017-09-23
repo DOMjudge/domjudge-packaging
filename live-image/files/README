@@ -121,6 +121,12 @@ ssh-copy-id root@<dhcp_hostname>
 
 Note that the root password is set to 'domjudge'.
 
+Before running the DOMjudge-live install.sh script below, it is
+advisable to first run as root the prepare-for-install.sh script to
+generate a unique root partition UUID and run fsck:
+
+# ./prepare-for-install.sh <domjudge-live-target.img>
+
 Now run the DOMjudge-live specific install script:
 ```
 ./install.sh <dhcp_hostname>
