@@ -88,8 +88,10 @@ sed -i '/^# *export LS_OPTIONS/,/^# *alias ls=/ s/^# *//' /root/.bashrc
 
 # Disable persistent storage and network udev rules:
 cd /lib/udev/rules.d
-mkdir disabled
-mv 75-persistent-net-generator.rules disabled
+if [ -f 75-persistent-net-generator.rules ]; then
+	mkdir -p disabled
+	mv 75-persistent-net-generator.rules disabled
+fi
 cd -
 
 # Pregenerate random password for DOMjudge database, so that we can
@@ -123,9 +125,9 @@ EOF
 apt-get install -q -y \
 	apt-transport-https \
 	openssh-server mysql-server apache2 sudo \
-	gcc g++ openjdk-7-jdk openjdk-7-jre-headless fp-compiler ghc \
-	python-minimal python3-minimal gnat gfortran lua5.1 \
-	mono-gmcs ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
+	gcc g++ default-jdk default-jre-headless fp-compiler ghc \
+	python-minimal python3-minimal gnat gfortran lua5.3 mono-mcs \
+	ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
 	enscript lpr zip unzip
 
 # Use DOMjudge debian packages if present under /tmp:
@@ -165,20 +167,14 @@ systemctl disable apache2.service mysql.service domjudge-judgehost.service
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
 ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/html/
 
-# Fix chroot build script to install CA certificates before trying to
-# copy files into /etc/ssl and don't try to chmod file that doesn't
-# exist in Debian Jessie:
-sed -i 's/^\(INCLUDEDEBS=".*\)"$/\1,ca-certificates"/' /usr/sbin/dj_make_chroot
-sed -i 's, /usr/lib/pt_chown,,' /usr/sbin/dj_make_chroot
-
 # Build DOMjudge chroot environment:
-dj_make_chroot
+/usr/local/sbin/dj_make_chroot
 
 # Add packages to chroot for additional language support
 mount --bind /proc $CHROOTDIR/proc
 chroot $CHROOTDIR /bin/sh -c \
-	"apt-get -q -y install python-minimal python3-minimal mono-gmcs \
-		bash-static gnat gfortran lua5.1"
+	"apt-get -q -y install python-minimal python3-minimal mono-mcs \
+		bash-static gnat gfortran lua5.3"
 umount $CHROOTDIR/proc
 # Copy (static) bash binary to location that is available within chroot
 cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
@@ -191,11 +187,6 @@ echo "nameserver 8.8.8.8" > $CHROOTDIR/etc/resolv.conf
 for i in 0 1 2 3 ; do
 	adduser --quiet --system domjudge-run-$i --home /nonexistent --no-create-home
 done
-
-# Add domjudge,domjudge-run users to chroot:
-# FIXME: needed for Python when $HOME is set, fixed in DOMjudge >= 4.1
-grep ^domjudge /etc/passwd >> $CHROOTDIR/etc/passwd
-grep ^domjudge /etc/shadow >> $CHROOTDIR/etc/shadow
 
 # Do some cleanup to prepare for creating a releasable image:
 echo "Doing final cleanup, this can take a while..."
