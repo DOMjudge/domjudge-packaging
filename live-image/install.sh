@@ -167,14 +167,16 @@ systemctl disable apache2.service mysql.service domjudge-judgehost.service
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
 ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/html/
 
-# Build DOMjudge chroot environment:
+# Build DOMjudge chroot environment (first reclaim some space):
+apt-get -q clean
 /usr/local/sbin/dj_make_chroot
 
 # Add packages to chroot for additional language support
 mount --bind /proc $CHROOTDIR/proc
 chroot $CHROOTDIR /bin/sh -c \
 	"apt-get -q -y install python-minimal python3-minimal mono-mcs \
-		bash-static gnat gfortran lua5.3"
+		bash-static gnat gfortran lua5.3 ; \
+	apt-get -q clean"
 umount $CHROOTDIR/proc
 # Copy (static) bash binary to location that is available within chroot
 cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
