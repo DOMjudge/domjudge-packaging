@@ -1,0 +1,2 @@
+#!/bin/bash
+tail -F /var/log/supervisor/nginx-stderr*

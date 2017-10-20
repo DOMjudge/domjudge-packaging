@@ -1,0 +1,62 @@
+FROM debian:latest
+MAINTAINER DOMjudge team <team@domjudge.org>
+
+ENV DEBIAN_FRONTEND=noninteractive \
+  CONTAINER_TIMEZONE=Europe/Amsterdam \
+  PHP_UPLOAD_MAX_FILESIZE=10M \
+  PHP_POST_MAX_SIZE=10M \
+  MYSQL_HOST=mariadb \
+  MYSQL_USER=domjudge \
+  MYSQL_DATABASE=domjudge \
+  MYSQL_PASSWORD=domjudge \
+  MYSQL_ROOT_PASSWORD=domjudge \
+  DJ_SKIP_MAKE=0 \
+  DJ_DB_INSTALL_BARE=0
+
+# Install required packages
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+    autoconf automake git \
+    gcc g++ make zip unzip mariadb-client \
+    nginx php php-cli php-fpm \
+    php-gd php-curl php-mysql php-json \
+    php-mcrypt php-gmp php-xml php-mbstring \
+    bsdmainutils ntp phpmyadmin \
+    linuxdoc-tools linuxdoc-tools-text \
+    groff texlive-latex-recommended texlive-latex-extra \
+    texlive-fonts-recommended texlive-lang-european \
+    sudo debootstrap libcgroup-dev procps \
+    gcc g++ openjdk-8-jre-headless \
+    openjdk-8-jdk ghc fp-compiler \
+    supervisor apache2-utils lsb-release composer \
+    libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Forward nginx request and error logs to standard output/error. Also create directory for PHP-FPM socket
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log \
+  && mkdir -p /run/php
+
+# Set up users
+RUN useradd -m domjudge \
+  && groupadd domjudge-run \
+  && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0 \
+  && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
+
+# Add exposed volume
+VOLUME ["/domjudge"]
+
+# Add scripts
+COPY ["scripts", "/scripts/"]
+RUN chmod 755 /scripts/* \
+  && ln -s /scripts/nginx-error-log /usr/bin/ \
+  && ln -s /scripts/nginx-access-log /usr/bin/ \
+  && ln -s /scripts/judgedaemon-log /usr/bin/ \
+  && ln -s /scripts/submit-test-programs /usr/bin/
+CMD ["/scripts/start.sh"]
+
+# Copy supervisor files
+COPY ["supervisor", "/etc/supervisor/conf.d/"]
+
+# Expose HTTP port
+EXPOSE 80

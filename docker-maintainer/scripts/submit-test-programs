@@ -1,0 +1,13 @@
+#!/bin/bash
+
+USER_EXISTS=$(mysql -h${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -AN -D${MYSQL_DATABASE} -e "SELECT COUNT(*) FROM user WHERE username = 'dummy'")
+if [ "${USER_EXISTS}" -eq "0" ]
+then
+  echo 'INSERT INTO user (userid, username, name, password, teamid) VALUES (3, "dummy", "dummy user for example team", "$2y$10$..uuk/OfkCe.H6xDocWvgOwT5AvrYKQk4lo0s25iZHGPrcLzru3xS", 2)' | mysql -h${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE}
+  echo "INSERT INTO userrole (userid, roleid) VALUES (3, 3);" | mysql -h${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE}
+fi
+
+echo "machine localhost login dummy password dummy" > ~/.netrc
+
+cd /domjudge/tests
+make check test-stress
