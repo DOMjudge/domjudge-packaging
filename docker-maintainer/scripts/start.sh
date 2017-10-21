@@ -1,18 +1,21 @@
 #!/bin/bash -e
 
 echo "[..] Setting timezone"
-ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime
+ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime
 echo ${CONTAINER_TIMEZONE} > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
-echo "[ok] Container timezone set to: $CONTAINER_TIMEZONE"; echo
+echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 
+echo "[..] Chaning nginx and PHP configuration settings"
 # Set correct settings
 sed -ri -e "s/^user.*/user www-data;/" /etc/nginx/nginx.conf
-sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/" \
-    -e "s/^post_max_size.*/post_max_size = ${PHP_POST_MAX_SIZE}/" \
-    -e "s/^short_open_tag.*/short_open_tag = on/" \
-    -e "s/^display_errors.*/display_errors = on/" \
+sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
+    -e "s/^post_max_size.*/post_max_size = 100M/" \
+    -e "s/^memory_limit.*/memory_limit = 512M/" \
+    -e "s/^max_file_uploads.*/max_file_uploads = 200/" \
+    -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
      /etc/php/7.0/fpm/php.ini
+echo "[ok] Done changing nginx and PHP configuration settings"; echo
 
 cd /domjudge
 
@@ -29,6 +32,10 @@ then
   exit 1
 fi
 
+echo "[..] Updating database credentials file"
+echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
+echo "[ok] Updated database credentials file"; echo
+
 if [ "${DJ_SKIP_MAKE}" -eq "1" ]
 then
   echo "Skipping maintainer-mode install for DOMjudge"
@@ -44,10 +51,6 @@ mkdir -p /domjudge-judgings
 mount -o bind /domjudge-judgings /domjudge/output/judgings
 chown -R domjudge output
 echo "[ok] Done setting up permissions"
-
-echo "[..] Updating database credentials file"
-echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
-echo "[ok] Updated database credentials file"; echo
 
 echo "[..] Checking database connection"
 if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
@@ -72,6 +75,10 @@ else
 fi
 echo "[ok] Database ready"; echo
 
+echo "[..] Fixing restapi path"
+sed -i 's/localhost\/domjudge/localhost/' etc/restapi.secret
+echo "[ok] Changed restapi URL from http://localhost/domjudge to http://localhost"
+
 echo "[..] Copying webserver config"
 # Set up vhost
 cp etc/nginx-conf /etc/nginx/sites-enabled/default
@@ -87,7 +94,16 @@ then
   sed -i 's/app\\\.php/app\\_dev.php/g' /etc/nginx/sites-enabled/default
   # Run DOMjudge in root
   sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' /etc/nginx/sites-enabled/default
-   sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' /etc/nginx/sites-enabled/default
+  sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' /etc/nginx/sites-enabled/default
+  # Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
+  setfacl    -m   u:www-data:r    /domjudge/etc/dbpasswords.secret > /dev/null 2>&1 || true
+  setfacl    -m   u:www-data:r    /domjudge/etc/restapi.secret > /dev/null 2>&1 || true
+  setfacl -R -m d:u:www-data:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
+  setfacl -R -m   u:www-data:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
+  setfacl -R -m d:m::rwx          /domjudge/webapp/var > /dev/null 2>&1 || true
+  setfacl -R -m   m::rwx          /domjudge/webapp/var > /dev/null 2>&1 || true
+  setfacl -R -m d:u:domjudge:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
+  setfacl -R -m   u:domjudge:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
 fi
 echo "[ok] Webserver config installed"; echo
 
@@ -95,16 +111,15 @@ if [[ ! -d /chroot/domjudge ]]
 then
   echo "[..] Setting up chroot"
   bin/dj_make_chroot
-  # bin/create_cgroups
   echo "[ok] Done setting up chroot"; echo
 fi
+
+echo "[..] Setting up cgroups"
+bin/create_cgroups
+echo "[ok] cgroups set up"; echo
 
 echo "[..] Adding sudoers configuration"
 cp etc/sudoers-domjudge /etc/sudoers.d/
 echo "[ok] Sudoers configuration added"; echo
-
-echo "[..] Fixing restapi path"
-sed -i 's/localhost\/domjudge/localhost/' etc/restapi.secret
-echo "[ok] Changed restapi URL from http://localhost/domjudge to http://localhost"
 
 exec supervisord -n -c /etc/supervisor/supervisord.conf

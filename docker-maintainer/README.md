@@ -26,20 +26,20 @@ This image is available on the [Docker Hub](https://hub.docker.com) as `domjudge
 Before starting the container, make sure you have a MySQL / MariaDB database somewhere. The easiest way to get one up and running is to use the [MariaDB](https://hub.docker.com/r/_/mariadb/) Docker container:
 
 ```bash
-docker run -it --name dj-mariadb -e MYSQL_ROOT_PASSWORD=rootpw -e MYSQL_USER=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_DATABASE=domjudge -p 13306:3306 mariadb
+docker run -it --name dj-mariadb -e MYSQL_ROOT_PASSWORD=rootpw -e MYSQL_USER=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_DATABASE=domjudge -p 13306:3306 mariadb --max-connections=1000
 ```
 
 This will start a MariaDB container, set the root password to `rootpw`, create a MySQL user named `domjudge` with password `djpw` and create an empty database named `domjudge`. It will also expose the server on port `13306` on your local machine, so you can use your favorite MySQL GUI to connect to it. If you want to save the MySQL data after removing the container, please read the [MariaDB](https://hub.docker.com/r/_/mariadb/) Docker Hub page for more information.
 
+Next, if you are on Linux make sure you have cgroups enabled. See the [DOMjudge documentation about setting up a judgehost](https://www.domjudge.org/docs/admin-manual-3.html#ss3.7) for information about how to do this. Docker on Windows and macOS actually use a small Linux VM which already has these options set.
+
 Now you can run DOMjudge itself using the following command:
 
 ```bash
-docker run -v [path-to-domjudge-checkout]:/domjudge --link dj-mariadb:mariadb -it -e MYSQL_HOST=mariadb -e MYSQL_USER=domjudge -e MYSQL_DATABASE=domjudge -e MYSQL_PASSWORD=djpw -e   MYSQL_ROOT_PASSWORD=rootpw -p 12345:80 --name domjudge --privileged domjudge/domjudge-maintainer
+docker run -v [path-to-domjudge-checkout]:/domjudge -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e MYSQL_HOST=mariadb -e MYSQL_USER=domjudge -e MYSQL_DATABASE=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_ROOT_PASSWORD=rootpw -p 12345:80 --name domjudge --privileged domjudge/domjudge-maintainer
 ```
 
-Make sure you replace `[path-to-domjudge-checkout]` with the path to your local DOMjudge checkout.
-
-On macOS and Windows you need to add `-v /sys/fs/cgroup:/sys/fs/cgroup:ro` to this command (somewhere after `run` and before `domjudge/domjudge-maintainer`) to get the cgroups to work correctly.
+Make sure you replace `[path-to-domjudge-checkout]` with the path to your local DOMjudge checkout. On recent macOS and Windows Docker builds, you should add `:cached` at the end of the `/domjudge` volume (i.e. `-v [path-to-domjudge-checkout]:/domjudge:cached`) to speed up the webserver a lot.
 
 The above command will start the container, set up DOMjudge for a maintainer install, set up the database and create a chroot to be used by the judgedaemons. It will then start nginx, PHP-FPM and two judgedaemons using supervisord.
 
@@ -50,8 +50,6 @@ You can now access the web interface on [http://localhost:12345/](http://localho
 The following environment variables are supported by the container:
 
 * `CONTAINER_TIMEZONE` (defaults to `Europe/Amsterdam`): allows you to change the timezone used inside the container.
-* `PHP_UPLOAD_MAX_FILESIZE` (defaults to `10M`): set the maximum upload filesize for PHP.
-* `PHP_POST_MAX_SIZE` (defaults to `10M`): set the maximum POST size for PHP.
 * `MYSQL_HOST` (defaults to `mariadb`): set the host to connect to for MySQL. Can be hostname or IP. Docker will add hostnames for any containers you `--link`, so in the example above, the MariaDB container will be available under the hostname `mariadb`.
 * `MYSQL_USER` (defaults to `domjudge`): set the user to use for connecting to MySQL.
 * `MYSQL_PASSWORD` (defaults to `domjudge`): set the password to use for connecting to MySQL.
@@ -75,9 +73,18 @@ The following commands are available:
 * `nginx-access-log`: tail the access log of nginx.
 * `nginx-error-log`: tail the error log of nginx.
 * `judgedaemon-log 0` and `judgedaemon-log 1`: tail the log of the first / second judgeaemon.
+* `symfony-log`: for DOMjudge using Symfony (i.e. 6.x and higher), tail the symfony log.
 * `submit-test-programs`: submit all test programs (by executing `make check test-stress` in the `tests` directory of the DOMjudge installation. This will also add a `dummy` user to your database if it does not exist yet. It's password will be set to `dummy`.
 
 Of course, you can always run `docker exec -it domjudge bash` to get a bash shell inside the container.
+
+To restart any of the services, run the following:
+
+```bash
+docker exec -it domjudge supervisorctl restart [service]
+```
+
+where `[service]` is one of `nginx`, `php`, `judgedaemon0` or `judgedaemon1`.
 
 ### Accessing the judgings
 

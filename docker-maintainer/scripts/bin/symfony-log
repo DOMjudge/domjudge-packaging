@@ -1,0 +1,2 @@
+#!/bin/bash
+tail -F /domjudge/webapp/var/logs/dev.log

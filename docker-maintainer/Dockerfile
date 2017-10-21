@@ -3,8 +3,6 @@ MAINTAINER DOMjudge team <team@domjudge.org>
 
 ENV DEBIAN_FRONTEND=noninteractive \
   CONTAINER_TIMEZONE=Europe/Amsterdam \
-  PHP_UPLOAD_MAX_FILESIZE=10M \
-  PHP_POST_MAX_SIZE=10M \
   MYSQL_HOST=mariadb \
   MYSQL_USER=domjudge \
   MYSQL_DATABASE=domjudge \
@@ -16,9 +14,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install required packages
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
-    autoconf automake git \
+    autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
-    nginx php php-cli php-fpm \
+    nginx php php-cli php-fpm php-zip \
     php-gd php-curl php-mysql php-json \
     php-mcrypt php-gmp php-xml php-mbstring \
     bsdmainutils ntp phpmyadmin \
@@ -48,11 +46,9 @@ VOLUME ["/domjudge"]
 
 # Add scripts
 COPY ["scripts", "/scripts/"]
-RUN chmod 755 /scripts/* \
-  && ln -s /scripts/nginx-error-log /usr/bin/ \
-  && ln -s /scripts/nginx-access-log /usr/bin/ \
-  && ln -s /scripts/judgedaemon-log /usr/bin/ \
-  && ln -s /scripts/submit-test-programs /usr/bin/
+RUN chmod 755 /scripts/start.sh \
+  && chmod 755 /scripts/bin/* \
+  && ln -s /scripts/bin/* /usr/bin/
 CMD ["/scripts/start.sh"]
 
 # Copy supervisor files
