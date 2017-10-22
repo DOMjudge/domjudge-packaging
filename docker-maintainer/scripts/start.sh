@@ -6,7 +6,7 @@ echo ${CONTAINER_TIMEZONE} > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 
-echo "[..] Chaning nginx and PHP configuration settings"
+echo "[..] Changing nginx and PHP configuration settings"
 # Set correct settings
 sed -ri -e "s/^user.*/user www-data;/" /etc/nginx/nginx.conf
 sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
@@ -84,6 +84,8 @@ echo "[..] Copying webserver config"
 cp etc/nginx-conf /etc/nginx/sites-enabled/default
 # Replace nginx php socket location
 sed -i 's/server unix:.*/server unix:\/run\/php\/php7.0-fpm.sock;/' /etc/nginx/sites-enabled/default
+setfacl    -m   u:www-data:r    /domjudge/etc/dbpasswords.secret > /dev/null 2>&1 || true
+setfacl    -m   u:www-data:r    /domjudge/etc/restapi.secret > /dev/null 2>&1 || true
 if [[ "${USE_LEGACY}" -eq "0" ]]
 then
   # Remove access_log and error_log entries
@@ -96,8 +98,6 @@ then
   sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' /etc/nginx/sites-enabled/default
   sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' /etc/nginx/sites-enabled/default
   # Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
-  setfacl    -m   u:www-data:r    /domjudge/etc/dbpasswords.secret > /dev/null 2>&1 || true
-  setfacl    -m   u:www-data:r    /domjudge/etc/restapi.secret > /dev/null 2>&1 || true
   setfacl -R -m d:u:www-data:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
   setfacl -R -m   u:www-data:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
   setfacl -R -m d:m::rwx          /domjudge/webapp/var > /dev/null 2>&1 || true
