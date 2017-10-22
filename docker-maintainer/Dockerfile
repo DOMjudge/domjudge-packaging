@@ -19,12 +19,12 @@ RUN apt-get update \
     nginx php php-cli php-fpm php-zip \
     php-gd php-curl php-mysql php-json \
     php-mcrypt php-gmp php-xml php-mbstring \
-    bsdmainutils ntp phpmyadmin \
+    bsdmainutils ntp \
     linuxdoc-tools linuxdoc-tools-text \
     groff texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european \
     sudo debootstrap libcgroup-dev procps \
-    gcc g++ openjdk-8-jre-headless \
+    openjdk-8-jre-headless \
     openjdk-8-jdk ghc fp-compiler \
     supervisor apache2-utils lsb-release composer \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
