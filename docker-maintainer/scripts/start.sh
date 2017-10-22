@@ -11,7 +11,7 @@ echo "[..] Changing nginx and PHP configuration settings"
 sed -ri -e "s/^user.*/user www-data;/" /etc/nginx/nginx.conf
 sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
     -e "s/^post_max_size.*/post_max_size = 100M/" \
-    -e "s/^memory_limit.*/memory_limit = 512M/" \
+    -e "s/^memory_limit.*/memory_limit = 2G/" \
     -e "s/^max_file_uploads.*/max_file_uploads = 200/" \
     -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
      /etc/php/7.0/fpm/php.ini
