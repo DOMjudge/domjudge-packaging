@@ -1,4 +1,4 @@
-# DOMjudge Docker container for maintainers
+# DOMjudge Docker container for contributors
 
 This directory contains the necessary files to create a Docker image which can be used by DOMjudge maintainers to work on DOMjudge without having to set up a DOMjudge development environment.
 
@@ -21,7 +21,7 @@ This container does not include:
 
 ## Using the image
 
-This image is available on the [Docker Hub](https://hub.docker.com) as `domjudge/domjudge-maintainer`.
+This image is available on the [Docker Hub](https://hub.docker.com) as `domjudge/domjudge-contributor`.
 
 Before starting the container, make sure you have a MySQL / MariaDB database somewhere. The easiest way to get one up and running is to use the [MariaDB](https://hub.docker.com/r/_/mariadb/) Docker container:
 
@@ -36,7 +36,7 @@ Next, if you are on Linux make sure you have cgroups enabled. See the [DOMjudge 
 Now you can run DOMjudge itself using the following command:
 
 ```bash
-docker run -v [path-to-domjudge-checkout]:/domjudge -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e MYSQL_HOST=mariadb -e MYSQL_USER=domjudge -e MYSQL_DATABASE=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_ROOT_PASSWORD=rootpw -p 12345:80 --name domjudge --privileged domjudge/domjudge-maintainer
+docker run -v [path-to-domjudge-checkout]:/domjudge -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e MYSQL_HOST=mariadb -e MYSQL_USER=domjudge -e MYSQL_DATABASE=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_ROOT_PASSWORD=rootpw -p 12345:80 --name domjudge --privileged domjudge/domjudge-contributor
 ```
 
 Make sure you replace `[path-to-domjudge-checkout]` with the path to your local DOMjudge checkout. On recent macOS and Windows Docker builds, you should add `:cached` at the end of the `/domjudge` volume (i.e. `-v [path-to-domjudge-checkout]:/domjudge:cached`) to speed up the webserver a lot.
@@ -95,7 +95,7 @@ Because the chroot script copies some special devices into every chroot used for
 If you want to build the image yourself, you can just run
 
 ```bash
-docker build -t domjudge/domjudge-maintainer .
+docker build -t domjudge/domjudge-contributor .
 ```
 
 inside this directory.

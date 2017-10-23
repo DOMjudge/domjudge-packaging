@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
   DJ_SKIP_MAKE=0 \
   DJ_DB_INSTALL_BARE=0
 
-# Install required packages
+# Install required packages and clean up afterwards to make this image layer smaller
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
     autoconf automake git acl \
