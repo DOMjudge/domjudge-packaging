@@ -12,7 +12,7 @@ the full text of this license can be found in the file
 /usr/share/common-licenses/GPL-2.
 
 The sorttable.js script is copyright by Stuart Langridge and
-licenced under the MIT/X11 licence: 
+licenced under the MIT/X11 licence:
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -94,7 +94,7 @@ Copyright (from the Debian copyright file):
  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  for more details.
 
-lib/ext/spyc/spyc.php is copyright 2005-2006 Chris Wanstrath,
+lib/vendor/spyc/spyc.php is copyright 2005-2006 Chris Wanstrath,
 2006-2011 Vlad Andersen and licenced under the MIT License.
 
 www/js/ace is copyright (c) 2010, Ajax.org B.V. and licenced under
@@ -102,3 +102,9 @@ the BSD license.
 
 www/js/flot is copyright (c) 2007-2014 IOLA and Ole Laursen and
 licenced under the MIT License.
+
+www/js/js.cookie.min.js (c) 2006, 2015 Klaus Hartl & Fagner Brack
+and licenced under the MIT license.
+
+sql/files/defaultdata/compare/compare.cc is copyright (c) 2010-2016
+Kattis + Google Inc and licenced under the MIT License.
