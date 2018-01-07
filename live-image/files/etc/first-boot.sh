@@ -11,4 +11,6 @@ dpkg-reconfigure openssh-server
 service mysql start
 /usr/local/sbin/dj-live genpass > /dev/null
 
+service domjudge-judgehost restart
+
 exit 0
