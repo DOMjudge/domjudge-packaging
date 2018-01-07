@@ -47,7 +47,7 @@ Depends: domjudge-common (= ${source:Version}), php-cli | php5-cli,
  php-json | php5-json, php-curl | php5-curl, procps, bash-static,
  adduser, lsb-base, unzip,
  ${shlibs:Depends}, ${misc:Depends}
-Recommends: ntp, sudo, debootstrap, gcc, g++, openjdk-7-jre-headless
+Recommends: ntp, sudo, debootstrap, gcc, g++, default-jdk-headless | default-jdk
 Suggests: ghc, fp-compiler
 Conflicts: apport
 Description: programming contest jury system (judgehost)
