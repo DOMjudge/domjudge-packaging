@@ -67,7 +67,7 @@ install: build
 
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
-		rm COPYING* README README.country_flags ChangeLog logos/DOMjudgelogo.png
+		rm COPYING* README.md README.country_flags ChangeLog logos/DOMjudgelogo.png
 
 	# This must be shipped in domjudge-common
 	rm $(DJDS)/etc/domjudge/common-config.php \
@@ -75,7 +75,7 @@ install: build
 
 	# This is in domjudge-common
 	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
-	      $(DJDS)/usr/lib/domjudge/ext $(DJJH)/usr/lib/domjudge/ext
+	      $(DJDS)/usr/lib/domjudge/vendor $(DJJH)/usr/lib/domjudge/vendor
 
 	# Saviour lib.error.sh before we trash /u/s/d
 	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
@@ -89,9 +89,9 @@ install: build
 
 	# Makes no sense to include passwords generated on .deb build host
 	rm $(DJDS)/etc/domjudge/dbpasswords.secret \
-    	$(DJDS)/etc/domjudge/restapi.secret \
+		$(DJDS)/etc/domjudge/restapi.secret \
 		$(DJDS)/etc/domjudge/gendbpasswords \
-		$(DJDS)/usr/bin/dj-setup-database
+		$(DJDS)/usr/bin/dj_setup_database
 
 	# TODO: Why is runguard in /usr/sbin? It's never called directly?
 	# Doesn't really hurt currently.
@@ -103,7 +103,7 @@ install: build
 		$(DJDS)/var/log/domjudge
 
 	# Fixup sudoers file to match our assumptions for user/chroot location
-	sed -i 's#^root #domjudge #' $(DJJH)/etc/domjudge/sudoers-domjudge
+	sed -i 's#^root #domjudge #;s# root\\:# domjudge\\:#' $(DJJH)/etc/domjudge/sudoers-domjudge
 	sed -i 's#/\*/proc#/var/lib/domjudge/chroot*/proc#' $(DJJH)/etc/domjudge/sudoers-domjudge
 	sed -i 's#/chroot/domjudge/\*#/var/lib/domjudge/chroot*/*#' $(DJJH)/etc/domjudge/sudoers-domjudge
 	mv $(DJJH)/etc/domjudge/sudoers-domjudge $(DJJH)/etc/sudoers.d/domjudge

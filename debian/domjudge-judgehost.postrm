@@ -14,7 +14,7 @@ fi
 if [ "$1" = "purge" ]; then
 	rm -f /var/log/domjudge/judge.*.log
 
-        rm -f /etc/domjudge/restapi.secret
+    rm -f /etc/domjudge/restapi.secret
 
 	# Remove my changes to the db.
 	db_purge
