@@ -13,6 +13,7 @@ fi
 
 if [ "$1" = "purge" ]; then
 	rm -f /var/log/domjudge/judge.*.log
+	rm -rf /var/lib/domjudge/chroot
 
     rm -f /etc/domjudge/restapi.secret
 
