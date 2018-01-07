@@ -14,3 +14,8 @@ REPLACE INTO `userrole` (`userid`, `roleid`)
 
 UPDATE `user`, `team` SET `user`.`teamid` = `team`.`teamid`
   WHERE `user`.`username` = 'admin' AND `team`.`name` = 'DOMjudge';
+
+-- Reduce low disk space warning, since we don't have much by default:
+UPDATE `configuration` SET `value` = '131072'
+  WHERE `name` = 'diskspace_error';
+
