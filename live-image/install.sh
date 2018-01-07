@@ -195,6 +195,12 @@ echo "Doing final cleanup, this can take a while..."
 apt-get -q clean
 rm -f /root/.ssh/authorized_keys /root/.bash_history
 
+# Cleanup proxy settings used during installation:
+if [ -n "$DEBPROXY" ]; then
+	sed -i "/http::Proxy/d" /etc/apt/apt.conf
+	sed -i "/http::Proxy/d" $CHROOTDIR/etc/apt/apt.conf
+fi
+
 # Prebuild locate database:
 /etc/cron.daily/mlocate
 
