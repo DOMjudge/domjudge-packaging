@@ -188,11 +188,6 @@ cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
 # of the build system which will not work elsewhere.
 echo "nameserver 8.8.8.8" > $CHROOTDIR/etc/resolv.conf
 
-# Add extra domjudge-run-X users for running multiple judgedaemons:
-for i in 0 1 2 3 ; do
-	adduser --quiet --system domjudge-run-$i --home /nonexistent --no-create-home
-done
-
 # Do some cleanup to prepare for creating a releasable image:
 echo "Doing final cleanup, this can take a while..."
 apt-get -q clean

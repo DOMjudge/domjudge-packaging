@@ -13,6 +13,9 @@ for i in 0 1 2 3 4 5 6 7 8; do
 		adduser --quiet --system domjudge-run-$i --home /nonexistent --no-create-home
 	fi
 done
+if ! getent group domjudge-run >/dev/null; then
+	addgroup --quiet --system domjudge-run
+fi
 
 # Allow judgedaemon to write here, and only somewhat privileged users
 # (ones that may also read syslog) to inspect the logs and judgings
