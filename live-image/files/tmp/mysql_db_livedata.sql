@@ -5,7 +5,7 @@
 -- externally (e.g. to 'domjudge').
 
 -- Enable most languages available:
-UPDATE `language` SET `allow_submit` = 1 WHERE `langid` IN ('adb', 'awk', 'bash', 'csharp', 'f95', 'hs', 'lua', 'pas', 'pl', 'py', 'py2', 'py3', 'sh');
+UPDATE `language` SET `allow_submit` = 1 WHERE `langid` IN ('adb', 'awk', 'bash', 'csharp', 'f95', 'pas', 'pl', 'py', 'py2', 'py3', 'sh');
 
 -- Associate admin user to team 'DOMjudge':
 REPLACE INTO `userrole` (`userid`, `roleid`)

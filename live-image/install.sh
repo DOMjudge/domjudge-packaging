@@ -128,8 +128,8 @@ EOF
 apt-get install -q -y \
 	apt-transport-https \
 	openssh-server mysql-server apache2 sudo php-zip \
-	gcc g++ default-jdk default-jre-headless fp-compiler ghc \
-	python-minimal python3-minimal gnat gfortran lua5.3 mono-mcs \
+	gcc g++ default-jdk default-jre-headless fp-compiler \
+	python-minimal python3-minimal gnat gfortran mono-mcs \
 	ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
 	enscript lpr zip unzip mlocate
 
