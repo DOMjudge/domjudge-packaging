@@ -24,7 +24,7 @@ cleanup() {
 trap cleanup EXIT
 
 # Default directory where to build the chroot tree:
-CHROOTDIR="/var/lib/domjudge/javachroot.new"
+CHROOTDIR="/var/lib/domjudge/chroot.new"
 
 # Fallback Debian and release (codename) to bootstrap (note: overriden right below):
 DISTRO="Debian"
@@ -57,7 +57,7 @@ usage()
     echo "Ubuntu: $UBUNTU_ARCHLIST"
     echo
     echo "If the host runs Debian/Ubuntu, the host architecture and release are used."
-    echo "The default chrootdir is '/var/lib/domjudge/javachroot'."
+    echo "The default chrootdir is '/var/lib/domjudge/chroot'."
 }
 
 error()
@@ -339,8 +339,8 @@ umount "$CHROOTDIR/dev/pts"
 umount "$CHROOTDIR/sys"
 umount "$CHROOTDIR/proc"
 
-if [ "$CHROOTDIR" = /var/lib/domjudge/javachroot.new ]; then
-	mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot
+if [ "$CHROOTDIR" = /var/lib/domjudge/chroot.new ]; then
+	mv /var/lib/domjudge/chroot.new /var/lib/domjudge/chroot
 fi
 
 echo "Done building chroot in $CHROOTDIR"

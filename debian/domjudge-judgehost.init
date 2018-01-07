@@ -18,7 +18,7 @@ RUNDIR=/var/run/domjudge/
 PIDFILE=$RUNDIR$NAME.pid
 DESC="DOMjudge Judgedaemon"
 RUNAS=domjudge
-CHROOTDIR=/var/lib/domjudge/javachroot
+CHROOTDIR=/var/lib/domjudge/chroot
 CGROUPDIR=/cgroup
 
 test -x $DAEMON || exit 0

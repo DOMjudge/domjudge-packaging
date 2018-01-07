@@ -30,7 +30,7 @@ build-stamp:
 		--with-judgehost_bindir=\$${prefix}/sbin \
 		--with-judgehost_libdir=\$${prefix}/share/domjudge \
 		--with-judgehost_libjudgedir=\$${prefix}/lib/domjudge \
-		--with-judgehost_chrootdir=/var/lib/domjudge/javachroot \
+		--with-judgehost_chrootdir=/var/lib/domjudge/chroot \
 		\
 		--with-domjudge-user=root
 
@@ -104,8 +104,8 @@ install: build
 
 	# Fixup sudoers file to match our assumptions for user/chroot location
 	sed -i 's#^root #domjudge #' $(DJJH)/etc/domjudge/sudoers-domjudge
-	sed -i 's#/\*/proc#/var/lib/domjudge/javachroot*/proc#' $(DJJH)/etc/domjudge/sudoers-domjudge
-	sed -i 's#/chroot/domjudge/\*#/var/lib/domjudge/javachroot*/*#' $(DJJH)/etc/domjudge/sudoers-domjudge
+	sed -i 's#/\*/proc#/var/lib/domjudge/chroot*/proc#' $(DJJH)/etc/domjudge/sudoers-domjudge
+	sed -i 's#/chroot/domjudge/\*#/var/lib/domjudge/chroot*/*#' $(DJJH)/etc/domjudge/sudoers-domjudge
 	mv $(DJJH)/etc/domjudge/sudoers-domjudge $(DJJH)/etc/sudoers.d/domjudge
 	chmod 0440 $(DJJH)/etc/sudoers.d/domjudge
 

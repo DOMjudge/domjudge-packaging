@@ -3,7 +3,7 @@
 set -e
 
 # Read command-line parameters:
-CHROOTDIR=/var/lib/domjudge/javachroot
+CHROOTDIR=/var/lib/domjudge/chroot
 # To prevent (libc6) upgrade questions:
 export DEBIAN_FRONTEND=noninteractive
 

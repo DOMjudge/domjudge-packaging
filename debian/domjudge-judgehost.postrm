@@ -1,10 +1,10 @@
 #! /bin/sh -e
 
-if [ -d /var/lib/domjudge/javachroot/proc ]; then
-	umount /var/lib/domjudge/javachroot/proc || true
+if [ -d /var/lib/domjudge/chroot/proc ]; then
+	umount /var/lib/domjudge/chroot/proc || true
 fi
-if [ -d /var/lib/domjudge/javachroot.new/proc ]; then
-	umount /var/lib/domjudge/javachroot.new/proc || true
+if [ -d /var/lib/domjudge/chroot.new/proc ]; then
+	umount /var/lib/domjudge/chroot.new/proc || true
 fi
 
 if [ -f /usr/share/debconf/confmodule ]; then

@@ -9,7 +9,7 @@ Forwarded: not-needed
  
  # Default directory where to build the chroot tree:
 -CHROOTDIR="@judgehost_chrootdir@"
-+CHROOTDIR="/var/lib/domjudge/javachroot.new"
++CHROOTDIR="/var/lib/domjudge/chroot.new"
  
  # Fallback Debian and release (codename) to bootstrap (note: overriden right below):
  DISTRO="Debian"
@@ -25,8 +25,8 @@ Forwarded: not-needed
  umount "$CHROOTDIR/sys"
  umount "$CHROOTDIR/proc"
  
-+if [ "$CHROOTDIR" = /var/lib/domjudge/javachroot.new ]; then
-+	mv /var/lib/domjudge/javachroot.new /var/lib/domjudge/javachroot
++if [ "$CHROOTDIR" = /var/lib/domjudge/chroot.new ]; then
++	mv /var/lib/domjudge/chroot.new /var/lib/domjudge/javachroot
 +fi
 +
  echo "Done building chroot in $CHROOTDIR"

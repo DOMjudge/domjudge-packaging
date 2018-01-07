@@ -15,7 +15,7 @@ set -e
 
 EXTRA=/tmp/extra-files.tgz
 
-CHROOTDIR=/var/lib/domjudge/javachroot
+CHROOTDIR=/var/lib/domjudge/chroot
 
 # Check if this script is started from the host:
 if [ "$1" != "ON_TARGET" ]; then
