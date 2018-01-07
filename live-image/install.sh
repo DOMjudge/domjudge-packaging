@@ -177,8 +177,7 @@ apt-get -q clean
 # Add packages to chroot for additional language support
 mount --bind /proc $CHROOTDIR/proc
 chroot $CHROOTDIR /bin/sh -c \
-	"apt-get -q -y install python-minimal python3-minimal mono-mcs \
-		bash-static gnat gfortran lua5.3 ; \
+	"apt-get -q -y install python-minimal python3-minimal mono-mcs bash-static ; \
 	apt-get -q clean"
 umount $CHROOTDIR/proc
 # Copy (static) bash binary to location that is available within chroot
