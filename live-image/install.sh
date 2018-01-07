@@ -18,21 +18,10 @@ EXTRA=/tmp/extra-files.tgz
 CHROOTDIR=/var/lib/domjudge/chroot
 
 # Check if this script is started from the host:
-if [ "$1" != "ON_TARGET" ]; then
-	if [ -z "$1" ]; then
-		echo "Error: no target hostname specified."
-		exit 1
-	fi
-	TARGET="$1"
+if [ "$1" = "ON_TARGET" ]; then
+	ON_TARGET_HOST=1
 	shift
-	make -C `dirname $0` `basename $EXTRA`
-	scp "$0" `dirname $0`/`basename $EXTRA` "root@$TARGET:`dirname $EXTRA`"
-	ssh "root@$TARGET" "/tmp/`basename $0` ON_TARGET $@"
-	exit 0
 fi
-
-# We're on the target system here, skip first argument 'ON_TARGET':
-shift
 
 while getopts ':p:v:' OPT ; do
 	case $OPT in
@@ -52,7 +41,21 @@ while getopts ':p:v:' OPT ; do
 			;;
 	esac
 done
+ARGS="$*"
 shift $((OPTIND-1))
+
+if [ -z "$ON_TARGET_HOST" ]; then
+	if [ -z "$1" ]; then
+		echo "Error: no target hostname specified."
+		exit 1
+	fi
+	TARGET="$1"
+	shift
+	make -C `dirname $0` `basename $EXTRA`
+	scp "$0" `dirname $0`/`basename $EXTRA` "root@$TARGET:`dirname $EXTRA`"
+	ssh "root@$TARGET" "/tmp/`basename $0` ON_TARGET $ARGS"
+	exit 0
+fi
 
 export DEBPROXY DJDEBVERSION
 
