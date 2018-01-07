@@ -225,6 +225,10 @@ rm -f /zerofile
 mkswap -L swap /dev/sda1
 sed -i 's/^UUID=[a-z0-9-]* *\(.*swap.*\)$/LABEL=swap      \1/' /etc/fstab
 
+# The old swap UUID isn't valid anymore for resume:
+sed -i 's/^RESUME=.*$/RESUME=/' /etc/initramfs-tools/conf.d/resume
+update-initramfs -u -k all
+
 echo "Done installing, halting system..."
 
 halt

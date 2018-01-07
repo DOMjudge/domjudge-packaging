@@ -20,4 +20,6 @@ ROOTPART="/dev/mapper/$ROOTPART"
 e2fsck -f "$ROOTPART"
 tune2fs -U random "$ROOTPART"
 
+# Run `update-grub` on the image to change the UUID in /boot/grub/grub.cfg.
+
 kpartx -d "$IMG"
