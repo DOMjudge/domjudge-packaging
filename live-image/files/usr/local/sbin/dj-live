@@ -60,7 +60,7 @@ EOF
 
 	genpass)
 		printf "Generating new DOMjudge database credentials..."
-		PW=`head -c12 /dev/urandom | base64 | head -c16 | tr '/+' 'Aa'`
+		PW=$(head -c12 /dev/urandom | base64 | head -c16 | tr '/+' 'Aa')
 
 		sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$PW'/" \
 		       -e "s/^\(dbc_dbserver\)=.*/\1=''/" \
@@ -84,10 +84,14 @@ EOF
 		# Generate REST API password and set it for judgehost user:
 		/etc/domjudge/genrestapicredentials > /etc/domjudge/restapi.secret
 
-		RESTPW=`tail -n1 /etc/domjudge/restapi.secret | sed 's/.*[[:space:]]//'`
+		RESTPW=$(tail -n1 /etc/domjudge/restapi.secret | sed 's/.*[[:space:]]//')
+
+		# NOTE: the hash function and cost below have to be kept
+		# synchronised with those used in the code!
+		PWHASH=$(htpasswd -nbB -C 10 foouser "$RESTPW" | sed 's/^foouser://')
 
 		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf domjudge <<EOF
-UPDATE user SET password=MD5('judgehost#$RESTPW') WHERE username='judgehost';
+UPDATE user SET password='$PWHASH' WHERE username='judgehost';
 EOF
 
 		echo " done."
