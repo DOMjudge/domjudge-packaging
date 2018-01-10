@@ -96,7 +96,7 @@ git clone https://github.com/DOMjudge/domjudge-packaging.git
 and chdir to the `domjudge-packaging/live-image` subdirectory.
 
 First, build a Debian image. Download a Debian netinst CD for
-Jessie/amd64 from http://www.debian.org/CD/netinst/. Make the file
+stable/amd64 from `http://www.debian.org/CD/netinst/`. Make the file
 `preseed.cfg` available on a URL that can be accessed in the next
 stage.
 
@@ -124,8 +124,9 @@ Note that the root password is set to 'domjudge'.
 Before running the DOMjudge-live install.sh script below, it is
 advisable to first run as root the prepare-for-install.sh script to
 generate a unique root partition UUID and run fsck:
-
-# ./prepare-for-install.sh <domjudge-live-target.img>
+```
+sudo ./prepare-for-install.sh <domjudge-live-target.img>
+```
 
 Now run the DOMjudge-live specific install script:
 ```
