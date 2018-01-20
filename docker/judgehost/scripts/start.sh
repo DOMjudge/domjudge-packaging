@@ -9,7 +9,7 @@ echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 cd /opt/domjudge/judgehost
 
 echo "[..] Setting up restapi file"
-echo "default	${DOMSERVER_BASEURL}api	${JUDGEDAEMON_USERNAME}	${JUDGEDAEMON_PASSWORD}" > etc/restapi.secret
+echo "default	${DOMSERVER_BASEURL}api/v4	${JUDGEDAEMON_USERNAME}	${JUDGEDAEMON_PASSWORD}" > etc/restapi.secret
 echo "[ok] Restapi file set up"; echo
 
 useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-${DAEMON_ID}
