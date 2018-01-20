@@ -1,0 +1,2 @@
+#!/bin/bash
+tail -F /opt/domjudge/domserver/webapp/var/logs/prod.log
