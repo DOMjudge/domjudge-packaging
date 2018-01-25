@@ -41,3 +41,12 @@ This image is based on Debian and the DOMjudge Debian packages.
 
 See `live-image/README` for more details. Note that most of the process
 of generating a complete image is automated, but not completely.
+
+
+## DOMjudge Docker containers
+
+Under `docker` you find the sources for the Docker containers on
+https://hub.docker.com/r/domjudge/. Under `docker-contributor` you
+find the sources for building a Docker container to do development
+on the DOMjudge sources from a git checkout. See the `README.md` files
+in those respective directories for more details.
