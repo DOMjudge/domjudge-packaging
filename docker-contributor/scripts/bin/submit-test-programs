@@ -1,5 +1,17 @@
 #!/bin/bash
 
+function file_or_env {
+    file=${1}_FILE
+    if [ ! -z "${!file}" ]; then
+        cat "${!file}"
+    else
+        echo -n ${!1}
+    fi
+}
+
+MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
+MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
+
 USER_EXISTS=$(mysql -h${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -AN -D${MYSQL_DATABASE} -e "SELECT COUNT(*) FROM user WHERE username = 'dummy'")
 if [ "${USER_EXISTS}" -eq "0" ]
 then

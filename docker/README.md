@@ -60,6 +60,23 @@ The following environment variables are supported by the `domserver` container:
 * `MYSQL_DATABASE` (defaults to `domjudge`): set the database to use.
 * `DJ_DB_INSTALL_BARE` (defaults to `0`): set to `1` to do a `bare-install` for the database instead of a normal `install`.
 
+#### Passwords through files
+
+In order to not specify sensitive information through environment variables, the variables `MYSQL_PASSWORD_FILE` and `MYSQL_ROOT_PASSWORD_FILE` can be used to set a path to a file to read the passwords from. This is suitable to use together with [docker compose's secrets](https://docs.docker.com/compose/compose-file/#secrets-configuration-reference):
+
+```yml
+...
+services:
+    domserver:
+        image: domjudge/domserver:${DOMJUDGE_VERSION}
+        secrets:
+            - domjudge-mysql-pw
+        ...
+        environment:
+            MYSQL_PASSWORD_FILE: /run/secrets/domjudge-mysql-pw
+        ...
+```
+
 #### Commands
 
 The `domserver` container supports a few commands. You can run all commands using the following syntax:
@@ -108,7 +125,7 @@ The following environment variables are supported by the `judgehost` container:
 * `CONTAINER_TIMEZONE` (defaults to `Europe/Amsterdam`): allows you to change the timezone used inside the container.
 * `DOMSERVER_BASEURL` (defaults to `http://domserver/`): base URL where the domserver can be found. The judgehost uses this to connect to the API. **Do not add `api` yourself, as the container will do this!**
 * `JUDGEDAEMON_USERNAME` (defaults to `judgehost`): username used to connect to the API.
-* `JUDGEDAEMON_PASSWORD` (defaults to `password`): password used to connect to the API. This should be the value of the `judgehost` password you wrote down earlier.
+* `JUDGEDAEMON_PASSWORD` (defaults to `password`): password used to connect to the API. This should be the value of the `judgehost` password you wrote down earlier. Like with the mysql passwords, you can also set `JUDGEDAEMON_PASSWORD_FILE` to a path containing the password instead.
 * `DAEMON_ID` (defaults to `0`): ID of the daemon to use for this judgedaemon. If you start multiple judgehosts on one (physical) machine, make sure each one has a different `DAEMON_ID`.
 
 ## Building the images
