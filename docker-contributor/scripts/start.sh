@@ -1,5 +1,14 @@
 #!/bin/bash -e
 
+function file_or_env {
+    file=${1}_FILE
+    if [ ! -z "${!file}" ]; then
+        cat "${!file}"
+    else
+        echo -n ${!1}
+    fi
+}
+
 echo "[..] Setting timezone"
 ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime
 echo ${CONTAINER_TIMEZONE} > /etc/timezone
@@ -31,6 +40,9 @@ then
   echo "DOMjudge sources not found. Did you add a volume with your DOMjudge checkout at /domjudge?"
   exit 1
 fi
+
+MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
+MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
 echo "[..] Updating database credentials file"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret

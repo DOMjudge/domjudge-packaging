@@ -58,6 +58,23 @@ The following environment variables are supported by the container:
 * `DJ_SKIP_MAKE` (defaults to `0`): set to `1` to skip the maintainer setup and install commands. This will speed up the startup process of the container and is useful if this is already done before.
 * `DJ_DB_INSTALL_BARE` (defaults to `0`): set to `1` to do a `bare-install` for the database instead of a normal `install`.
 
+#### Passwords through files
+
+In order to not specify sensitive information through environment variables, the variables `MYSQL_PASSWORD_FILE` and `MYSQL_ROOT_PASSWORD_FILE` can be used to set a path to a file to read the passwords from. This is suitable to use together with [docker compose's secrets](https://docs.docker.com/compose/compose-file/#secrets-configuration-reference):
+
+```yml
+...
+services:
+    domjudge-contributor:
+        image: domjudge/domjudge-contributor:${DOMJUDGE_VERSION}
+        secrets:
+            - domjudge-mysql-pw
+        ...
+        environment:
+            MYSQL_PASSWORD_FILE: /run/secrets/domjudge-mysql-pw
+        ...
+```
+
 ### Commands
 
 This container supports a few commands. You can run all commands using the following syntax:
