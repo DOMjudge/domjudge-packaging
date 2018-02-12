@@ -20,7 +20,12 @@ cd /opt/domjudge/judgehost
 JUDGEDAEMON_PASSWORD=$(file_or_env JUDGEDAEMON_PASSWORD)
 
 echo "[..] Setting up restapi file"
-echo "default	${DOMSERVER_BASEURL}api/v4	${JUDGEDAEMON_USERNAME}	${JUDGEDAEMON_PASSWORD}" > etc/restapi.secret
+if [[ -f /opt/domjudge/judgehost/legacy ]]
+then
+  echo "default	${DOMSERVER_BASEURL}api	${JUDGEDAEMON_USERNAME}	${JUDGEDAEMON_PASSWORD}" > etc/restapi.secret
+else
+  echo "default	${DOMSERVER_BASEURL}api/v4	${JUDGEDAEMON_USERNAME}	${JUDGEDAEMON_PASSWORD}" > etc/restapi.secret
+fi
 echo "[ok] Restapi file set up"; echo
 
 useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-${DAEMON_ID}
