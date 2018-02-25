@@ -27,7 +27,8 @@ RUN apt-get update \
     openjdk-8-jre-headless \
     openjdk-8-jdk ghc fp-compiler \
     supervisor apache2-utils lsb-release composer \
-    libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
+    libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev python python-pip \
+    && pip install Pygments \
     && rm -rf /var/lib/apt/lists/*
 
 # Forward nginx request and error logs to standard output/error. Also create directory for PHP-FPM socket
