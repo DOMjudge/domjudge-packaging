@@ -47,6 +47,7 @@ RUN apt-get update \
 	nginx php-cli php-fpm php-zip \
 	php-gd php-curl php-mysql php-json \
 	php-mcrypt php-gmp php-xml php-mbstring \
+	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Copy domserver directory and add script files

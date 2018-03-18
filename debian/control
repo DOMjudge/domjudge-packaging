@@ -30,6 +30,7 @@ Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
  ${misc:Depends}
 Recommends: php-curl | php5-curl, ntp, default-mysql-server | virtual-mysql-server,
  phpmyadmin
+Suggests: enscript, lpr
 Description: programming contest jury system (server)
  DOMjudge is a jury system for running a programming contest. It allows
  teams to submit solutions to problems, which will be compiled, ran and
