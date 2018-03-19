@@ -16,6 +16,7 @@ RUN apt-get update \
 	groff texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european \
 	composer libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
+	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Set up user
