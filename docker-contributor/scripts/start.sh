@@ -96,8 +96,8 @@ echo "[..] Copying webserver config"
 cp etc/nginx-conf /etc/nginx/sites-enabled/default
 # Replace nginx php socket location
 sed -i 's/server unix:.*/server unix:\/run\/php\/php7.0-fpm.sock;/' /etc/nginx/sites-enabled/default
-setfacl    -m   u:www-data:r    /domjudge/etc/dbpasswords.secret > /dev/null 2>&1 || true
-setfacl    -m   u:www-data:r    /domjudge/etc/restapi.secret > /dev/null 2>&1 || true
+chown www-data: /domjudge/etc/dbpasswords.secret
+chown www-data: /domjudge/etc/restapi.secret
 if [[ "${USE_LEGACY}" -eq "0" ]]
 then
   # Remove access_log and error_log entries
@@ -110,12 +110,7 @@ then
   sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' /etc/nginx/sites-enabled/default
   sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' /etc/nginx/sites-enabled/default
   # Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
-  setfacl -R -m d:u:www-data:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
-  setfacl -R -m   u:www-data:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
-  setfacl -R -m d:m::rwx          /domjudge/webapp/var > /dev/null 2>&1 || true
-  setfacl -R -m   m::rwx          /domjudge/webapp/var > /dev/null 2>&1 || true
-  setfacl -R -m d:u:domjudge:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
-  setfacl -R -m   u:domjudge:rwx  /domjudge/webapp/var > /dev/null 2>&1 || true
+  chown www-data: /domjudge/webapp/var
 fi
 echo "[ok] Webserver config installed"; echo
 

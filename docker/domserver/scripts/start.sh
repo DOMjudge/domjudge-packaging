@@ -76,8 +76,8 @@ cp etc/nginx-conf /etc/nginx/sites-enabled/default
 sed -i 's/server unix:.*/server unix:\/run\/php\/php7.0-fpm.sock;/' /etc/nginx/sites-enabled/default
 
 # Set up permissions
-setfacl    -m   u:www-data:r    etc/dbpasswords.secret > /dev/null 2>&1 || true
-setfacl    -m   u:www-data:r    etc/restapi.secret > /dev/null 2>&1 || true
+chown www-data: etc/dbpasswords.secret
+chown www-data: etc/restapi.secret
 
 if [[ "${USE_LEGACY}" -eq "0" ]]
 then
@@ -87,12 +87,7 @@ then
 	# Run DOMjudge in root
 	sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' /etc/nginx/sites-enabled/default
 	sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' /etc/nginx/sites-enabled/default
-	setfacl -R -m d:u:www-data:rwx  webapp/var > /dev/null 2>&1 || true
-	setfacl -R -m   u:www-data:rwx  webapp/var > /dev/null 2>&1 || true
-	setfacl -R -m d:m::rwx          webapp/var > /dev/null 2>&1 || true
-	setfacl -R -m   m::rwx          webapp/var > /dev/null 2>&1 || true
-	setfacl -R -m d:u:domjudge:rwx  webapp/var > /dev/null 2>&1 || true
-	setfacl -R -m   u:domjudge:rwx  webapp/var > /dev/null 2>&1 || true
+	chown -R www-data: webapp/var
 fi
 echo "[ok] Webserver config installed"; echo
 
