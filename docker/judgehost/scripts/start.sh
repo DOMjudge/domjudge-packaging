@@ -32,7 +32,7 @@ echo "[..] Setting up cgroups"
 bin/create_cgroups
 echo "[ok] cgroups set up"; echo
 
-if ! -id domjudge-run-${DAEMON_ID} > /dev/null 2>&1; then
+if ! id domjudge-run-${DAEMON_ID} > /dev/null 2>&1; then
   useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-${DAEMON_ID}
 fi
 exec sudo -u domjudge /opt/domjudge/judgehost/bin/judgedaemon -n ${DAEMON_ID}
