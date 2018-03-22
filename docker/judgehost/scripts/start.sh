@@ -28,6 +28,10 @@ else
 fi
 echo "[ok] Restapi file set up"; echo
 
+echo "[..] Setting up cgroups"
+bin/create_cgroups
+echo "[ok] cgroups set up"; echo
+
 if ! -id domjudge-run-${DAEMON_ID} > /dev/null 2>&1; then
   useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-${DAEMON_ID}
 fi
