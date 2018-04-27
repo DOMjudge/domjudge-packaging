@@ -9,7 +9,7 @@ RUN apt-get update \
 	autoconf automake git \
 	gcc g++ make zip unzip \
 	php-cli php-zip \
-	php-gd php-curl php-mysql php-json \
+	php-gd php-curl php-mysql php-json php-intl \
 	php-mcrypt php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
 	linuxdoc-tools linuxdoc-tools-text \
