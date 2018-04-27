@@ -37,7 +37,7 @@ Next, if you are on Linux make sure you have cgroups enabled. See the [DOMjudge 
 Now you can run the domserver using the following command:
 
 ```bash
-docker run -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e MYSQL_HOST=mariadb -e MYSQL_USER=domjudge -e MYSQL_DATABASE=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_ROOT_PASSWORD=rootpw -p 12345:80 --name domserver domjudge/domserver:latest
+docker run --link dj-mariadb:mariadb -it -e MYSQL_HOST=mariadb -e MYSQL_USER=domjudge -e MYSQL_DATABASE=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_ROOT_PASSWORD=rootpw -p 12345:80 --name domserver domjudge/domserver:latest
 ```
 
 If you want a specific DOMjudge version instead of the latest, replace `latest` with the DOMjudge version (e.g. `5.3.0`).
