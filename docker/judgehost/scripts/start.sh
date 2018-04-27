@@ -32,6 +32,10 @@ echo "[..] Setting up cgroups"
 bin/create_cgroups
 echo "[ok] cgroups set up"; echo
 
+echo "[..] Copying resolv.conf to chroot"
+cp /etc/resolv.conf /chroot/domjudge/etc/resolv.conf
+echo "[ok] resolv.conf copied"; echo
+
 if ! id domjudge-run-${DAEMON_ID} > /dev/null 2>&1; then
   useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-${DAEMON_ID}
 fi
