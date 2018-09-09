@@ -39,7 +39,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	MYSQL_USER=domjudge \
 	MYSQL_DATABASE=domjudge \
 	MYSQL_PASSWORD=domjudge \
-	MYSQL_ROOT_PASSWORD=domjudge
+	MYSQL_ROOT_PASSWORD=domjudge \
+	DJ_DB_INSTALL_BARE=0
 
 # Install required packages for running of domserver
 RUN apt-get update \

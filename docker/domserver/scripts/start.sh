@@ -40,6 +40,13 @@ MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
 echo "[..] Updating database credentials file"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
+if [[ "${USE_LEGACY}" -eq "0" ]]
+then
+	sed -i "s/database_host: .*/database_host: ${MYSQL_HOST}/" webapp/app/config/parameters.yml
+	sed -i "s/database_name: .*/database_name: ${MYSQL_DATABASE}/" webapp/app/config/parameters.yml
+	sed -i "s/database_user: .*/database_user: ${MYSQL_USER}/" webapp/app/config/parameters.yml
+	sed -i "s/database_password: .*/database_password: ${MYSQL_PASSWORD}/" webapp/app/config/parameters.yml
+fi
 echo "[ok] Updated database credentials file"; echo
 
 echo "[..] Checking database connection"
@@ -88,6 +95,8 @@ then
 	sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' /etc/nginx/sites-enabled/default
 	sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' /etc/nginx/sites-enabled/default
 	chown -R www-data: webapp/var
+	# Clear Symfony cache
+	webapp/bin/console cache:clear --env=prod
 fi
 echo "[ok] Webserver config installed"; echo
 
