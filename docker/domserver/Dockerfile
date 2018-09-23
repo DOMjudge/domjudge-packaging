@@ -15,12 +15,17 @@ RUN apt-get update \
 	linuxdoc-tools linuxdoc-tools-text \
 	groff texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european \
-	composer libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
+	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
 	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Set up user
 RUN useradd -m domjudge
+
+# Install composer
+ADD https://getcomposer.org/installer composer-setup.php
+RUN php composer-setup.php \
+    && mv /composer.phar /usr/local/bin/composer
 
 # Add DOMjudge source code and build script
 ADD domjudge.tar.gz /domjudge-src

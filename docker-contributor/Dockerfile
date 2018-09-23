@@ -26,7 +26,7 @@ RUN apt-get update \
     sudo debootstrap libcgroup-dev procps \
     openjdk-8-jre-headless \
     openjdk-8-jdk ghc fp-compiler \
-    supervisor apache2-utils lsb-release composer \
+    supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev python python-pip \
     enscript lpr \
     && pip install Pygments \
@@ -42,6 +42,11 @@ RUN useradd -m domjudge \
   && groupadd domjudge-run \
   && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0 \
   && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
+
+# Install composer
+ADD https://getcomposer.org/installer composer-setup.php
+RUN php composer-setup.php \
+    && mv /composer.phar /usr/local/bin/composer
 
 # Add exposed volume
 VOLUME ["/domjudge"]
