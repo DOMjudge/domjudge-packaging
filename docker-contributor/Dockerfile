@@ -51,6 +51,8 @@ RUN php composer-setup.php \
 # Add exposed volume
 VOLUME ["/domjudge"]
 
+WORKDIR /domjudge
+
 # Add scripts
 COPY ["scripts", "/scripts/"]
 RUN chmod 755 /scripts/start.sh \
