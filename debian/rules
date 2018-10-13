@@ -68,7 +68,7 @@ install: build
 
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
-		rm COPYING* README.md README.country_flags ChangeLog logos/DOMjudgelogo.png
+		rm COPYING* README.md README.country_flags ChangeLog
 
 	# This must be shipped in domjudge-common
 	rm $(DJDS)/etc/domjudge/common-config.php \
