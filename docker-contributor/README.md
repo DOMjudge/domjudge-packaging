@@ -55,6 +55,7 @@ The following environment variables are supported by the container:
 * `MYSQL_PASSWORD` (defaults to `domjudge`): set the password to use for connecting to MySQL.
 * `MYSQL_ROOT_PASSWORD` (defaults to `domjudge`): set the root password to use for connecting to MySQL.
 * `MYSQL_DATABASE` (defaults to `domjudge`): set the database to use.
+* `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
 * `DJ_SKIP_MAKE` (defaults to `0`): set to `1` to skip the maintainer setup and install commands. This will speed up the startup process of the container and is useful if this is already done before.
 * `DJ_DB_INSTALL_BARE` (defaults to `0`): set to `1` to do a `bare-install` for the database instead of a normal `install`.
 

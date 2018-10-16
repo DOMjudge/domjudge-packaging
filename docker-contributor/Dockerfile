@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
   MYSQL_DATABASE=domjudge \
   MYSQL_PASSWORD=domjudge \
   MYSQL_ROOT_PASSWORD=domjudge \
+  FPM_MAX_CHILDREN=40 \
   DJ_SKIP_MAKE=0 \
   DJ_DB_INSTALL_BARE=0
 
