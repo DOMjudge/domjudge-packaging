@@ -28,7 +28,7 @@ RUN apt-get update \
     openjdk-8-jdk ghc fp-compiler \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev python python-pip \
-    enscript lpr \
+    enscript lpr ca-certificates \
     && pip install Pygments \
     && rm -rf /var/lib/apt/lists/*
 
