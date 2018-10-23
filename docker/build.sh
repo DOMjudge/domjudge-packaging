@@ -42,7 +42,7 @@ echo "[ok] Done building Docker image for judgehost chroot"
 
 echo "All done. Image domjudge/domserver:${VERSION} and domjudge/judgehost:${VERSION} created"
 echo "If you are a DOMjudge maintainer with access to the domjudge organization on Docker Hub, you can now run the following command to push them to Docker Hub:"
-echo "$ docker push domjudge/domserver:${VERSION} && docker push domjudge/judgehost:${VERSION} && docker push domjudge/domjudge-judgehost-chroot:${VERSION}"
+echo "$ docker push domjudge/domserver:${VERSION} && docker push domjudge/judgehost:${VERSION} && docker push domjudge/default-judgehost-chroot:${VERSION}"
 echo "If this is the latest release, also run the following command:"
 echo "$ docker tag domjudge/domserver:${VERSION} domjudge/domserver:latest && \
 docker tag domjudge/judgehost:${VERSION} domjudge/judgehost:latest && \
