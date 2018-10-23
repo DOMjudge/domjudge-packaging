@@ -59,6 +59,7 @@ The following environment variables are supported by the `domserver` container:
 * `MYSQL_ROOT_PASSWORD` (defaults to `domjudge`): set the root password to use for connecting to MySQL.
 * `MYSQL_DATABASE` (defaults to `domjudge`): set the database to use.
 * `DJ_DB_INSTALL_BARE` (defaults to `0`): set to `1` to do a `bare-install` for the database instead of a normal `install`.
+* `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
 
 #### Passwords through files
 
@@ -127,7 +128,6 @@ The following environment variables are supported by the `judgehost` container:
 * `JUDGEDAEMON_USERNAME` (defaults to `judgehost`): username used to connect to the API.
 * `JUDGEDAEMON_PASSWORD` (defaults to `password`): password used to connect to the API. This should be the value of the `judgehost` password you wrote down earlier. Like with the mysql passwords, you can also set `JUDGEDAEMON_PASSWORD_FILE` to a path containing the password instead.
 * `DAEMON_ID` (defaults to `0`): ID of the daemon to use for this judgedaemon. If you start multiple judgehosts on one (physical) machine, make sure each one has a different `DAEMON_ID`.
-* `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
 
 ## Building the images
 
