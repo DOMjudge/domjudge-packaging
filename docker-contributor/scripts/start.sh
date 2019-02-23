@@ -23,7 +23,9 @@ sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
     -e "s/^memory_limit.*/memory_limit = 2G/" \
     -e "s/^max_file_uploads.*/max_file_uploads = 200/" \
     -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
-     /etc/php/7.0/fpm/php.ini
+     /etc/php/7.2/fpm/php.ini
+sed -ri -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
+     /etc/php/7.2/cli/php.ini
 echo "[ok] Done changing nginx and PHP configuration settings"; echo
 
 cd /domjudge
@@ -97,16 +99,16 @@ cp etc/nginx-conf /etc/nginx/sites-enabled/default
 # Replace nginx php socket location
 sed -i 's/server unix:.*/server unix:\/var\/run\/php-fpm-domjudge.sock;/' /etc/nginx/sites-enabled/default
 # Remove default FPM pool config and link in DOMJudge version
-if [[ -f /etc/php/7.0/fpm/pool.d/www.conf ]]
+if [[ -f /etc/php/7.2/fpm/pool.d/www.conf ]]
 then
-  rm /etc/php/7.0/fpm/pool.d/www.conf
+  rm /etc/php/7.2/fpm/pool.d/www.conf
 fi
-if [[ ! -f /etc/php/7.0/fpm/pool.d/domjudge.conf ]]
+if [[ ! -f /etc/php/7.2/fpm/pool.d/domjudge.conf ]]
 then
-  ln -s /domjudge/etc/domjudge-fpm.conf /etc/php/7.0/fpm/pool.d/domjudge.conf
+  ln -s /domjudge/etc/domjudge-fpm.conf /etc/php/7.2/fpm/pool.d/domjudge.conf
 fi
 # Change pm.max_children
-sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.0/fpm/pool.d/domjudge.conf
+sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.2/fpm/pool.d/domjudge.conf
 
 chown www-data: /domjudge/etc/dbpasswords.secret
 chown www-data: /domjudge/etc/restapi.secret

@@ -1,5 +1,5 @@
-FROM debian:latest
-MAINTAINER DOMjudge team <team@domjudge.org>
+FROM ubuntu:bionic
+LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
   CONTAINER_TIMEZONE=Europe/Amsterdam \
@@ -17,19 +17,19 @@ RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
     autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
-    nginx php php-cli php-fpm php-zip \
-    php-gd php-curl php-mysql php-json php-intl \
-    php-mcrypt php-gmp php-xml php-mbstring \
+    nginx php7.2 php7.2-cli php7.2-fpm php7.2-zip \
+    php7.2-gd php7.2-curl php7.2-mysql php7.2-json php7.2-intl \
+    php7.2-gmp php7.2-xml php7.2-mbstring \
     bsdmainutils ntp \
     linuxdoc-tools linuxdoc-tools-text \
     groff texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european \
     sudo debootstrap libcgroup-dev procps \
-    openjdk-8-jre-headless \
-    openjdk-8-jdk ghc fp-compiler \
+    openjdk-11-jre-headless \
+    openjdk-11-jdk ghc fp-compiler \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev python python-pip \
-    enscript lpr ca-certificates \
+    enscript lpr ca-certificates less vim \
     && pip install Pygments \
     && rm -rf /var/lib/apt/lists/*
 
