@@ -6,7 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	DOMSERVER_BASEURL=http://domserver/ \
 	JUDGEDAEMON_USERNAME=judgehost \
 	JUDGEDAEMON_PASSWORD=password \
-	DAEMON_ID=0
+	DAEMON_ID=0 \
+	DOMJUDGE_CREATE_WRITABLE_TEMP_DIR=0
 
 # Install required packages for running of judgehost
 RUN apt-get update \
