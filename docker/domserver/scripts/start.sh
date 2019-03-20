@@ -121,9 +121,10 @@ then
 	# Remove access_log and error_log entries
 	sed -i '/access_log/d' $NGINX_CONFIG_FILE
 	sed -i '/error_log/d' $NGINX_CONFIG_FILE
-	chown -R www-data: webapp/var
 	# Clear Symfony cache
 	webapp/bin/console cache:clear --env=prod
+	# Fix permissions on cache and log directories
+	chown -R www-data: webapp/var
 fi
 echo "[ok] Webserver config installed"; echo
 
