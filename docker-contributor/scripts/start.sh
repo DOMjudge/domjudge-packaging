@@ -17,7 +17,7 @@ echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 
 echo "[..] Changing nginx and PHP configuration settings"
 # Set correct settings
-sed -ri -e "s/^user.*/user www-data;/" /etc/nginx/nginx.conf
+sed -ri -e "s/^user.*/user domjudge;/" /etc/nginx/nginx.conf
 sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
     -e "s/^post_max_size.*/post_max_size = 100M/" \
     -e "s/^memory_limit.*/memory_limit = 2G/" \
@@ -55,7 +55,7 @@ then
   echo "Skipping maintainer-mode install for DOMjudge"
 else
   echo "[..] Performing maintainer-mode install for DOMjudge"
-  sudo -u domjudge make maintainer-conf CONFIGURE_FLAGS="--with-baseurl=http://localhost/"
+  sudo -u domjudge make maintainer-conf CONFIGURE_FLAGS="--with-baseurl=http://localhost/ --with-webserver-group=domjudge"
   sudo -u domjudge make maintainer-install
   echo "[ok] DOMjudge installed in Maintainer-mode"; echo
 fi
@@ -110,8 +110,8 @@ fi
 # Change pm.max_children
 sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.2/fpm/pool.d/domjudge.conf
 
-chown www-data: /domjudge/etc/dbpasswords.secret
-chown www-data: /domjudge/etc/restapi.secret
+chown domjudge: /domjudge/etc/dbpasswords.secret
+chown domjudge: /domjudge/etc/restapi.secret
 if [[ "${USE_LEGACY}" -eq "0" ]]
 then
   HAS_INNER_NGINX=0
@@ -140,7 +140,7 @@ then
   sed -i 's/app\.php/app_dev.php/g' $NGINX_CONFIG_FILE
   sed -i 's/app\\\.php/app\\_dev.php/g' $NGINX_CONFIG_FILE
   # Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
-  chown www-data: /domjudge/webapp/var
+  chown domjudge: /domjudge/webapp/var
 fi
 echo "[ok] Webserver config installed"; echo
 
