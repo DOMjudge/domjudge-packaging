@@ -54,7 +54,7 @@ RUN apt-get update \
 	zip unzip acl supervisor mariadb-client apache2-utils \
 	nginx php-cli php-fpm php-zip \
 	php-gd php-curl php-mysql php-json \
-	php-mcrypt php-gmp php-xml php-mbstring \
+	php-mcrypt php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
