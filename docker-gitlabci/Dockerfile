@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
   # Docs \
   # linuxdoc-tools linuxdoc-tools-text groff \
   # texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-lang-european \
-  # Misc travis things \
+  # Misc gitlab things \
   mariadb-client curl build-essential composer packaging-dev  \
   git python-pip moreutils \
   # Things we'd have in the chroot \
@@ -19,8 +19,13 @@ RUN apt-get update && apt-get install -y \
 # Needed for building the docs
 RUN pip install pygments
 
-# Put the travis user in sudo
+# Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+RUN useradd -m domjudge
+RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0
+RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
+RUN groupadd domjudge-run
 
 # Do some extra setup
 RUN mkdir -p /run/php \

@@ -1,7 +1,7 @@
-# Docker Container for TravisCI Builds
+# Docker Container for Gitlab CI Builds
 
 This directory contains the necessary files to create Docker images used for
-building and testing domjudge on TravisCI. This is basically our way to get a
+building and testing domjudge on Gitlab CI. This is basically our way to get a
 newer environment when running there rather than the ubuntu 14.04 environment
 they provide.
 
