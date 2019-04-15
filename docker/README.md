@@ -129,6 +129,7 @@ The following environment variables are supported by the `judgehost` container:
 * `JUDGEDAEMON_PASSWORD` (defaults to `password`): password used to connect to the API. This should be the value of the `judgehost` password you wrote down earlier. Like with the mysql passwords, you can also set `JUDGEDAEMON_PASSWORD_FILE` to a path containing the password instead.
 * `DAEMON_ID` (defaults to `0`): ID of the daemon to use for this judgedaemon. If you start multiple judgehosts on one (physical) machine, make sure each one has a different `DAEMON_ID`.
 * `DOMJUDGE_CREATE_WRITABLE_TEMP_DIR` (defaults top `0`): if set to 1, a writable temporary directory will be created for submissions. This only works for DOMjudge versions >= 6.1.
+* `RUN_USER_UID_GID` (defaults to `62860`): UID/GID of the user that will submissions. Make sure this UID/GID is **not** used on your host OS.
 
 ## Building the images
 

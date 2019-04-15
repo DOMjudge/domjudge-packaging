@@ -7,7 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	JUDGEDAEMON_USERNAME=judgehost \
 	JUDGEDAEMON_PASSWORD=password \
 	DAEMON_ID=0 \
-	DOMJUDGE_CREATE_WRITABLE_TEMP_DIR=0
+	DOMJUDGE_CREATE_WRITABLE_TEMP_DIR=0 \
+	RUN_USER_UID_GID=62860
 
 # Install required packages for running of judgehost
 RUN apt-get update \
@@ -26,9 +27,8 @@ RUN cp /opt/domjudge/judgehost/etc/sudoers-domjudge /etc/sudoers.d/
 # Add scripts
 COPY ["judgehost/scripts", "/scripts/"]
 
-# Change start script permissions, add user and group and fix permissions
+# Change start script permissions, add user and fix permissions
 RUN chmod +x /scripts/start.sh \
 	&& useradd -m domjudge \
-	&& groupadd domjudge-run \
 	&& chown -R domjudge: /opt/domjudge
 CMD ["/scripts/start.sh"]
