@@ -64,7 +64,8 @@ install: build
 	dh_install
 
 	# clean up tmpdirs
-	rmdir $(DJDS)/tmp $(DJJH)/tmp $(DJDS)/var/run/domjudge $(DJJH)/var/run/domjudge
+	# rmdir $(DJDS)/tmp $(DJJH)/tmp
+	rmdir $(DJDS)/var/run/domjudge $(DJJH)/var/run/domjudge
 
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
