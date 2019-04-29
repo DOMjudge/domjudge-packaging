@@ -114,7 +114,7 @@ then
 		HAS_INNER_NGINX=1
 		cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
 		NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
-		sed -i 's/\/domjudge\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
+		sed -i 's/\/opt\/domjudge\/domserver\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
 		# Run DOMjudge in root
 		sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
 		sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
@@ -133,5 +133,14 @@ then
 	chown -R www-data: webapp/var
 fi
 echo "[ok] Webserver config installed"; echo
+
+if [[ -f etc/initial_admin_password.secret ]]
+then
+	echo -n "Initial admin password is "
+	cat etc/initial_admin_password.secret
+	echo
+	echo
+	echo
+fi
 
 exec supervisord -n -c /etc/supervisor/supervisord.conf

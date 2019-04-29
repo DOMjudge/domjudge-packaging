@@ -53,14 +53,14 @@ RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	zip unzip acl supervisor mariadb-client apache2-utils \
 	nginx php-cli php-fpm php-zip \
-	php-gd php-curl php-mysql php-json \
+	php-gd php-curl php-mysql php-json php-intl \
 	php-mcrypt php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Copy domserver directory and add script files
 COPY --from=domserver-build /opt/domjudge/domserver /opt/domjudge/domserver
-COPY --from=domserver-build /opt/domjudge/doc /opt/domjudge/domserver/www/jury/doc
+COPY --from=domserver-build /opt/domjudge/doc /opt/domjudge/doc
 COPY ["domserver/scripts", "/scripts/"]
 
 # Add user, create PHP FPM socket dir, change permissions for domjudge directory and fix scripts
