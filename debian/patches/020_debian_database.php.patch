@@ -2,20 +2,19 @@ Author: <thijs@debian.org>
 Description: No description.
 --- a/lib/use_db.php
 +++ b/lib/use_db.php
-@@ -4,6 +4,7 @@
- 
+@@ -4,6 +4,7 @@ require('lib.database.php');
+
  function setup_database_connection()
  {
 +/*
- 	$credfile = ETCDIR . '/dbpasswords.secret';
- 	$credentials = @file($credfile);
- 	if (!$credentials) {
-@@ -37,5 +38,8 @@
- 		user_error("Failed to create database connection", E_USER_ERROR);
- 		exit();
- 	}
+     $credfile = ETCDIR . '/dbpasswords.secret';
+     $credentials = @file($credfile);
+     if (!$credentials) {
+@@ -43,4 +44,7 @@ function setup_database_connection()
+         user_error("Failed to create database connection", E_USER_ERROR);
+         exit();
+     }
 +*/
-+	$credfile = ETCDIR . '/domserver.dbconfig.php';
-+	require(LIBDIR . '/debian-database.php');
++    $credfile = ETCDIR . '/domserver.dbconfig.php';
++    require(LIBDIR . '/debian-database.php');
  }
- 

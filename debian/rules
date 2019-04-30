@@ -25,6 +25,7 @@ build-stamp:
 		\
 		--with-domserver_libdir=\$${prefix}/share/domjudge \
 		--with-domserver_libwwwdir=\$${prefix}/share/domjudge/libwww \
+		--with-domserver_webappdir=\$${prefix}/share/domjudge/webapp \
 		--with-domserver_libsubmitdir=\$${prefix}/share/domjudge \
 		\
 		--with-judgehost_bindir=\$${prefix}/sbin \
@@ -63,11 +64,12 @@ install: build
 	dh_install
 
 	# clean up tmpdirs
-	rmdir $(DJDS)/tmp $(DJJH)/tmp $(DJDS)/var/run/domjudge $(DJJH)/var/run/domjudge
+	# rmdir $(DJDS)/tmp $(DJJH)/tmp
+	rmdir $(DJDS)/var/run/domjudge $(DJJH)/var/run/domjudge
 
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
-		rm COPYING* README.md README.country_flags ChangeLog logos/DOMjudgelogo.png
+		rm COPYING* README.md README.country_flags ChangeLog
 
 	# This must be shipped in domjudge-common
 	rm $(DJDS)/etc/domjudge/common-config.php \
@@ -80,9 +82,9 @@ install: build
 	# Saviour lib.error.sh before we trash /u/s/d
 	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
 
-	# We'd like these to be amendable by the admin
-	cd $(DJDS)/usr/share/domjudge/www/images/ && \
-		mv teams affiliations ../../../../../var/lib/domjudge/images/
+	# We'd like these to be amendable by the admin(See domjudge-domserver.links)
+	cd $(DJDS)/usr/share/domjudge/webapp/web/images/ && \
+		mv teams affiliations ../../../../../../var/lib/domjudge/images/
 
 	# This we'll symlink from the system-copy
 	rm $(DJJH)/usr/lib/domjudge/sh-static
