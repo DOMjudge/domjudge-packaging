@@ -24,11 +24,11 @@ Description: common files for the DOMjudge programming contest jury system
 Package: domjudge-domserver
 Architecture: all
 Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
- libapache2-mod-php | libapache2-mod-php5, php-mysql | php5-mysql,
- php-cli | php5-cli, php-json | php5-json, php-gd | php5-gd,
+ php, php-mysql, php-xml, php-intl, php-curl, php-mbstring,
+ php-cli, php-json, php-gd,
  zip, unzip, dbconfig-common, default-mysql-client | virtual-mysql-client,
  ${misc:Depends}
-Recommends: php-curl | php5-curl, ntp, default-mysql-server | virtual-mysql-server,
+Recommends: php-curl, ntp, default-mysql-server | virtual-mysql-server,
  phpmyadmin
 Suggests: enscript, lpr
 Description: programming contest jury system (server)
@@ -44,8 +44,8 @@ Description: programming contest jury system (server)
 
 Package: domjudge-judgehost
 Architecture: any
-Depends: domjudge-common (= ${source:Version}), php-cli | php5-cli,
- php-json | php5-json, php-curl | php5-curl, procps, bash-static,
+Depends: domjudge-common (= ${source:Version}), php-cli,
+ php-json, php-curl, php-xml, php-zip, procps, bash-static,
  adduser, lsb-base, unzip,
  ${shlibs:Depends}, ${misc:Depends}
 Recommends: ntp, sudo, debootstrap, gcc, g++, default-jdk-headless | default-jdk

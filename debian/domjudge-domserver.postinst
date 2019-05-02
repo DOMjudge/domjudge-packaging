@@ -22,6 +22,7 @@ COMMON_STATE=$(dpkg-query -f '${Status}' -W 'apache2.2-common' 2>/dev/null | awk
 
 if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
 	. /usr/share/apache2/apache2-maintscript-helper
+	apache2_invoke enmod rewrite
 	apache2_invoke enconf domjudge
 elif [ "$COMMON_STATE" = "installed" ] || [ "$COMMON_STATE" = "unpacked" ] ; then
 	[ -d /etc/apache2/conf.d/ ] && [ ! -L /etc/apache2/conf.d/phpmyadmin.conf ] && ln -s ../conf-available/domjudge.conf /etc/apache2/conf.d/domjudge.conf
