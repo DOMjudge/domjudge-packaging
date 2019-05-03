@@ -18,6 +18,7 @@ elif [ "$COMMON_STATE" = "installed" ] || [ "$COMMON_STATE" = "unpacked" ] ; the
 fi
 rm -f /etc/apache2/conf-available/domjudge.conf
 
+rm -rf /var/cache/domjudge
 
 if [ "$1" = "purge" ]; then
         rm -f /etc/domjudge/domserver.dbconfig.php
@@ -28,7 +29,7 @@ if [ "$1" = "purge" ]; then
 	# Purge accumulated files (not entire /var/lib/domjudge
 	# since domjudge-judgehost may remain installed)
 	rm -rf /var/lib/domjudge/images /var/lib/domjudge/submissions \
-		/etc/domjudge/dbpasswords.secret
+		/var/log/domjudge /etc/domjudge/dbpasswords.secret
 fi
 
 

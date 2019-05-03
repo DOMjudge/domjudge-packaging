@@ -136,7 +136,7 @@ binary-indep: build install
 	dh_installlogrotate -i
 	dh_link -i
 	dh_compress -i -X .tex -X .pdf
-	dh_fixperms -i -X genteammanuals -X gentexconfig
+	dh_fixperms -i -X genteammanuals -X gentexconfig -X var/cache/domjudge -X var/log/domjudge -X var/lib/domjudge
 	dh_installdeb -i
 	dh_gencontrol -i
 	dh_md5sums -i
