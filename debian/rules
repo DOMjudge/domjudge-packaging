@@ -117,7 +117,6 @@ install: build
 	# Database configuration
 	cat sql/mysql_db_structure.sql sql/mysql_db_defaultdata.sql \
 		sql/mysql_db_files_defaultdata.sql > $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/install/mysql
-	cp debian/src/db_clean.sql $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/remove/mysql
 	# Upgrades
 	for i in sql/upgrade/upgrade_*_*.sql; do \
 		T=`echo $$i|sed -r 's#sql/upgrade/upgrade_.*_(.*)\.sql#\1#'`; \

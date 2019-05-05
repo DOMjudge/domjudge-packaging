@@ -8,6 +8,9 @@ dbc_generate_include_perms="0640"
 dbc_generate_include=php:/etc/domjudge/domserver.dbconfig.php
 dbc_go domjudge-domserver $@
 
+# dbconfig-generate-include could instantiate a template, but we're
+# already running it above and can only run one. So use different
+# approach as long as we still need two files for db info.
 /etc/domjudge/gendbparams > /usr/share/domjudge/webapp/app/config/parameters.yml
 
 . /etc/dbconfig-common/domjudge-domserver.conf
