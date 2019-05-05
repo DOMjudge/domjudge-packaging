@@ -86,11 +86,12 @@ install: build
 	rm $(DJJH)/usr/lib/domjudge/sh-static
 
 	# Remove so they can be symlinked to system dirs
-	rm -r $(DJDS)/usr/share/domjudge/webapp/var/cache $(DJDS)/usr/share/domjudge/webapp/var/logs
+	rm -r $(DJDS)/usr/share/domjudge/webapp/var/cache \
+		$(DJDS)/usr/share/domjudge/webapp/var/logs \
+		$(DJDS)/usr/share/domjudge/webapp/var/sessions
 
 	# Makes no sense to include passwords generated on .deb build host
-	rm $(DJDS)/etc/domjudge/dbpasswords.secret \
-		$(DJDS)/etc/domjudge/restapi.secret \
+	rm $(DJDS)/etc/domjudge/*.secret \
 		$(DJDS)/etc/domjudge/gendbpasswords \
 		$(DJDS)/usr/bin/dj_setup_database
 
@@ -99,8 +100,10 @@ install: build
 
 	# Needs to be web-writable:
 	chgrp www-data $(DJDS)/var/lib/domjudge/submissions \
+		$(DJDS)/var/lib/domjudge/sessions \
 		$(DJDS)/var/log/domjudge $(DJDS)/var/cache/domjudge
-	chmod g+w $(DJDS)/var/lib/domjudge/submissions \
+	chmod 0770 $(DJDS)/var/lib/domjudge/submissions \
+		$(DJDS)/var/lib/domjudge/sessions \
 		$(DJDS)/var/log/domjudge $(DJDS)/var/cache/domjudge
 
 	# Fixup sudoers file to match our assumptions for user/chroot location
