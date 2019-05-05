@@ -24,23 +24,19 @@ build-stamp:
 		--with-domjudge_docdir=\$${prefix}/share/doc/domjudge-doc \
 		\
 		--with-domserver_libdir=\$${prefix}/share/domjudge \
-		--with-domserver_libwwwdir=\$${prefix}/share/domjudge/libwww \
+		--with-domserver_libvendordir=\$${prefix}/share/domjudge/lib/vendor \
 		--with-domserver_webappdir=\$${prefix}/share/domjudge/webapp \
 		--with-domserver_libsubmitdir=\$${prefix}/share/domjudge \
 		\
 		--with-judgehost_bindir=\$${prefix}/sbin \
 		--with-judgehost_libdir=\$${prefix}/share/domjudge \
+		--with-judgehost_libvendordir=\$${prefix}/share/domjudge/lib/vendor \
 		--with-judgehost_libjudgedir=\$${prefix}/lib/domjudge \
 		--with-judgehost_chrootdir=/var/lib/domjudge/chroot \
 		\
 		--with-domjudge-user=root
 
-	# 'make build' also builds the very time-consuming misc-tools,
-	# skip that for now.
-	#$(MAKE) build
-	$(MAKE) domserver
-	$(MAKE) judgehost
-	$(MAKE) docs
+	$(MAKE) all
 
 	touch build-stamp
 
@@ -77,7 +73,7 @@ install: build
 
 	# This is in domjudge-common
 	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
-	      $(DJDS)/usr/lib/domjudge/vendor $(DJJH)/usr/lib/domjudge/vendor
+		$(DJDS)/usr/share/domjudge/lib/vendor
 
 	# Saviour lib.error.sh before we trash /u/s/d
 	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
