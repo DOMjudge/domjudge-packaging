@@ -123,6 +123,7 @@ install: build
 		T=`echo $$i|sed -r 's#sql/upgrade/upgrade_.*_(.*)\.sql#\1#'`; \
 		cp $$i $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/$$T; \
 	done
+	cp -a debian/src/gendbparams $(DJDS)/etc/domjudge/
 
 # Build architecture-independent files here.
 binary-indep: build install

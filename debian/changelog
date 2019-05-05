@@ -1,3 +1,9 @@
+domjudge (7.0.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Tue, 30 Apr 2019 18:56:45 +0000
+
 domjudge (5.3.2-1) unstable; urgency=medium
 
   * New upstream release.

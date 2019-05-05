@@ -1,9 +1,5 @@
 #!/bin/sh -e
 
-# Let the webserver save backups of submissons to this dir
-chgrp www-data /var/lib/domjudge/submissions
-chmod 0770 /var/lib/domjudge/submissions
-
 . /usr/share/debconf/confmodule
 . /usr/share/dbconfig-common/dpkg/postinst.mysql
 
@@ -11,6 +7,8 @@ dbc_generate_include_owner="root:www-data"
 dbc_generate_include_perms="0640"
 dbc_generate_include=php:/etc/domjudge/domserver.dbconfig.php
 dbc_go domjudge-domserver $@
+
+/etc/domjudge/gendbparams > /usr/share/domjudge/webapp/app/config/parameters.yml
 
 . /etc/dbconfig-common/domjudge-domserver.conf
 
@@ -25,7 +23,7 @@ if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
 	apache2_invoke enmod rewrite
 	apache2_invoke enconf domjudge
 elif [ "$COMMON_STATE" = "installed" ] || [ "$COMMON_STATE" = "unpacked" ] ; then
-	[ -d /etc/apache2/conf.d/ ] && [ ! -L /etc/apache2/conf.d/phpmyadmin.conf ] && ln -s ../conf-available/domjudge.conf /etc/apache2/conf.d/domjudge.conf
+	[ -d /etc/apache2/conf.d/ ] && [ ! -L /etc/apache2/conf.d/domjudge.conf ] && ln -s ../conf-available/domjudge.conf /etc/apache2/conf.d/domjudge.conf
 fi
 
 #DEBHELPER#
