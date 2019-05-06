@@ -19,10 +19,10 @@ fi
 
 # Allow judgedaemon to write here, and only somewhat privileged users
 # (ones that may also read syslog) to inspect the logs and judgings
-chown domjudge:adm /var/log/domjudge \
+chown domjudge:adm /var/log/domjudge/judgehost \
 	/var/lib/domjudge /var/lib/domjudge/judgings
 
-chmod 0751 /var/log/domjudge /var/lib/domjudge/judgings
+chmod 0751 /var/log/domjudge/judgehost /var/lib/domjudge/judgings
 
 # set up restapi credentials
 db_get domjudge/api_endpoint

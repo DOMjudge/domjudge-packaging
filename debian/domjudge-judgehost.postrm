@@ -13,9 +13,12 @@ fi
 
 if [ "$1" = "purge" ]; then
 	rm -f /var/log/domjudge/judge.*.log
+	rm -rf /var/log/domjudge/judgehost
 	rm -rf /var/lib/domjudge/chroot
 
-    rm -f /etc/domjudge/restapi.secret
+	rm -f /etc/domjudge/restapi.secret
+
+	rmdir --ignore-fail-on-non-empty /var/log/domjudge
 
 	# Remove my changes to the db.
 	db_purge

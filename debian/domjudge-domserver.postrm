@@ -29,7 +29,8 @@ if [ "$1" = "purge" ]; then
 	# Purge accumulated files (not entire /var/lib/domjudge
 	# since domjudge-judgehost may remain installed)
 	rm -rf /var/lib/domjudge/images /var/lib/domjudge/submissions \
-		/var/log/domjudge /etc/domjudge/dbpasswords.secret
+		/var/log/domjudge/domserver /etc/domjudge/dbpasswords.secret
+	rmdir --ignore-fail-on-non-empty /var/log/domjudge
 fi
 
 
