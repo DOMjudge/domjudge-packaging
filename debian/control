@@ -1,5 +1,5 @@
 Source: domjudge
-Priority: extra
+Priority: optional
 Section: misc
 Maintainer: DOMjudge Developers <team@domjudge.org>
 Uploaders: Jaap Eldering <jaap@jaapeldering.nl>, Keith Johnson <kj@ubergeek42.com>, Thijs Kinkhorst <thijs@debian.org>
@@ -25,11 +25,10 @@ Package: domjudge-domserver
 Architecture: all
 Depends: domjudge-common (= ${source:Version}), apache2 | httpd,
  php, php-mysql, php-xml, php-intl, php-curl, php-mbstring,
- php-cli, php-json, php-gd,
+ php-cli, php-json, php-gd, php-zip,
  zip, unzip, dbconfig-common, default-mysql-client | virtual-mysql-client,
  ${misc:Depends}
-Recommends: php-curl, ntp, default-mysql-server | virtual-mysql-server,
- phpmyadmin
+Recommends: ntp, default-mysql-server | virtual-mysql-server
 Suggests: enscript, lpr
 Description: programming contest jury system (server)
  DOMjudge is a jury system for running a programming contest. It allows
