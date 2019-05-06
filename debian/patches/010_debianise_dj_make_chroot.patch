@@ -26,7 +26,7 @@ Forwarded: not-needed
  umount "$CHROOTDIR/proc"
 
 +if [ "$CHROOTDIR" = /var/lib/domjudge/chroot.new ]; then
-+	mv /var/lib/domjudge/chroot.new /var/lib/domjudge/javachroot
++	mv /var/lib/domjudge/chroot.new /var/lib/domjudge/chroot
 +fi
 +
  echo "Done building chroot in $CHROOTDIR"
