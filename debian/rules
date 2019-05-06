@@ -71,6 +71,9 @@ install: build
 	rm $(DJDS)/etc/domjudge/common-config.php \
 		$(DJDS)/usr/share/domjudge/*.php $(DJDS)/usr/share/domjudge/alert
 
+	# This should only be in domserver (fixed upstream)
+	rm -f $(DJJH)/etc/domjudge/verdicts.php
+
 	# This is in domjudge-common
 	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
 		$(DJDS)/usr/share/domjudge/lib/vendor
