@@ -1,6 +1,6 @@
 Template: domjudge/api_endpoint
 Type: string
-Default: http://localhost/domjudge/api/
+Default: http://localhost/domjudge/api
 Description: API URL:
  The API URL for the DOMjudge Server you
  want to judge for. You may change this
