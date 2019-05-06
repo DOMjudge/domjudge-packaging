@@ -18,7 +18,7 @@ elif [ "$COMMON_STATE" = "installed" ] || [ "$COMMON_STATE" = "unpacked" ] ; the
 fi
 rm -f /etc/apache2/conf-available/domjudge.conf
 
-rm -rf /var/cache/domjudge
+rm -rf /var/cache/domjudge /var/lib/domjudge/sessions
 
 if [ "$1" = "purge" ]; then
         rm -f /etc/domjudge/domserver.dbconfig.php
