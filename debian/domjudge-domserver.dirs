@@ -2,5 +2,4 @@ var/cache/domjudge
 var/lib/domjudge/images
 var/lib/domjudge/sessions
 usr/share/dbconfig-common/data/domjudge-domserver/install
-usr/share/dbconfig-common/scripts/domjudge-domserver/install
 usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql

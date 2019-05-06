@@ -21,7 +21,7 @@ rm -f /etc/apache2/conf-available/domjudge.conf
 rm -rf /var/cache/domjudge /var/lib/domjudge/sessions
 
 if [ "$1" = "purge" ]; then
-        rm -f /etc/domjudge/domserver.dbconfig.php
+        rm -f /etc/domjudge/domserver.dbconfig.php /etc/domjudge/initial_admin_password.secret
         if which ucf >/dev/null 2>&1; then
                 ucf --purge /etc/domjudge/domserver.dbconfig.php
         fi
