@@ -22,4 +22,6 @@ tune2fs -U random "$ROOTPART"
 
 # Run `update-grub` on the image to change the UUID in /boot/grub/grub.cfg.
 
+sleep 1
+
 kpartx -d "$IMG"
