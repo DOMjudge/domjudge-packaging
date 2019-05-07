@@ -26,10 +26,10 @@ If everything was in order you will now get a .dsc (source package)
 and several .deb's (binary package). If not, find out why and fix it.
 
 Finally, if you're one of the DOMjudge maintainers, upload the package
-to the DOMjudge Debian repository. When the packages are available on
-domjudge@domjudge, run something like `dput domjudge_x.y.z-1_amd64.changes`.
-Alternatively, set up `~/.dput.cf` to upload from your machine.
-Then as domjudge@domjudge run `mini-dinstall`.
+to the DOMjudge Debian repository:
+- copy the files to /srv/http/domjudge/debian/mini-dinstall/incoming/
+- run `mini-dinstall -b` (ensure you have a full tty available e.g ssh
+  directly into the domjudge user)
 
 
 ## DOMjudge-live image
