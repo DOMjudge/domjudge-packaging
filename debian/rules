@@ -127,6 +127,7 @@ install: build
 		T=`echo $$i|sed -r 's#sql/upgrade/upgrade_.*_(.*)\.sql#\1#'`; \
 		cp $$i $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/$$T; \
 	done
+	sed -i 's#^source #source /usr/share/domjudge/sql/#' $(DJDS)/usr/share/dbconfig-common/data/domjudge-domserver/upgrade/mysql/*
 	cp -a debian/src/setadminpassword $(DJDS)/etc/domjudge/
 	cp -a debian/src/gendbparams $(DJDS)/etc/domjudge/
 
