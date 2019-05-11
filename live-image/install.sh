@@ -66,13 +66,11 @@ rm -f $EXTRA
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Add DOMjudge Debian archive key:
-echo -n "Adding DOMjudge APT archive key... "
-apt-key add /tmp/domjudge-apt-key.asc
+echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
+
+# Update packages, we've added sources and keys:
 apt-get -q update
 apt-get -q -y upgrade
-
-echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf
 
 # Fix some GRUB boot loader settings:
 sed -i -e 's/^\(GRUB_DEFAULT\)=.*/\1=2/' \
