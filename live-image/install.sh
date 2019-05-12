@@ -165,8 +165,8 @@ systemctl set-default multi-user.target
 systemctl disable apache2.service mysql.service domjudge-judgehost.service
 
 # Make some files available in the doc root
-ln -s /usr/share/doc/domjudge-doc/examples/*.pdf      /var/www/html/
-ln -s /usr/share/domjudge/www/images/DOMjudgelogo.png /var/www/html/
+ln -s /usr/share/doc/domjudge-doc/examples/*.pdf             /var/www/html/
+ln -s /usr/share/domjudge/webapp/web/images/DOMjudgelogo.png /var/www/html/
 
 # Build DOMjudge chroot environment (first reclaim some space):
 apt-get -q clean
