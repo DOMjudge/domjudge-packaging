@@ -26,6 +26,7 @@ if [ -x /etc/first-boot.sh ]; then
 	mv /etc/first-boot.sh /etc/first-boot-done.sh
 fi
 
+# Show warning to change default passwords:
 if [ -e /etc/domjudge-default-passwords ]; then
 	cat /etc/domjudge-default-passwords
 fi
