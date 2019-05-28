@@ -164,6 +164,8 @@ cat /tmp/mysql_db_livedata.sql \
 systemctl set-default multi-user.target
 systemctl disable apache2.service mysql.service domjudge-judgehost.service
 
+sed -i '/^CGROUPDIR=/c CGROUPDIR=/sys/fs/cgroup' /etc/init.d/domjudge-judgehost
+
 # Make some files available in the doc root
 ln -s /usr/share/doc/domjudge-doc/examples/*.pdf             /var/www/html/
 ln -s /usr/share/domjudge/webapp/web/images/DOMjudgelogo.png /var/www/html/
