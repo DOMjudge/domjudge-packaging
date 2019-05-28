@@ -170,14 +170,8 @@ ln -s /usr/share/domjudge/webapp/web/images/DOMjudgelogo.png /var/www/html/
 
 # Build DOMjudge chroot environment (first reclaim some space):
 apt-get -q clean
-/usr/local/sbin/dj_make_chroot
+dj_make_chroot -i python3-minimal,mono-mcs,bash-static
 
-# Add packages to chroot for additional language support
-mount --bind /proc $CHROOTDIR/proc
-chroot $CHROOTDIR /bin/sh -c \
-	"apt-get -q -y install python-minimal python3-minimal mono-mcs bash-static ; \
-	apt-get -q clean"
-umount $CHROOTDIR/proc
 # Copy (static) bash binary to location that is available within chroot
 cp -a $CHROOTDIR/bin/bash-static $CHROOTDIR/usr/local/bin/bash
 
