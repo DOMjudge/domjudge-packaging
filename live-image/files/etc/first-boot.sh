@@ -6,10 +6,10 @@
 
 dpkg-reconfigure openssh-server
 
-# Generate new random password for domjudge database user; first make
+# Generate new random password for domjudge DB and API; first make
 # sure that MySQL is running.
 service mysql start
-/usr/local/sbin/dj-live genpass > /dev/null
+/usr/local/sbin/dj_live genpass > /dev/null
 
 service domjudge-judgehost restart
 

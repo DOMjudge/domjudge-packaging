@@ -25,7 +25,7 @@ where `<target>` is one of:
   judgehost    = run judgehost with judgedaemon only
 ```
 
-A script `dj-live` is included to perform some basic tasks, such as
+A script `dj_live` is included to perform some basic tasks, such as
 changing passwords from the defaults. Run it without arguments on the
 console for more information.
 
