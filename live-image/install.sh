@@ -95,31 +95,13 @@ if [ -f 75-persistent-net-generator.rules ]; then
 fi
 cd -
 
-# Pregenerate random password for DOMjudge database, so that we can
-# set it the same for domserver and judgehost packages:
-DBPASSWORD=`head -c12 /dev/urandom | base64 | head -c 16 | tr '/+' 'Aa'`
-
 # Install packages including DOMjudge:
 debconf-set-selections <<EOF
-mysql-server-5.1	mysql-server/root_password	password	domjudge
-mysql-server-5.1	mysql-server/root_password_again		password	domjudge
-
-phpmyadmin	phpmyadmin/mysql/admin-user	string	root
-phpmyadmin	phpmyadmin/mysql/admin-pass	password	domjudge
 phpmyadmin	phpmyadmin/reconfigure-webserver	multiselect	apache2
 phpmyadmin	phpmyadmin/database-type	select	mysql
 
-domjudge-domserver	domjudge-domserver/mysql/app-pass       password	$DBPASSWORD
-domjudge-domserver	domjudge-domserver/app-password-confirm	password	$DBPASSWORD
 domjudge-domserver	domjudge-domserver/dbconfig-install	boolean	true
-domjudge-domserver	domjudge-domserver/mysql/admin-user	string	root
-domjudge-domserver	domjudge-domserver/mysql/admin-pass	password	domjudge
-
-domjudge-judgehost	domjudge-judgehost/mysql/app-pass       password	$DBPASSWORD
-domjudge-judgehost	domjudge-judgehost/app-password-confirm	password	$DBPASSWORD
 domjudge-judgehost	domjudge-judgehost/dbconfig-install	boolean	true
-domjudge-judgehost	domjudge-judgehost/mysql/admin-user	string	root
-domjudge-judgehost	domjudge-judgehost/mysql/admin-pass	password	domjudge
 
 EOF
 
@@ -146,19 +128,15 @@ fi
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
 
-# Generate REST API password and set it for judgehost user:
-cd /etc/domjudge/
-./genrestapicredentials > restapi.secret
-RESTPW=`tail -n1 restapi.secret | sed 's/.*[[:space:]]//'`
-echo "UPDATE \`user\` SET \`password\` = MD5('judgehost#$RESTPW') \
-WHERE \`username\` = 'judgehost';" >> /tmp/mysql_db_livedata.sql
-cd -
+# Set default admin password:
+/usr/local/sbin/dj_live adminpass admin
+rm -f /etc/domjudge/initial_admin_password.secret
 
 # Add DOMjudge-live specific and sample DB content:
 cat /tmp/mysql_db_livedata.sql \
     /usr/share/domjudge/sql/mysql_db_examples.sql \
     /usr/share/domjudge/sql/mysql_db_files_examples.sql \
-| mysql -u root --password=domjudge domjudge
+| mysql domjudge
 
 # Configure domserver/judgehost systemd target (aka. "runlevels"):
 systemctl set-default multi-user.target

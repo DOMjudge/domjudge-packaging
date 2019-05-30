@@ -13,6 +13,14 @@ error()
 	exit 1
 }
 
+# NOTE: the hash function and cost below have to be kept synchronised
+# with those used in DOMjudge code!
+dj_pwhash()
+{
+	[ -n "$1" ] || error "missing password argument to dj_pwhash."
+	htpasswd -nbB -C 10 foouser "$1" | sed 's/^foouser://'
+}
+
 [ `id -u` -eq 0 ] || error "this program must be run as root."
 
 case "$1" in
@@ -20,25 +28,16 @@ case "$1" in
 		echo "Updating system root password..."
 		passwd
 
-		echo "Updating MySQL root password..."
-		read -es -p "Enter new MySQL password: "  PASS1 ; echo
-		read -es -p "Retype new MySQL password: " PASS2 ; echo
-		[ "x$PASS1" = "x$PASS2" ] || error "passwords do not match."
-		# Use Debian administrative credentials to login to the MySQL server.
-		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
-UPDATE user SET password=PASSWORD('$PASS1') WHERE user='root';
-FLUSH PRIVILEGES;
-EOF
-		echo "MySQL root password updated."
-
 		rm /etc/issue
 		ln -s /etc/issue.djlive /etc/issue
 
 		cat <<EOF
 
-You might also want to modify the default passwords for the web interfaces.
-The jury interface has user 'admin' with password 'admin' preconfigured.
-This can be changed in the web interface.
+You might also want to modify the default password for the web interface.
+The admin user has password 'admin' preconfigured. This can be changed in
+the web interface, or by running
+
+  $0 adminpass
 
 Furthermore, the files
 
@@ -47,9 +46,9 @@ Furthermore, the files
 
 contain the DOMjudge database user and REST API passwords, respectively.
 These are for internal use only, and were generated on first boot of this
-image. They can be regenerated with
+image. If needed, they can be regenerated with
 
-  $0 genpass
+  $0 dbapipass
 
 This also updates the files /etc/dbconfig-common/domjudge-domserver.conf
 and /usr/share/domjudge/webapp/app/config/parameters.yml.
@@ -59,7 +58,30 @@ machines used, and the URL adapted to point to the main DOMjudge server.
 EOF
 		;;
 
-	genpass)
+	adminpass)
+		[ -n "$2" ] && PASS="$2"
+
+		echo "Updating DOMjudge web interface admin user password..."
+		if [ -z "$PASS" ]; then
+			read -es -p "Enter new admin user password: "  PASS1 ; echo
+			read -es -p "Retype new admin user password: " PASS2 ; echo
+			[ "x$PASS1" = "x$PASS2" ] || error "passwords do not match."
+			PASS="$PASS1"
+		fi
+
+		# NOTE: the hash function and cost below have to be kept
+		# synchronised with those used in the code!
+		PWHASH=$(dj_pwhash "$PASS")
+
+		mysql domjudge <<EOF
+UPDATE user SET password='$PWHASH' WHERE username='admin';
+EOF
+
+		echo " done."
+
+		;;
+
+	dbapipass)
 		printf "Generating new DOMjudge database credentials..."
 		PW=$(head -c12 /dev/urandom | base64 | head -c16 | tr '/+' 'Aa')
 
@@ -76,7 +98,7 @@ EOF
 			/etc/domjudge/domserver.dbconfig.php
 
 		# Use Debian administrative credentials to login to the MySQL server.
-		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf mysql <<EOF
+		mysql mysql <<EOF
 UPDATE user SET password=PASSWORD('$PW') WHERE user='domjudge_sql';
 FLUSH PRIVILEGES;
 EOF
@@ -89,12 +111,9 @@ EOF
 		/etc/domjudge/genrestapicredentials > /etc/domjudge/restapi.secret
 
 		RESTPW=$(tail -n1 /etc/domjudge/restapi.secret | sed 's/.*[[:space:]]//')
+		PWHASH=$(dj_pwhash "$RESTPW")
 
-		# NOTE: the hash function and cost below have to be kept
-		# synchronised with those used in the code!
-		PWHASH=$(htpasswd -nbB -C 10 foouser "$RESTPW" | sed 's/^foouser://')
-
-		/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf domjudge <<EOF
+		mysql domjudge <<EOF
 UPDATE user SET password='$PWHASH' WHERE username='judgehost';
 EOF
 
@@ -114,8 +133,9 @@ EOF
 Usage: $0 <command> [argument]...
 
 Commands:
-  rootpass    set system and MySQL database root passwords
-  genpass     (re)generate DOMjudge DB user and REST API passwords
+  rootpass    set system root password
+  dbapipass   (re)generate DOMjudge DB user and REST API passwords
+  adminpass   set DOMjudge web interface admin user password
   upgrade     install system (security) updates
   help        display this usage information
 

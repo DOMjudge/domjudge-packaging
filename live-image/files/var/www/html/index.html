@@ -24,20 +24,19 @@ and the <a href="https://www.apache.org/">Apache</a> webserver.</p>
 <li><a href="/domjudge/team/"><strong>Team interface:</strong></a> allows a team to submit and
     view submissions and clarifications, and view and the scoreboard.</li>
 <li><a href="/domjudge/jury/"><strong>Jury/admin interface:</strong></a> the full set of options
-    available to judges/admins. Log in with user <em>jury</em> or
-    <em>admin</em> respectively, close your browser to log out. The
-    admin interface is a superset of the jury interface with
-    additional administrative options.</li>
+    available to judges/admins. A user <em>admin</em> is available that also has a team
+    <em>DOMjudge</em> associated to it.</li>
 </ul>
 
-<p><strong>Note</strong> that initially all passwords are set equal to
-the respective usernames. Furthermore, a team account <em>domjudge</em>
-is preconfigured with equal password. See the script <code>dj_live</code>
-available on the system to change passwords.</p>
+<p><strong>Note</strong> that initially the system root passwords is
+<em>domjudge</em> and domjudge admin user password is <em>admin</em>.
+These should be changed as soon as possible. Use the script
+<code>dj_live</code> on the system to change passwords.</p>
 
 <p>Additionally <a href="/phpmyadmin"><strong>phpMyAdmin</strong></a>
-is available. Login with the MySQL <em>root</em> user to access and
-modify the DOMjudge database.</p>
+is available. Login with the MySQL <em>domjudge_sql</em> user to
+access and modify the DOMjudge database. The password can be found
+in <code>/etc/domjudge/domserver.dbconfig.php</code>.</p>
 
 <h2>Problem statements</h2>
 
