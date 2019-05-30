@@ -51,7 +51,8 @@ image. They can be regenerated with
 
   $0 genpass
 
-This also updates the file /etc/dbconfig-common/domjudge-domserver.conf.
+This also updates the files /etc/dbconfig-common/domjudge-domserver.conf
+and /usr/share/domjudge/webapp/app/config/parameters.yml.
 The file /etc/domjudge/restapi.secret must be copied to any other judgehost
 machines used, and the URL adapted to point to the main DOMjudge server.
 
@@ -65,6 +66,9 @@ EOF
 		sed -i -e "s/^\(dbc_dbpass\)=.*/\1='$PW'/" \
 		       -e "s/^\(dbc_dbserver\)=.*/\1=''/" \
 		    /etc/dbconfig-common/domjudge-domserver.conf
+
+		sed -i -e "s/^\( *database_password:\).*/\1 $PW/" \
+			/usr/share/domjudge/webapp/app/config/parameters.yml
 
 		# Generate new DOMjudge include snippet from dbconfig:
 		dbconfig-generate-include -f php -O root:www-data -m 0640 \
