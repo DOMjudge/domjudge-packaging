@@ -83,8 +83,8 @@ vboxmanage convertfromraw domjudge-live_YYYY-MM-DD.img \
 ## Generating the image from sources
 
 NOTE: these images are not Debian-live systems in the sense of
-http://live.debian.net/ but plain Debian installations that can
-be copied onto an USB stick and booted from there. That is, any
+https://www.debian.org/CD/live/ but plain Debian installations that
+can be copied onto an USB stick and booted from there. That is, any
 changes are persistently stored on the image.
 
 This image can be generated semi-automatically from sources.
