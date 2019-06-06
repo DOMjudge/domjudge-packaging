@@ -59,6 +59,10 @@ fi
 if ! bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} status > /dev/null 2>&1
 then
 	echo "  Database not installed; installing..."
+	if [[ -f etc/genadminpassword ]]
+	then
+		etc/genadminpassword > etc/initial_admin_password.secret
+	fi
 	INSTALL=install
 	if [ "${DJ_DB_INSTALL_BARE}" -eq "1" ]
 	then
