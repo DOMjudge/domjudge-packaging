@@ -135,6 +135,9 @@ then
 	webapp/bin/console cache:clear --env=prod
 	# Fix permissions on cache and log directories
 	chown -R www-data: webapp/var
+	# Add the Docker gateway as a trusted proxy
+	DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
+	sed -i "s#^//\s*\(Request::setTrustedProxies(\)[^,]*#\1['${DOCKER_GATEWAY_IP}']#" webapp/web/app.php
 fi
 echo "[ok] Webserver config installed"; echo
 
