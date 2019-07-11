@@ -1,0 +1,3 @@
+#!/bin/bash
+phpenmod xdebug
+supervisorctl restart php

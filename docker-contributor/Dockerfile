@@ -58,6 +58,9 @@ WORKDIR /domjudge
 COPY ["php-config", "//etc/php/7.2/fpm/conf.d"]
 COPY ["php-config", "//etc/php/7.2/cli/conf.d"]
 
+# Disable Xdebug by default
+RUN phpdismod xdebug
+
 # Add scripts
 COPY ["scripts", "/scripts/"]
 RUN chmod 755 /scripts/start.sh \

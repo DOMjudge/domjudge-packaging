@@ -1,0 +1,3 @@
+#!/bin/bash
+phpdismod xdebug
+supervisorctl restart php

@@ -13,6 +13,7 @@ The container includes the following:
 * Two running judgedaemons using a chroot.
 * Scripts for reading the log files of the webserver and the judgedaemons.
 * A script to create a dummy DOMjudge user and submit all test submissions.
+* Scripts for enabling and disabling Xdebug.
 
 This container does not include:
 
@@ -43,7 +44,7 @@ Make sure you replace `[path-to-domjudge-checkout]` with the path to your local 
 
 The above command will start the container, set up DOMjudge for a maintainer install, set up the database and create a chroot to be used by the judgedaemons. It will then start nginx, PHP-FPM and two judgedaemons using supervisord.
 
-You can now access the web interface on [http://localhost:12345/](http://localhost:12345/). Use username `admin` and password `admin` to log in. Note that for DOMjudge 6.0.0 and higher the webserver configuration will be set up such that the debug front controller will be used.
+You can now access the web interface on [http://localhost:12345/](http://localhost:12345/). Use username `admin` and the password from `etc/initial_admin_password.secret` to log in. Note that for DOMjudge 6.0.0 and higher the webserver configuration will be set up such that the debug front controller will be used.
 
 ### Environment variables
 
@@ -93,6 +94,8 @@ The following commands are available:
 * `judgedaemon-log 0` and `judgedaemon-log 1`: tail the log of the first / second judgeaemon.
 * `symfony-log`: for DOMjudge using Symfony (i.e. 6.x and higher), tail the symfony log.
 * `submit-test-programs`: submit all test programs (by executing `make check test-stress` in the `tests` directory of the DOMjudge installation. This will also add a `dummy` user to your database if it does not exist yet. It's password will be set to `dummy`.
+* `xdebug-enable`: enable Xdebug debugging. See note below
+* `xdebug-disable`: disable Xdebug debugging. See note below
 
 Of course, you can always run `docker exec -it domjudge bash` to get a bash shell inside the container.
 
@@ -103,6 +106,18 @@ docker exec -it domjudge supervisorctl restart [service]
 ```
 
 where `[service]` is one of `nginx`, `php`, `judgedaemon0` or `judgedaemon1`.
+
+### Xdebug
+
+Xdebug is not enabled by default, because it will slow down requests quite a bit. You can enable it by running `docker-compose exec xdebug-enable` and disable it again
+by running `docker-compose exec xdebug-disable`.
+
+Xdebug has the following settings:
+
+* `xdebug.remote_autostart=1`: such that you do not have to set a cookie or GET parameter to start debugging.
+* `xdebug.remote_enable=1`: enable remote debugging.
+* `xdebug.remote_host=host.docker.internal`: connect to the Docker host for debugging.
+* `xdebug.idekey=IDE`: the IDE key to use; you should set this in your IDE of choice.
 
 ### Accessing the judgings
 
