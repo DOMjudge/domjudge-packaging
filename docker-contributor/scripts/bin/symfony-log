@@ -1,2 +1,7 @@
 #!/bin/bash
-tail -F /domjudge/webapp/var/logs/dev.log
+if [[ -d /domjudge/webapp/var/log ]]
+then
+    tail -F /domjudge/webapp/var/log/dev.log
+else
+    tail -F /domjudge/webapp/var/logs/dev.log
+fi
