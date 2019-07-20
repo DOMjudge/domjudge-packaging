@@ -42,10 +42,17 @@ echo "[..] Updating database credentials file"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
 if [[ "${USE_LEGACY}" -eq "0" ]]
 then
-	sed -i "s/database_host: .*/database_host: ${MYSQL_HOST}/" webapp/app/config/parameters.yml
-	sed -i "s/database_name: .*/database_name: ${MYSQL_DATABASE}/" webapp/app/config/parameters.yml
-	sed -i "s/database_user: .*/database_user: ${MYSQL_USER}/" webapp/app/config/parameters.yml
-	sed -i "s/database_password: .*/database_password: ${MYSQL_PASSWORD}/" webapp/app/config/parameters.yml
+	if [[ -f etc/gensymfonyenv ]]
+	then
+		DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
+		sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
+		composer symfony:dump-env prod
+	else
+		sed -i "s/database_host: .*/database_host: ${MYSQL_HOST}/" webapp/app/config/parameters.yml
+		sed -i "s/database_name: .*/database_name: ${MYSQL_DATABASE}/" webapp/app/config/parameters.yml
+		sed -i "s/database_user: .*/database_user: ${MYSQL_USER}/" webapp/app/config/parameters.yml
+		sed -i "s/database_password: .*/database_password: ${MYSQL_PASSWORD}/" webapp/app/config/parameters.yml
+	fi
 fi
 echo "[ok] Updated database credentials file"; echo
 
@@ -137,7 +144,13 @@ then
 	chown -R www-data: webapp/var
 	# Add the Docker gateway as a trusted proxy
 	DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
-	sed -i "s#^//\s*\(Request::setTrustedProxies(\)[^,]*#\1['${DOCKER_GATEWAY_IP}']#" webapp/web/app.php
+	if [[ -f webapp/web/app.php ]]
+	then
+		sed -i "s#^//\s*\(Request::setTrustedProxies(\)[^,]*#\1['${DOCKER_GATEWAY_IP}']#" webapp/web/app.php
+	else
+		echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
+		composer symfony:dump-env prod
+	fi
 fi
 echo "[ok] Webserver config installed"; echo
 
