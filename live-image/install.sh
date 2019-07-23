@@ -97,9 +97,6 @@ cd -
 
 # Install packages including DOMjudge:
 debconf-set-selections <<EOF
-phpmyadmin	phpmyadmin/reconfigure-webserver	multiselect	apache2
-phpmyadmin	phpmyadmin/database-type	select	mysql
-
 domjudge-domserver	domjudge-domserver/dbconfig-install	boolean	true
 domjudge-judgehost	domjudge-judgehost/dbconfig-install	boolean	true
 
@@ -107,10 +104,10 @@ EOF
 
 apt-get install -q -y \
 	apt-transport-https \
-	openssh-server mysql-server apache2 sudo php-zip \
+	openssh-server mariadb-server apache2 sudo php-zip \
 	gcc g++ default-jdk default-jre-headless fp-compiler \
 	python-minimal python3-minimal gnat gfortran mono-mcs \
-	ntp phpmyadmin debootstrap cgroup-bin libcgroup1 \
+	ntp debootstrap cgroup-bin libcgroup1 \
 	enscript lpr zip unzip mlocate
 
 # Use DOMjudge debian packages if present under /tmp:
