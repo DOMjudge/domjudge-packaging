@@ -186,6 +186,9 @@ cp /etc/issue.djlive /etc/issue.djlive-default-passwords
 cat /tmp/domjudge-default-passwords >> /etc/issue.djlive-default-passwords
 ln -s /etc/issue.djlive-default-passwords /etc/issue
 
+# Remove DOMjudge cache for password changes and space:
+rm -rf /var/cache/domjudge/prod/*
+
 # Unmount swap and zero empty space to improve compressibility:
 swapoff -a
 cat /dev/zero > /dev/sda1 2>/dev/null || true
@@ -203,4 +206,9 @@ update-initramfs -u -k all
 
 echo "Done installing, halting system..."
 
-halt
+# Reboot in Qemu since a halt hangs the emulation:
+if grep 'QEMU' /proc/cpuinfo >/dev/null ; then
+	reboot
+else
+	halt
+fi
