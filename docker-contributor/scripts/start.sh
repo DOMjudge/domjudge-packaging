@@ -46,6 +46,14 @@ fi
 MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
 MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
+cat > /home/domjudge/.my.cnf <<EOF
+[client]
+host=${MYSQL_HOST}
+user=root
+password=${MYSQL_ROOT_PASSWORD}
+EOF
+chown domjudge: /home/domjudge/.my.cnf
+
 echo "[..] Updating database credentials file"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
 echo "[ok] Updated database credentials file"; echo
