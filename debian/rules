@@ -154,7 +154,7 @@ binary-arch: build install
 	dh_testroot -a
 	dh_installchangelogs -a -X ChangeLog
 	dh_installdocs -a
-	dh_installinit -a
+	dh_installsystemd -a
 	dh_installman -a
 	dh_installdebconf -a
 	dh_installexamples -a
