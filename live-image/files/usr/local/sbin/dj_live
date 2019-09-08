@@ -103,6 +103,9 @@ UPDATE user SET password=PASSWORD('$PW') WHERE user='domjudge_sql';
 FLUSH PRIVILEGES;
 EOF
 
+		# Flush Symfony cache, since it stores the password.
+		/usr/share/domjudge/webapp/bin/console --env=prod cache:clear
+
 		echo " done."
 
 		echo "Generating new DOMjudge REST API password..."

@@ -125,10 +125,6 @@ fi
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
 
-# Set default admin password:
-/usr/local/sbin/dj_live adminpass admin
-rm -f /etc/domjudge/initial_admin_password.secret
-
 # Add DOMjudge-live specific and sample DB content:
 cat /tmp/mysql_db_livedata.sql \
     /usr/share/domjudge/sql/mysql_db_examples.sql \
@@ -186,8 +182,12 @@ cp /etc/issue.djlive /etc/issue.djlive-default-passwords
 cat /tmp/domjudge-default-passwords >> /etc/issue.djlive-default-passwords
 ln -s /etc/issue.djlive-default-passwords /etc/issue
 
+# Set default admin password:
+/usr/local/sbin/dj_live adminpass admin
+rm -f /etc/domjudge/initial_admin_password.secret
+
 # Remove DOMjudge cache for password changes and space:
-rm -rf /var/cache/domjudge/prod/*
+/usr/share/domjudge/webapp/bin/console --env=prod cache:clear
 
 # Unmount swap and zero empty space to improve compressibility:
 swapoff -a
