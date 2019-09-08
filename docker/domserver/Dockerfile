@@ -10,7 +10,7 @@ RUN apt-get update \
 	gcc g++ make zip unzip \
 	php-cli php-zip \
 	php-gd php-curl php-mysql php-json php-intl \
-	php-mcrypt php-gmp php-xml php-mbstring \
+	php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
 	linuxdoc-tools linuxdoc-tools-text \
 	groff texlive-latex-recommended texlive-latex-extra \
@@ -54,7 +54,7 @@ RUN apt-get update \
 	zip unzip acl supervisor mariadb-client apache2-utils \
 	nginx php-cli php-fpm php-zip \
 	php-gd php-curl php-mysql php-json php-intl \
-	php-mcrypt php-gmp php-xml php-mbstring php-ldap \
+	php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 

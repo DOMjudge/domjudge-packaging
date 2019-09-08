@@ -10,7 +10,7 @@ RUN apt-get update \
 	gcc g++ make zip unzip \
 	php-cli php-zip lsb-release debootstrap \
 	php-gd php-curl php-mysql php-json \
-	php-mcrypt php-gmp php-xml php-mbstring \
+	php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
 	&& rm -rf /var/lib/apt/lists/*
