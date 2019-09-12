@@ -25,8 +25,8 @@ RUN apt-get update \
     groff texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european \
     sudo debootstrap libcgroup-dev procps \
-    openjdk-11-jre-headless \
-    openjdk-11-jdk ghc fp-compiler \
+    default-jre-headless \
+    default-jdk ghc fp-compiler \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev python python-pip \
     enscript lpr ca-certificates less vim \
