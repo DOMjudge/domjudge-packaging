@@ -10,9 +10,9 @@ make_entry()
 	TARGET="$1"
 	NAME="$2"
 	shift 2
-	$LINUX | sed -n '/^menuentry /,/^}/ p' | \
-	sed -e 's/\(linux.* root=.*\)/\1'"${TARGET:+ systemd.unit=$TARGET.target} $@/" \
-	    -e "s/^menuentry '[^']*'/menuentry '$NAME'/"
+	$LINUX | sed -n '/^ *menuentry /,/^ *}/ p' | \
+	sed -e 's/\(linux.* root=.*\)/\1'" systemd.unit=$TARGET.target $@/" \
+	    -e "s/^\( *menuentry\) '[^']*'/\1 '$NAME'/"
 }
 
 make_entry domjudge-all 'DOMjudge domserver \& judgehost'
