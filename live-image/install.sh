@@ -187,7 +187,7 @@ ln -s /etc/issue.djlive-default-passwords /etc/issue
 rm -f /etc/domjudge/initial_admin_password.secret
 
 # Remove DOMjudge cache for password changes and space:
-/usr/share/domjudge/webapp/bin/console --env=prod cache:clear
+rm -rf /var/cache/domjudge/prod
 
 # Unmount swap and zero empty space to improve compressibility:
 swapoff -a

@@ -103,8 +103,8 @@ UPDATE user SET password=PASSWORD('$PW') WHERE user='domjudge_sql';
 FLUSH PRIVILEGES;
 EOF
 
-		# Flush Symfony cache, since it stores the password.
-		/usr/share/domjudge/webapp/bin/console --env=prod cache:clear
+		# Remove Symfony cache, since it stores the password.
+		rm -rf /var/cache/domjudge/prod
 
 		echo " done."
 
