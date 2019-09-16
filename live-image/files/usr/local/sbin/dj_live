@@ -120,6 +120,13 @@ EOF
 UPDATE user SET password='$PWHASH' WHERE username='judgehost';
 EOF
 
+		# Restart judgedaemon if it was meant to be running:
+		service domjudge-judgehost status >/dev/null 2>&1
+		exitcode=$?
+		if [ $exitcode -le 1 ]; then
+			service domjudge-judgehost restart
+		fi
+
 		echo " done."
 
 		;;

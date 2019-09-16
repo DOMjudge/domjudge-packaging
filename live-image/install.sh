@@ -122,6 +122,9 @@ else
 	        domjudge-judgehost${USEVERSION}
 fi
 
+# Overwrite init script to fix start/restart:
+mv /etc/init.d/domjudge-judgehost.new /etc/init.d/domjudge-judgehost
+
 # Do not have stuff listening that we don't use:
 apt-get remove -q -y --purge portmap nfs-common
 

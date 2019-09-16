@@ -11,6 +11,4 @@ dpkg-reconfigure openssh-server
 service mysql start
 /usr/local/sbin/dj_live dbapipass
 
-service domjudge-judgehost restart
-
 exit 0
