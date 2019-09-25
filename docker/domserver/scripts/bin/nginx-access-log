@@ -1,2 +1,2 @@
 #!/bin/bash
-supervisorctl tail -f nginx
+tail -F /var/log/nginx/access.log

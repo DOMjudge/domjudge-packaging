@@ -23,7 +23,7 @@ sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
 	-e "s/^memory_limit.*/memory_limit = 2G/" \
 	-e "s/^max_file_uploads.*/max_file_uploads = 200/" \
 	-e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
-	 /etc/php/7.0/fpm/php.ini
+	 /etc/php/7.3/fpm/php.ini
 echo "[ok] Done changing nginx and PHP configuration settings"; echo
 
 cd /opt/domjudge/domserver
@@ -38,20 +38,35 @@ fi
 MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
 MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
+DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
+
 echo "[..] Updating database credentials file"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
 if [[ "${USE_LEGACY}" -eq "0" ]]
 then
-	if [[ -f etc/gensymfonyenv ]]
+	if [[ -f webapp/.env.local ]]
 	then
 		DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
 		sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
-		composer symfony:dump-env prod
+		sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
+
+		# Add the Docker gateway as a trusted proxy
+		if grep -q TRUSTED_PROXIES webapp/.env.local
+		then
+			sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
+			sed -i "s|'TRUSTED_PROXIES' => .*|'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',|" webapp/.env.local.php
+		else
+			echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
+			sed -i "s|);|  'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',\n);|" webapp/.env.local.php
+		fi
 	else
 		sed -i "s/database_host: .*/database_host: ${MYSQL_HOST}/" webapp/app/config/parameters.yml
 		sed -i "s/database_name: .*/database_name: ${MYSQL_DATABASE}/" webapp/app/config/parameters.yml
 		sed -i "s/database_user: .*/database_user: ${MYSQL_USER}/" webapp/app/config/parameters.yml
 		sed -i "s/database_password: .*/database_password: ${MYSQL_PASSWORD}/" webapp/app/config/parameters.yml
+
+		# Add the Docker gateway as a trusted proxy
+		sed -i "s#^//\s*\(Request::setTrustedProxies(\)[^,]*#\1['${DOCKER_GATEWAY_IP}']#" webapp/web/app.php
 	fi
 fi
 echo "[ok] Updated database credentials file"; echo
@@ -66,7 +81,7 @@ fi
 if ! bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} status > /dev/null 2>&1
 then
 	echo "  Database not installed; installing..."
-	if [[ -f etc/genadminpassword ]]
+	if [[ -f etc/genadminpassword ]] && [[ ! -f etc/initial_admin_password.secret ]]
 	then
 		etc/genadminpassword > etc/initial_admin_password.secret
 	fi
@@ -95,19 +110,19 @@ then
 	# Replace nginx php socket location
 	sed -i 's!server unix:.*!server unix:/var/run/php-fpm-domjudge.sock;!' /etc/nginx/sites-enabled/default
 	# Remove default FPM pool config and link in DOMJudge version
-	if [[ -f /etc/php/7.0/fpm/pool.d/www.conf ]]
+	if [[ -f /etc/php/7.3/fpm/pool.d/www.conf ]]
 	then
-		rm /etc/php/7.0/fpm/pool.d/www.conf
+		rm /etc/php/7.3/fpm/pool.d/www.conf
 	fi
-	if [[ ! -f /etc/php/7.0/fpm/pool.d/domjudge.conf ]]
+	if [[ ! -f /etc/php/7.3/fpm/pool.d/domjudge.conf ]]
 	then
-		ln -s /opt/domjudge/domserver/etc/domjudge-fpm.conf /etc/php/7.0/fpm/pool.d/domjudge.conf
+		ln -s /opt/domjudge/domserver/etc/domjudge-fpm.conf /etc/php/7.3/fpm/pool.d/domjudge.conf
 	fi
 	# Change pm.max_children
-	sed --follow-symlinks -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.0/fpm/pool.d/domjudge.conf
+	sed --follow-symlinks -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.3/fpm/pool.d/domjudge.conf
 else
 	# Replace nginx php socket location
-	sed -i 's!server unix:.*!server unix:/var/run/php/php7.0-fpm.sock;!' /etc/nginx/sites-enabled/default
+	sed -i 's!server unix:.*!server unix:/var/run/php/php7.3-fpm.sock;!' /etc/nginx/sites-enabled/default
 fi
 
 # Set up permissions
@@ -142,14 +157,10 @@ then
 	webapp/bin/console cache:clear --env=prod
 	# Fix permissions on cache and log directories
 	chown -R www-data: webapp/var
-	# Add the Docker gateway as a trusted proxy
-	DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
-	if [[ -f webapp/web/app.php ]]
+	# Also fix permissions on .env files
+	if [[ -f webapp/.env.local ]]
 	then
-		sed -i "s#^//\s*\(Request::setTrustedProxies(\)[^,]*#\1['${DOCKER_GATEWAY_IP}']#" webapp/web/app.php
-	else
-		echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
-		composer symfony:dump-env prod
+		chown www-data: webapp/.env.local webapp/.env.local.php
 	fi
 fi
 echo "[ok] Webserver config installed"; echo

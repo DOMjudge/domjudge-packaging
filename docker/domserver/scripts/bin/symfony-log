@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ -d /opt/domjudge/domserver/webapp/var/log ]]
 then
-    tail -F /opt/domjudge/domserver/webapp/var/log/dev.log
+    tail -F /opt/domjudge/domserver/webapp/var/log/prod.log
 else
-    tail -F /opt/domjudge/domserver/webapp/var/logs/dev.log
+    tail -F /opt/domjudge/domserver/webapp/var/logs/prod.log
 fi

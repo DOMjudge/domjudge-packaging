@@ -58,6 +58,11 @@ RUN apt-get update \
 	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
+# Install composer
+ADD https://getcomposer.org/installer composer-setup.php
+RUN php composer-setup.php \
+    && mv /composer.phar /usr/local/bin/composer
+
 # Copy domserver directory and add script files
 COPY --from=domserver-build /opt/domjudge/domserver /opt/domjudge/domserver
 COPY --from=domserver-build /opt/domjudge/doc /opt/domjudge/doc
