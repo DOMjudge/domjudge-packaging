@@ -137,6 +137,48 @@ The following environment variables are supported by the `judgehost` container:
 * `DOMJUDGE_CREATE_WRITABLE_TEMP_DIR` (defaults top `0`): if set to 1, a writable temporary directory will be created for submissions. This only works for DOMjudge versions >= 6.1.
 * `RUN_USER_UID_GID` (defaults to `62860`): UID/GID of the user that will submissions. Make sure this UID/GID is **not** used on your host OS.
 
+#### Example AWS Setup
+
+The [BAPC 2019 contest](https://2019.bapc.eu) used AWS EC2 to create judgehost workers. Thanks to Guillaume Derval—who also used AWS for the 2018 contest—we were able to create new judgehost instances with just one command. If you're using AWS to run the judgings during a contest, make sure to test all problems against the AWS environment as well. Testing against the live environment is always smart, but with AWS the performance can vary more than with dedicated hardware.
+
+The command is as follows, it uses the [AWS cli tool](https://github.com/aws/aws-cli):
+```bash
+aws ec2 run-instances --launch-template LaunchTemplateId=$LAUNCH_TEMPLATE_ID,Version=2 --count 1 --cpu-options CoreCount=1,ThreadsPerCore=1 --user-data file://bapc-user-data.sh
+```
+
+This makes use of a launch template, which contains all of the instance settings that we used—except for the cpu-options, which a template cannot store. It is recommended to create the template by first setting up a judgehost manually yourself using the web interface for example, with the instance settings that you want to use. This way you can setup the network and actually test it before templating it. For reference, BAPC 2019 used the following template:
+
+![An example of a launch template that can be used](launch-template.png)
+
+The user-data file is a script that will run one time when the instance is first booted. BAPC 2019 used a Ubuntu 18.04 AMI (ami-06358f49b5839867c), so the script will use the `apt` package manager. It may also work on other Debian based systems, but that is untested. These are the contents of the script:
+
+```bash
+#!/bin/sh
+
+# From https://docs.docker.com/install/linux/docker-ce/ubuntu/
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+# Disable the apt timer which might interfere with judging
+sudo systemctl disable apt-daily-upgrade.timer
+sudo systemctl stop apt-daily-upgrade.timer
+# Put our hostname in /etc/hosts otherwise sudo will give warnings
+echo 127.0.0.1 $(hostname) | sudo tee -a /etc/hosts
+
+###################################################
+# Fill in these (secret) variables yourself!!
+sudo docker run -d --restart=on-failure --network host --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --name judgehost -e DOMSERVER_BASEURL=your_baseurl -e JUDGEDAEMON_USERNAME=your_username -e JUDGEDAEMON_PASSWORD=your_password domjudge/judgehost:7.0.3
+###################################################
+
+# Enable cgroup functionality that judgehost needs, this requires a reboot
+sudo sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="console=tty1 console=ttyS0 nvme_core.io_timeout=4294967295 cgroup_enable=memory swapaccount=1"|' /etc/default/grub.d/50-cloudimg-settings.cfg
+sudo update-grub
+sudo reboot
+```
+
 ## Building the images
 
 If you want to build the images yourself, you can just run
