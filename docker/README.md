@@ -16,6 +16,18 @@ The judgehost container contains a working judgehost with cgroup support and a c
 
 These containers do not include MySQL / MariaDB; the [MariaDB](https://hub.docker.com/r/_/mariadb/) Docker container does this better than we ever could.
 
+#### Table of Contents
+- [Using the images](#using-the-images)
+  - [MariaDB container](#mariadb-container)
+  - [DOMserver container](#domserver-container)
+    - [Environment variables](#environment-variables)
+    - [Passwords through files](#passwords-through-files)
+    - [Commands](#commands)
+  - [Judgehost container](#judgehost-container)
+    - [Environment variables](#environment-variables)
+    - [Example AWS Setup](#example-aws-setup)
+- [Building the images](#building-the-images)
+
 ## Using the images
 
 These images are available on the [Docker Hub](https://hub.docker.com) as `domjudge/domserver` and `domjudge/judgehost`.
