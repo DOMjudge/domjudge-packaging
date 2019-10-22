@@ -7,8 +7,9 @@ RUN apt-get update && apt-get install -y \
   devscripts shellcheck nginx libboost-regex-dev \
   php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
   # Docs \
-  # linuxdoc-tools linuxdoc-tools-text groff \
-  # texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-lang-european \
+  python3-sphinx python3-sphinx-rtd-theme \
+  texlive-latex-recommended texlive-latex-extra \
+  texlive-fonts-recommended texlive-lang-european \
   # Misc gitlab things \
   mariadb-client curl build-essential composer packaging-dev  \
   git python-pip moreutils \

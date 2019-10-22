@@ -21,8 +21,9 @@ RUN apt-get update \
     php7.2-gd php7.2-curl php7.2-mysql php7.2-json php7.2-intl \
     php7.2-gmp php7.2-xml php7.2-mbstring php-xdebug \
     bsdmainutils ntp \
-    linuxdoc-tools linuxdoc-tools-text \
-    groff texlive-latex-recommended texlive-latex-extra \
+    linuxdoc-tools linuxdoc-tools-text groff \
+    python3-sphinx python3-sphinx-rtd-theme \
+    texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european \
     sudo debootstrap libcgroup-dev procps \
     default-jre-headless \
