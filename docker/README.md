@@ -44,7 +44,13 @@ If you want a specific DOMjudge version instead of the latest, replace `latest` 
 
 The above command will start the container and set up the database. It will then start nginx and PHP-FPM using supervisord.
 
-You can now access the web interface on [http://localhost:12345/](http://localhost:12345/). Use username `admin` and password `admin` to log in. Note that for DOMjudge 6.0.0 and higher the webserver configuration will be set up such that the debug front controller will be used.
+The initial password for the `admin` user should be printed when starting the domserver, but if not, you can use the following command go retrieve it:
+
+```bash
+docker exec -it domserver cat /opt/domjudge/domserver/etc/initial_admin_password.secret
+```
+
+You can now access the web interface on [http://localhost:12345/](http://localhost:12345/) and log in as admin.
 
 Make sure you change the password of the `judgehost` account in the webinterface to something and write down the value.
 
