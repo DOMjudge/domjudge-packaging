@@ -44,20 +44,30 @@ echo "[..] Updating database credentials file"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
 if [[ "${USE_LEGACY}" -eq "0" ]]
 then
-	if [[ -f webapp/.env.local ]]
+	if [[ -f webapp/.env ]]
 	then
-		DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
-		sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
-		sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
+		# We only set database settings for DOMjudge < 7.2.0, newer versions load it automatically from etc/dbpasswords.secret
+		if [[ -f webapp/.env.local ]]
+		then
+			DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
+			sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
+			sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
+		fi
 
 		# Add the Docker gateway as a trusted proxy
 		if grep -q TRUSTED_PROXIES webapp/.env.local
 		then
 			sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
-			sed -i "s|'TRUSTED_PROXIES' => .*|'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',|" webapp/.env.local.php
+			if [[ -f webapp/.env.local.php ]]
+			then
+				sed -i "s|'TRUSTED_PROXIES' => .*|'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',|" webapp/.env.local.php
+			fi
 		else
 			echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
-			sed -i "s|);|  'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',\n);|" webapp/.env.local.php
+			if [[ -f webapp/.env.local.php ]]
+			then
+				sed -i "s|);|  'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',\n);|" webapp/.env.local.php
+			fi
 		fi
 	else
 		sed -i "s/database_host: .*/database_host: ${MYSQL_HOST}/" webapp/app/config/parameters.yml
@@ -160,7 +170,11 @@ then
 	# Also fix permissions on .env files
 	if [[ -f webapp/.env.local ]]
 	then
-		chown www-data: webapp/.env.local webapp/.env.local.php
+		chown www-data: webapp/.env.local
+	fi
+	if [[ -f webapp/.env.local.php ]]
+	then
+		chown www-data: webapp/.env.local.php
 	fi
 fi
 echo "[ok] Webserver config installed"; echo
