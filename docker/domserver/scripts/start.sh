@@ -51,11 +51,14 @@ then
 		then
 			DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
 			sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
-			sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
+			if [[ -f webapp/.env.local.php ]]
+			then
+				sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
+			fi
 		fi
 
 		# Add the Docker gateway as a trusted proxy
-		if grep -q TRUSTED_PROXIES webapp/.env.local
+		if grep -q TRUSTED_PROXIES webapp/.env.local > /dev/null 2>&1
 		then
 			sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
 			if [[ -f webapp/.env.local.php ]]
