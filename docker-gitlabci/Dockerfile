@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
   acl make zip unzip apache2-utils bsdmainutils libcurl4-gnutls-dev \
-  libjsoncpp-dev libmagic-dev autoconf automake sudo debootstrap procps \
+  libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
   devscripts shellcheck nginx libboost-regex-dev \
   php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
