@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
   libjsoncpp-dev libmagic-dev autoconf automake sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
   devscripts shellcheck nginx libboost-regex-dev \
-  php php-cli php-apcu php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
+  php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
   # Docs \
   python3-sphinx python3-sphinx-rtd-theme \
   texlive-latex-recommended texlive-latex-extra \
