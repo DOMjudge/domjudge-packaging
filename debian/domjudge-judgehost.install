@@ -1,2 +1,1 @@
 debian/src/dj_upgrade_chroot usr/sbin
-debian/create-cgroups.service lib/systemd/system

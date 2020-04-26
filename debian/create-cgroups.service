@@ -1,7 +1,0 @@
-[Unit]
-Description=Make sure cgroups exist for domjudge judgedaemon
-
-[Service]
-Type=oneshot
-ExecStart=/usr/sbin/create_cgroups
-RemainAfterExit=true

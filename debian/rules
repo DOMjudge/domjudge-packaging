@@ -26,7 +26,6 @@ build-stamp:
 		--with-domserver_libdir=\$${prefix}/share/domjudge \
 		--with-domserver_libvendordir=\$${prefix}/share/domjudge/lib/vendor \
 		--with-domserver_webappdir=\$${prefix}/share/domjudge/webapp \
-		--with-domserver_libsubmitdir=\$${prefix}/share/domjudge \
 		--with-domserver_logdir=/var/log/domjudge/domserver \
 		\
 		--with-judgehost_bindir=\$${prefix}/sbin \
@@ -84,7 +83,7 @@ install: build
 	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
 
 	# We'd like these to be amendable by the admin(See domjudge-domserver.links)
-	cd $(DJDS)/usr/share/domjudge/webapp/web/images/ && \
+	cd $(DJDS)/usr/share/domjudge/webapp/public/images/ && \
 		mv teams affiliations ../../../../../../var/lib/domjudge/images/
 
 	# This we'll symlink from the system-copy
@@ -92,7 +91,7 @@ install: build
 
 	# Remove so they can be symlinked to system dirs
 	rm -r $(DJDS)/usr/share/domjudge/webapp/var/cache \
-		$(DJDS)/usr/share/domjudge/webapp/var/logs \
+		$(DJDS)/usr/share/domjudge/webapp/var/log \
 		$(DJDS)/usr/share/domjudge/webapp/var/sessions
 
 	# Makes no sense to include passwords generated on .deb build host
@@ -104,11 +103,9 @@ install: build
 	# Doesn't really hurt currently.
 
 	# Needs to be web-writable:
-	chgrp www-data $(DJDS)/var/lib/domjudge/submissions \
-		$(DJDS)/var/lib/domjudge/sessions \
+	chgrp www-data $(DJDS)/var/lib/domjudge/sessions \
 		$(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
-	chmod 0770 $(DJDS)/var/lib/domjudge/submissions \
-		$(DJDS)/var/lib/domjudge/sessions \
+	chmod 0770 $(DJDS)/var/lib/domjudge/sessions \
 		$(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
 
 	# Fixup sudoers file to match our assumptions for user/chroot location
