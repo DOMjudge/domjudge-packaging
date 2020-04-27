@@ -30,7 +30,6 @@ build-stamp:
 		\
 		--with-judgehost_bindir=\$${prefix}/sbin \
 		--with-judgehost_libdir=\$${prefix}/share/domjudge \
-		--with-judgehost_libvendordir=\$${prefix}/share/domjudge/lib/vendor \
 		--with-judgehost_libjudgedir=\$${prefix}/lib/domjudge \
 		--with-judgehost_chrootdir=/var/lib/domjudge/chroot \
 		--with-judgehost_logdir=/var/log/domjudge/judgehost \
@@ -98,9 +97,6 @@ install: build
 		$(DJDS)/etc/domjudge/gendbpasswords \
 		$(DJDS)/usr/bin/dj_setup_database
 
-	# TODO: Why is runguard in /usr/sbin? It's never called directly?
-	# Doesn't really hurt currently.
-
 	# Needs to be web-writable:
 	chgrp www-data $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
 	chmod 0770 $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
@@ -140,7 +136,7 @@ binary-indep: build install
 	dh_installdeb -i
 	dh_gencontrol -i
 	dh_md5sums -i
-	dh_builddeb -i -- -Zxz
+	dh_builddeb -i
 
 # Build architecture-dependent files here.
 binary-arch: build install
@@ -160,7 +156,7 @@ binary-arch: build install
 	dh_shlibdeps -a
 	dh_gencontrol -a
 	dh_md5sums -a
-	dh_builddeb -a -- -Zxz
+	dh_builddeb -a
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install
