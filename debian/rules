@@ -70,15 +70,12 @@ install: build
 		rm COPYING* README.md README.country_flags ChangeLog
 
 	# This must be shipped in domjudge-common
-	rm $(DJDS)/etc/domjudge/common-config.php \
+	rm $(DJDS)/etc/domjudge/common-config.php $(DJDS)/etc/domjudge/genrestapicredentials \
 		$(DJDS)/usr/share/domjudge/*.php $(DJDS)/usr/share/domjudge/alert
-
-	# This should only be in domserver (fixed upstream)
-	rm -f $(DJJH)/etc/domjudge/verdicts.php
 
 	# This is in domjudge-common
 	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
-		$(DJDS)/usr/share/domjudge/lib/vendor
+		$(DJJH)/etc/domjudge/genrestapicredentials
 
 	# Saviour lib.error.sh before we trash /u/s/d
 	cp lib/lib.error.sh $(DJJH)/usr/share/domjudge/
@@ -95,7 +92,7 @@ install: build
 		$(DJDS)/usr/share/domjudge/webapp/var/log
 
 	# Makes no sense to include passwords generated on .deb build host
-	rm $(DJDS)/etc/domjudge/*.secret \
+	rm $(DJDS)/etc/domjudge/*.secret $(DJJH)/etc/domjudge/restapi.secret \
 		$(DJDS)/etc/domjudge/gendbpasswords
 
 	# Needs to be web-writable:
@@ -115,7 +112,6 @@ install: build
 	cp -a debian/src/db_upgrade \
 		$(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/upgrade/mysql/$(DEB_VERSION)
 	cp -a debian/src/setadminpassword $(DJDS)/etc/domjudge/
-	cp -a debian/src/gendbparams $(DJDS)/etc/domjudge/
 
 # Build architecture-independent files here.
 binary-indep: build install
