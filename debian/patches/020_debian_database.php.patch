@@ -18,3 +18,34 @@ Description: No description.
 +    $credfile = ETCDIR . '/domserver.dbconfig.php';
 +    require(LIBDIR . '/debian-database.php');
  }
+--- a/sql/dj_setup_database.in	2020-04-27 14:34:26.366706761 +0000
++++ b/sql/dj_setup_database.in	2020-04-27 14:34:22.154713128 +0000
+@@ -132,6 +132,9 @@
+ 
+ read_dbpasswords()
+ {
++	read_debiandbpasswords
++	return
++
+ 	if [ ! -r "$PASSWDFILE" ]; then
+ 		echo "Error: password file '$PASSWDFILE' not found or not readable."
+ 		echo "You may want to run: $0 genpass"
+@@ -159,6 +162,18 @@
+ 	verbose "Database credentials read from '$PASSWDFILE'."
+ }
+ 
++read_debiandbpasswords()
++{
++	. /etc/dbconfig-common/domjudge-domserver.conf
++
++	domjudge_DBHOST=$dbc_dbserver
++	domjudge_DBNAME=$dbc_dbname
++	domjudge_DBUSER=$dbc_dbuser
++	domjudge_PASSWD=$dbc_dbpass
++	DBHOST=$domjudge_DBHOST
++	DBNAME=$domjudge_DBNAME
++}
++
+ status()
+ {
+ 	if [ ! -r "$PASSWDFILE" ]; then
