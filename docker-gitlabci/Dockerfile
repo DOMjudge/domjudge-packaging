@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
   devscripts shellcheck nginx libboost-regex-dev \
   php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
   # Docs \
-  python3-sphinx python3-sphinx-rtd-theme python3-pip \
+  python-sphinx python-sphinx-rtd-theme rst2pdf \
   texlive-latex-recommended texlive-latex-extra \
   texlive-fonts-recommended texlive-lang-european \
   # Misc gitlab things \
@@ -16,9 +16,6 @@ RUN apt-get update && apt-get install -y \
   # Things we'd have in the chroot \
   ca-certificates default-jre-headless pypy locales software-properties-common \
   && rm -rf /var/lib/apt/lists/*
-
-# Needed for building the docs
-RUN pip install pygments && pip3 install rst2pdf
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
