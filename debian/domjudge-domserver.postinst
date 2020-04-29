@@ -14,7 +14,7 @@ fi
 RA_SECRET=/etc/domjudge/restapi.secret
 if [ ! -f $RA_SECRET ] ; then
 	touch $RA_SECRET
-	chown root:www-data $RA_SECRET
+	chown root:domjudge $RA_SECRET
 	chmod 0640 $RA_SECRET
 	/etc/domjudge/genrestapicredentials > $RA_SECRET
 fi
@@ -46,5 +46,10 @@ if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
 	apache2_invoke enmod rewrite
 	apache2_invoke enconf domjudge
 fi
+
+# Clean up files from older packages (<< 7.3.0)
+rm -f /etc/domjudge/domserver.dbconfig.php
+ucf --purge /etc/domjudge/domserver.dbconfig.php
+rm -rf /var/lib/domjudge/sessions /var/lib/domjudge/submissions
 
 #DEBHELPER#

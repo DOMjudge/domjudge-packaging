@@ -36,7 +36,7 @@ build-stamp:
 		--with-judgehost_chrootdir=/var/lib/domjudge/chroot \
 		--with-judgehost_logdir=/var/log/domjudge/judgehost \
 		\
-		--with-domjudge-user=root
+		--with-domjudge-user=domjudge
 
 	$(MAKE) all
 
@@ -123,8 +123,8 @@ binary-indep: build install
 	dh_installlogrotate -i
 	dh_lintian -i
 	dh_link -i
-	dh_compress -i -X .tex -X .pdf
-	dh_fixperms -i -X genteammanuals -X gentexconfig -X var/cache/domjudge -X var/log/domjudge -X var/lib/domjudge
+	dh_compress -i -X .pdf
+	dh_fixperms -i -X var/cache/domjudge -X var/log/domjudge -X var/lib/domjudge
 	dh_installdeb -i
 	dh_gencontrol -i
 	dh_md5sums -i
