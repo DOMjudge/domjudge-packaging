@@ -19,7 +19,7 @@ if [ "$1" = "purge" ]; then
 
 	rm -f /etc/domjudge/restapi.secret
 
-	rmdir --ignore-fail-on-non-empty /var/log/domjudge
+	rmdir --ignore-fail-on-non-empty /var/log/domjudge || true
 
 	# Remove my changes to the db.
 	db_purge

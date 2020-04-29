@@ -111,7 +111,6 @@ install: build
 		$(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/install/mysql
 	cp -a debian/src/db_upgrade \
 		$(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/upgrade/mysql/$(DEB_VERSION)
-	cp -a debian/src/setadminpassword $(DJDS)/etc/domjudge/
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -122,6 +121,7 @@ binary-indep: build install
 	dh_installchangelogs -p domjudge-common -p domjudge-domserver -X ChangeLog
 	dh_installdocs -i
 	dh_installlogrotate -i
+	dh_lintian -i
 	dh_link -i
 	dh_compress -i -X .tex -X .pdf
 	dh_fixperms -i -X genteammanuals -X gentexconfig -X var/cache/domjudge -X var/log/domjudge -X var/lib/domjudge
@@ -140,6 +140,7 @@ binary-arch: build install
 	dh_installman -a
 	dh_installdebconf -a
 	dh_installexamples -a
+	dh_lintian -a
 	dh_strip -a
 	dh_link -a
 	dh_compress -a
