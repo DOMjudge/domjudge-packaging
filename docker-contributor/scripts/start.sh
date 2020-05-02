@@ -160,7 +160,12 @@ then
 fi
 
 echo "[..] Setting up cgroups"
-bin/create_cgroups
+if [[ -f bin/create_cgroups ]]
+then
+  bin/create_cgroups
+else
+  judge/create_cgroups
+fi
 echo "[ok] cgroups set up"; echo
 
 echo "[..] Adding sudoers configuration"
