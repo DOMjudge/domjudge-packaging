@@ -22,7 +22,7 @@ RUN apt-get update \
     php7.2-gmp php7.2-xml php7.2-mbstring php-xdebug \
     bsdmainutils ntp \
     linuxdoc-tools linuxdoc-tools-text groff \
-    python3-sphinx python3-sphinx-rtd-theme python3-pip \
+    python3-sphinx python3-sphinx-rtd-theme python3-yaml python3-pip \
     texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european \
     sudo debootstrap libcgroup-dev procps \
