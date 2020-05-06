@@ -28,13 +28,6 @@ echo "[ok] Done changing nginx and PHP configuration settings"; echo
 
 cd /opt/domjudge/domserver
 
-# Determine whether we have a legacy DOMjudge instance, i.e. one without Symfony
-USE_LEGACY=0
-if [[ ! -d webapp ]]
-then
-	USE_LEGACY=1
-fi
-
 MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
 MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
@@ -42,44 +35,31 @@ DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 
 echo "[..] Updating database credentials file"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
-if [[ "${USE_LEGACY}" -eq "0" ]]
+
+# We only set database settings for DOMjudge < 7.2.0, newer versions load it automatically from etc/dbpasswords.secret
+if [[ ! -f webapp/config/load_db_secrets.php ]]
 then
-	if [[ -f webapp/.env ]]
+	DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
+	sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
+	if [[ -f webapp/.env.local.php ]]
 	then
-		# We only set database settings for DOMjudge < 7.2.0, newer versions load it automatically from etc/dbpasswords.secret
-		if [[ -f webapp/.env.local ]]
-		then
-			DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
-			sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
-			if [[ -f webapp/.env.local.php ]]
-			then
-				sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
-			fi
-		fi
+		sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
+	fi
+fi
 
-		# Add the Docker gateway as a trusted proxy
-		if grep -q TRUSTED_PROXIES webapp/.env.local > /dev/null 2>&1
-		then
-			sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
-			if [[ -f webapp/.env.local.php ]]
-			then
-				sed -i "s|'TRUSTED_PROXIES' => .*|'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',|" webapp/.env.local.php
-			fi
-		else
-			echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
-			if [[ -f webapp/.env.local.php ]]
-			then
-				sed -i "s|);|  'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',\n);|" webapp/.env.local.php
-			fi
-		fi
-	else
-		sed -i "s/database_host: .*/database_host: ${MYSQL_HOST}/" webapp/app/config/parameters.yml
-		sed -i "s/database_name: .*/database_name: ${MYSQL_DATABASE}/" webapp/app/config/parameters.yml
-		sed -i "s/database_user: .*/database_user: ${MYSQL_USER}/" webapp/app/config/parameters.yml
-		sed -i "s/database_password: .*/database_password: ${MYSQL_PASSWORD}/" webapp/app/config/parameters.yml
-
-		# Add the Docker gateway as a trusted proxy
-		sed -i "s#^//\s*\(Request::setTrustedProxies(\)[^,]*#\1['${DOCKER_GATEWAY_IP}']#" webapp/web/app.php
+# Add the Docker gateway as a trusted proxy
+if grep -q TRUSTED_PROXIES webapp/.env.local > /dev/null 2>&1
+then
+	sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
+	if [[ -f webapp/.env.local.php ]]
+	then
+		sed -i "s|'TRUSTED_PROXIES' => .*|'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',|" webapp/.env.local.php
+	fi
+else
+	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
+	if [[ -f webapp/.env.local.php ]]
+	then
+		sed -i "s|);|  'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',\n);|" webapp/.env.local.php
 	fi
 fi
 echo "[ok] Updated database credentials file"; echo
@@ -142,43 +122,28 @@ fi
 chown www-data: etc/dbpasswords.secret
 chown www-data: etc/restapi.secret
 
-if [[ "${USE_LEGACY}" -eq "0" ]]
+cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
+NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
+sed -i 's/\/opt\/domjudge\/domserver\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
+# Run DOMjudge in root
+sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
+sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
+sed -i 's/\/domjudge;/"";/' $NGINX_CONFIG_FILE
+# Remove access_log and error_log entries
+sed -i '/access_log/d' $NGINX_CONFIG_FILE
+sed -i '/error_log/d' $NGINX_CONFIG_FILE
+# Clear Symfony cache
+webapp/bin/console cache:clear --env=prod
+# Fix permissions on cache and log directories
+chown -R www-data: webapp/var
+# Also fix permissions on .env files
+if [[ -f webapp/.env.local ]]
 then
-	HAS_INNER_NGINX=0
-	NGINX_CONFIG_FILE=/etc/nginx/sites-enabled/default
-
-	# Check if we have DOMjudge >= 6.1 which has a separate file for the inner nginx configuration
-	if [[ -f etc/nginx-conf-inner ]]
-	then
-		HAS_INNER_NGINX=1
-		cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
-		NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
-		sed -i 's/\/opt\/domjudge\/domserver\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
-		# Run DOMjudge in root
-		sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
-		sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
-		sed -i 's/\/domjudge;/"";/' $NGINX_CONFIG_FILE
-	else
-		# Run DOMjudge in root
-		sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' $NGINX_CONFIG_FILE
-		sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' $NGINX_CONFIG_FILE
-	fi
-	# Remove access_log and error_log entries
-	sed -i '/access_log/d' $NGINX_CONFIG_FILE
-	sed -i '/error_log/d' $NGINX_CONFIG_FILE
-	# Clear Symfony cache
-	webapp/bin/console cache:clear --env=prod
-	# Fix permissions on cache and log directories
-	chown -R www-data: webapp/var
-	# Also fix permissions on .env files
-	if [[ -f webapp/.env.local ]]
-	then
-		chown www-data: webapp/.env.local
-	fi
-	if [[ -f webapp/.env.local.php ]]
-	then
-		chown www-data: webapp/.env.local.php
-	fi
+	chown www-data: webapp/.env.local
+fi
+if [[ -f webapp/.env.local.php ]]
+then
+	chown www-data: webapp/.env.local.php
 fi
 echo "[ok] Webserver config installed"; echo
 

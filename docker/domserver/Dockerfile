@@ -13,7 +13,7 @@ RUN apt-get update \
 	php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
 	linuxdoc-tools linuxdoc-tools-text groff \
-	python3-sphinx python3-sphinx-rtd-theme python3-yaml \
+	python3-sphinx python3-sphinx-rtd-theme python3-yaml python3-pip \
 	texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
@@ -21,7 +21,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Needed for building the docs
-RUN pip install pygments && pip3 install rst2pdf
+RUN pip3 install pygments rst2pdf
 
 # Set up user
 RUN useradd -m domjudge

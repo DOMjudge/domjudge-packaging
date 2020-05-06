@@ -30,13 +30,6 @@ echo "[ok] Done changing nginx and PHP configuration settings"; echo
 
 cd /domjudge
 
-# Determine whether we have a legacy DOMjudge instance, i.e. one without Symfony
-USE_LEGACY=0
-if [[ ! -d webapp ]]
-then
-  USE_LEGACY=1
-fi
-
 if [[ ! -f README.md ]] || ! grep -q DOMjudge README.md
 then
   echo "DOMjudge sources not found. Did you add a volume with your DOMjudge checkout at /domjudge?"
@@ -120,36 +113,22 @@ sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/p
 
 chown domjudge: /domjudge/etc/dbpasswords.secret
 chown domjudge: /domjudge/etc/restapi.secret
-if [[ "${USE_LEGACY}" -eq "0" ]]
-then
-  HAS_INNER_NGINX=0
-  NGINX_CONFIG_FILE=/etc/nginx/sites-enabled/default
-
-  # Check if we are on DOMjudge >= bb8209d4e9596b9480c1f85960dfb7c3d763b587 which has a separate file for the inner nginx configuration
-  if [[ -f etc/nginx-conf-inner ]]
-  then
-    HAS_INNER_NGINX=1
-    cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
-    NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
-    sed -i 's/\/domjudge\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
-    # Run DOMjudge in root
-    sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
-    sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
-    sed -i 's/\/domjudge;/"";/' $NGINX_CONFIG_FILE
-  else
-    # Run DOMjudge in root
-    sed -i '/^\t#location \//,/^\t#\}/ s/\t#/\t/' $NGINX_CONFIG_FILE
-    sed -i '/^\tlocation \/domjudge/,/^\t\}/ s/^\t/\t#/' $NGINX_CONFIG_FILE
-  fi
-  # Remove access_log and error_log entries
-  sed -i '/access_log/d' $NGINX_CONFIG_FILE
-  sed -i '/error_log/d' $NGINX_CONFIG_FILE
-  # Use debug front controller
-  sed -i 's/app\.php/app_dev.php/g' $NGINX_CONFIG_FILE
-  sed -i 's/app\\\.php/app\\_dev.php/g' $NGINX_CONFIG_FILE
-  # Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
-  chown domjudge: /domjudge/webapp/var
-fi
+HAS_INNER_NGINX=1
+cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
+NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
+sed -i 's/\/domjudge\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
+# Run DOMjudge in root
+sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
+sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
+sed -i 's/\/domjudge;/"";/' $NGINX_CONFIG_FILE
+# Remove access_log and error_log entries
+sed -i '/access_log/d' $NGINX_CONFIG_FILE
+sed -i '/error_log/d' $NGINX_CONFIG_FILE
+# Use debug front controller
+sed -i 's/app\.php/app_dev.php/g' $NGINX_CONFIG_FILE
+sed -i 's/app\\\.php/app\\_dev.php/g' $NGINX_CONFIG_FILE
+# Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
+chown domjudge: /domjudge/webapp/var
 echo "[ok] Webserver config installed"; echo
 
 if [[ ! -d /chroot/domjudge ]]
