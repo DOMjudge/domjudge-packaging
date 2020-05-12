@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	autoconf automake git \
-	gcc g++ make zip unzip \
+	gcc g++ make acl zip unzip \
 	php-cli php-zip \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring \
@@ -55,7 +55,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install required packages for running of domserver
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
-	zip unzip acl supervisor mariadb-client apache2-utils \
+	acl zip unzip supervisor mariadb-client apache2-utils \
 	nginx php-cli php-fpm php-zip \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
