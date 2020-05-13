@@ -77,7 +77,8 @@ RUN useradd -m domjudge \
 	&& mkdir -p /run/php \
 	&& chown -R domjudge: /opt/domjudge \
 	&& chown -R www-data: /opt/domjudge/domserver/tmp \
-	&& chown -R www-data: /opt/domjudge/domserver/submissions \
+	# for DOMjudge <= 7.2 (submitdir was removed in commit DOMjudge/domjudge@d66725038)
+	&& if [ -d /opt/domjudge/domserver/submissions ]; then chown -R www-data: /opt/domjudge/domserver/submissions; fi \
 	&& chmod 755 /scripts/start.sh \
 	&& chmod 755 /scripts/bin/* \
 	&& ln -s /scripts/bin/* /usr/bin/
