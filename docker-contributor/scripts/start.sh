@@ -56,8 +56,9 @@ then
   echo "Skipping maintainer-mode install for DOMjudge"
 else
   echo "[..] Performing maintainer-mode install for DOMjudge"
-  sudo -u domjudge make maintainer-conf CONFIGURE_FLAGS="--with-baseurl=http://localhost/ --with-webserver-group=domjudge"
-  sudo -u domjudge make maintainer-install
+  # -H is required on Ubuntu < 19.10 to set $HOME, see https://askubuntu.com/a/1187000
+  sudo -H -u domjudge make maintainer-conf CONFIGURE_FLAGS="--with-baseurl=http://localhost/ --with-webserver-group=domjudge"
+  sudo -H -u domjudge make maintainer-install
   echo "[ok] DOMjudge installed in Maintainer-mode"; echo
 fi
 
