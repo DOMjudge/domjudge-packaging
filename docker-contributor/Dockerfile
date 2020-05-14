@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -17,9 +17,9 @@ RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
     autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
-    nginx php7.2 php7.2-cli php7.2-fpm php7.2-zip \
-    php7.2-gd php7.2-curl php7.2-mysql php7.2-json php7.2-intl \
-    php7.2-gmp php7.2-xml php7.2-mbstring php-xdebug \
+    nginx php7.4 php7.4-cli php7.4-fpm php7.4-zip \
+    php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-intl \
+    php7.4-gmp php7.4-xml php7.4-mbstring php-xdebug \
     bsdmainutils ntp \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
@@ -29,12 +29,12 @@ RUN apt-get update \
     default-jre-headless \
     default-jdk ghc fp-compiler \
     supervisor apache2-utils lsb-release \
-    libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev python python-pip \
+    libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
     && rm -rf /var/lib/apt/lists/*
 
 # Needed for building the docs
-RUN pip install pygments && pip3 install rst2pdf
+RUN pip3 install pygments && pip3 install rst2pdf
 
 # Forward nginx request and error logs to standard output/error. Also create directory for PHP-FPM socket
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
@@ -58,8 +58,8 @@ VOLUME ["/domjudge"]
 WORKDIR /domjudge
 
 # Add PHP configuration
-COPY ["php-config", "//etc/php/7.2/fpm/conf.d"]
-COPY ["php-config", "//etc/php/7.2/cli/conf.d"]
+COPY ["php-config", "//etc/php/7.4/fpm/conf.d"]
+COPY ["php-config", "//etc/php/7.4/cli/conf.d"]
 
 # Disable Xdebug by default
 RUN phpdismod xdebug
