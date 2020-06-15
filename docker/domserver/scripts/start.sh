@@ -121,6 +121,10 @@ fi
 # Set up permissions
 chown www-data: etc/dbpasswords.secret
 chown www-data: etc/restapi.secret
+if [[ -f etc/symfony_app.secret ]]
+then
+	chown www-data: etc/symfony_app.secret
+fi
 
 cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
