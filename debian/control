@@ -45,7 +45,7 @@ Description: programming contest jury system (server)
 Package: domjudge-judgehost
 Architecture: any
 Depends: domjudge-common (= ${source:Version}), php-cli,
- php-json, php-curl, php-xml, php-zip, procps, bash-static,
+ php-json, php-curl, php-xml, php-zip, procps,
  adduser, lsb-base, unzip,
  ${shlibs:Depends}, ${misc:Depends}
 Recommends: ntp, sudo, debootstrap, gcc, g++, default-jdk-headless | default-jdk

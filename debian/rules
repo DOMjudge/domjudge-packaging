@@ -84,9 +84,6 @@ install: build
 	cd $(DJDS)/usr/share/domjudge/webapp/public/images/ && \
 		mv teams affiliations ../../../../../../var/lib/domjudge/images/
 
-	# This we'll symlink from the system-copy
-	rm $(DJJH)/usr/lib/domjudge/sh-static
-
 	# Remove so they can be symlinked to system dirs
 	rm -r $(DJDS)/usr/share/domjudge/webapp/var/cache \
 		$(DJDS)/usr/share/domjudge/webapp/var/log
