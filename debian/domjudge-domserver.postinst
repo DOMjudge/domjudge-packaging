@@ -49,7 +49,7 @@ fi
 
 # Clean up files from older packages (<< 7.3.0)
 rm -f /etc/domjudge/domserver.dbconfig.php
-ucf --purge /etc/domjudge/domserver.dbconfig.php
+ucf --purge /etc/domjudge/domserver.dbconfig.php || true
 rm -rf /var/lib/domjudge/sessions /var/lib/domjudge/submissions
 
 #DEBHELPER#
