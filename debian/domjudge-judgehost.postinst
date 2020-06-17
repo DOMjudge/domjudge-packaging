@@ -40,3 +40,7 @@ chgrp domjudge /etc/domjudge/restapi.secret
 printf "default\t$API_URL\t$API_USER\t$API_PASS\n" > /etc/domjudge/restapi.secret
 
 #DEBHELPER#
+
+if [ ! -d /var/lib/domjudge/chroot/ ]; then
+	echo "Now please create a chroot by running 'dj_make_chroot' as root."
+fi
