@@ -100,6 +100,9 @@ install: build
 	chgrp www-data $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
 	chmod 0770 $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
 
+	# Fix correct systemd unit file location for Debian systems
+	mv $(DJJH)/usr/lib/systemd/system $(DJJH)/lib/systemd/
+
 	# Fixup sudoers file to match our assumptions for user/chroot location
 	sed -i 's#^root #domjudge #;s# root\\:# domjudge\\:#' $(DJJH)/etc/domjudge/sudoers-domjudge
 	sed -i 's#/\*/proc#/var/lib/domjudge/chroot*/proc#' $(DJJH)/etc/domjudge/sudoers-domjudge
