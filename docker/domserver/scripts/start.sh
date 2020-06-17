@@ -33,17 +33,60 @@ MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
 DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 
-echo "[..] Updating database credentials file"
-echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" > etc/dbpasswords.secret
+echo "[..] Generating credential files"
+echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" | (umask 077 && cat > etc/dbpasswords.secret)
 
-# We only set database settings for DOMjudge < 7.2.0, newer versions load it automatically from etc/dbpasswords.secret
-if [[ ! -f webapp/config/load_db_secrets.php ]]
+# Make a note of whether the file with the initial admin password existed originally
+if [[ -f etc/initial_admin_password.secret ]]
 then
-	DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}
-	sed -i "s|DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" webapp/.env.local
-	if [[ -f webapp/.env.local.php ]]
-	then
-		sed -i "s|'mysql://.*',$|'${DATABASE_URL}',|" webapp/.env.local.php
+	admin_pw_file_existed=1
+else
+	admin_pw_file_existed=0
+fi
+
+# Generate secrets
+if [[ -f etc/gen_all_secrets ]]
+then
+	# DOMjudge >= 7.2.1
+	(cd etc && ./gen_all_secrets)
+	# (Note: running 'etc/gen_all_secrets' does not work before commit DOMjudge/domjudge@9bac55144600)
+elif [[ -f webapp/config/load_db_secrets.php ]]
+then
+	# DOMjudge 7.2.0
+	# This version does not install gen_all_secrets and gensymfonysecret, so we have to inline them here (fixed in commit DOMjudge/domjudge@d523a965f8e0)
+	if [[ ! -f etc/restapi.secret ]]; then
+		etc/genrestapicredentials | (umask 077 && cat > etc/restapi.secret)
+	fi
+	if [[ ! -f etc/initial_admin_password.secret ]]; then
+		etc/genadminpassword | (umask 077 && cat > etc/initial_admin_password.secret)
+	fi
+	if [[ ! -f etc/symfony_app.secret ]]; then
+		{
+			# From etc/gensymfonysecret
+			head -c20 /dev/urandom | base64 | head -c20 | tr '/+' 'Aa'
+			echo
+		} | (umask 077 && cat > etc/symfony_app.secret)
+	fi
+else
+	# DOMjudge 7.1
+	if [[ ! -f etc/restapi.secret ]]; then
+		etc/genrestapicredentials | (umask 077 && cat > etc/restapi.secret)
+	fi
+	if [[ ! -f etc/initial_admin_password.secret ]]; then
+		etc/genadminpassword | (umask 077 && cat > etc/initial_admin_password.secret)
+	fi
+	# This version needs the database settings and app secret to be in webapp/.env.local
+	# It is generated using etc/gensymfonyenv on DOMjudge 7.1, but that script is not installed so we inline it here
+	if [[ ! -f webapp/.env.local ]]; then
+		{
+			SECRET=$(head -c20 /dev/urandom | base64 | head -c20 | tr '/+' 'Aa')
+			echo "# Generated on $(hostname), $(date)."
+			echo
+			echo "# Uncomment the following line to run the application in development mode"
+			echo "#APP_ENV=dev"
+			echo "APP_SECRET=$SECRET"
+			echo "DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
+		} | (umask 077 && cat > webapp/.env.local)
 	fi
 fi
 
@@ -51,18 +94,40 @@ fi
 if grep -q TRUSTED_PROXIES webapp/.env.local > /dev/null 2>&1
 then
 	sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
-	if [[ -f webapp/.env.local.php ]]
-	then
-		sed -i "s|'TRUSTED_PROXIES' => .*|'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',|" webapp/.env.local.php
-	fi
 else
 	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
-	if [[ -f webapp/.env.local.php ]]
-	then
-		sed -i "s|);|  'TRUSTED_PROXIES' => '${DOCKER_GATEWAY_IP}',\n);|" webapp/.env.local.php
-	fi
 fi
-echo "[ok] Updated database credentials file"; echo
+
+if [[ ! -f webapp/config/load_db_secrets.php ]]
+then
+	# DOMjudge 7.1 dumps the environment into webapp/.env.local.php for improved speed
+	# We also do that here (with some additional setup to get composer to work)
+	echo '{"config": {"vendor-dir": "lib/vendor"}, "extra": {"symfony": {"root-dir": "webapp/"}}}' > composer.json
+	touch webapp/.env
+	composer symfony:dump-env prod
+	rm composer.json
+	if [[ ! -s webapp/.env ]]; then
+		rm webapp/.env
+	fi
+	chmod og= webapp/.env.local.php
+fi
+
+# Set up permissions
+chown www-data: etc/dbpasswords.secret
+chown www-data: etc/restapi.secret
+if [[ -f etc/symfony_app.secret ]]
+then
+	chown www-data: etc/symfony_app.secret
+fi
+if [[ -f webapp/.env.local ]]
+then
+	chown www-data: webapp/.env.local
+fi
+if [[ -f webapp/.env.local.php ]]
+then
+	chown www-data: webapp/.env.local.php
+fi
+echo "[ok] Generated credential files"; echo
 
 echo "[..] Checking database connection"
 if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
@@ -74,10 +139,6 @@ fi
 if ! bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} status > /dev/null 2>&1
 then
 	echo "  Database not installed; installing..."
-	if [[ -f etc/genadminpassword ]] && [[ ! -f etc/initial_admin_password.secret ]]
-	then
-		etc/genadminpassword > etc/initial_admin_password.secret
-	fi
 	INSTALL=install
 	if [ "${DJ_DB_INSTALL_BARE}" -eq "1" ]
 	then
@@ -87,6 +148,13 @@ then
 	bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} ${INSTALL}
 else
 	echo "  Database installed; upgrading..."
+	if [ "${admin_pw_file_existed}" -eq "0" ] && [[ -f etc/initial_admin_password.secret ]]
+	then
+		# The file etc/initial_admin_password.secret did not originally exist and was generated by etc/gen_all_secrets earlier.
+		# However, the database already exists and has a different password.
+		# We can't extract the password from the database because only the hash is stored, so we mark the password as unknown.
+		echo "[unknown]" > etc/initial_admin_password.secret
+	fi
 	bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} upgrade
 fi
 echo "[ok] Database ready"; echo
@@ -118,14 +186,6 @@ else
 	sed -i 's!server unix:.*!server unix:/var/run/php/php7.3-fpm.sock;!' /etc/nginx/sites-enabled/default
 fi
 
-# Set up permissions
-chown www-data: etc/dbpasswords.secret
-chown www-data: etc/restapi.secret
-if [[ -f etc/symfony_app.secret ]]
-then
-	chown www-data: etc/symfony_app.secret
-fi
-
 cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
 sed -i 's/\/opt\/domjudge\/domserver\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
@@ -140,15 +200,6 @@ sed -i '/error_log/d' $NGINX_CONFIG_FILE
 webapp/bin/console cache:clear --env=prod
 # Fix permissions on cache and log directories
 chown -R www-data: webapp/var
-# Also fix permissions on .env files
-if [[ -f webapp/.env.local ]]
-then
-	chown www-data: webapp/.env.local
-fi
-if [[ -f webapp/.env.local.php ]]
-then
-	chown www-data: webapp/.env.local.php
-fi
 echo "[ok] Webserver config installed"; echo
 
 if [[ -f etc/initial_admin_password.secret ]]
