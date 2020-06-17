@@ -47,6 +47,10 @@ clean:
 	dh_testroot
 	rm -f build-stamp
 	$(MAKE) distclean
+	# Because the build process overwrites the docs in the tarball,
+	# we remove everything so a second build does not fail. Missing
+	# files are acceptable to dpkg-bp (but triggers warnings) 
+	rm -rf doc/manual/build/
 	dh_clean
 
 install:
