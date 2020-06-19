@@ -56,15 +56,16 @@ If you want a specific DOMjudge version instead of the latest, replace `latest` 
 
 The above command will start the container and set up the database. It will then start nginx and PHP-FPM using supervisord.
 
-The initial password for the `admin` user should be printed when starting the domserver, but if not, you can use the following command go retrieve it:
+The initial passwords for the `admin` and `judgehost` users should be printed when starting the domserver, but if not, you can use the following commands to retrieve them:
 
 ```bash
 docker exec -it domserver cat /opt/domjudge/domserver/etc/initial_admin_password.secret
+docker exec -it domserver cat /opt/domjudge/domserver/etc/restapi.secret
 ```
 
 You can now access the web interface on [http://localhost:12345/](http://localhost:12345/) and log in as admin.
 
-Make sure you change the password of the `judgehost` account in the webinterface to something and write down the value.
+Make a note of the password for the `judgehost` user, it will be used when the judgehost container is configured. The password can be changed from the web interface by editing the `judgehost` user.
 
 #### Environment variables
 
@@ -144,7 +145,7 @@ The following environment variables are supported by the `judgehost` container:
 * `CONTAINER_TIMEZONE` (defaults to `Europe/Amsterdam`): allows you to change the timezone used inside the container.
 * `DOMSERVER_BASEURL` (defaults to `http://domserver/`): base URL where the domserver can be found. The judgehost uses this to connect to the API. **Do not add `api` yourself, as the container will do this!**
 * `JUDGEDAEMON_USERNAME` (defaults to `judgehost`): username used to connect to the API.
-* `JUDGEDAEMON_PASSWORD` (defaults to `password`): password used to connect to the API. This should be the value of the `judgehost` password you wrote down earlier. Like with the mysql passwords, you can also set `JUDGEDAEMON_PASSWORD_FILE` to a path containing the password instead.
+* `JUDGEDAEMON_PASSWORD` (defaults to `password`): password used to connect to the API. This should be the password displayed for the `judgehost` user when the `domserver` container was started. Like with the mysql passwords, you can also set `JUDGEDAEMON_PASSWORD_FILE` to a path containing the password instead.
 * `DAEMON_ID` (defaults to `0`): ID of the daemon to use for this judgedaemon. If you start multiple judgehosts on one (physical) machine, make sure each one has a different `DAEMON_ID`.
 * `DOMJUDGE_CREATE_WRITABLE_TEMP_DIR` (defaults top `0`): if set to 1, a writable temporary directory will be created for submissions. This only works for DOMjudge versions >= 6.1.
 * `RUN_USER_UID_GID` (defaults to `62860`): UID/GID of the user that will submissions. Make sure this UID/GID is **not** used on your host OS.

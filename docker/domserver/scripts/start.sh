@@ -36,12 +36,18 @@ DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 echo "[..] Generating credential files"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" | (umask 077 && cat > etc/dbpasswords.secret)
 
-# Make a note of whether the file with the initial admin password existed originally
+# Make a note of whether some of the credential files existed originally
 if [[ -f etc/initial_admin_password.secret ]]
 then
 	admin_pw_file_existed=1
 else
 	admin_pw_file_existed=0
+fi
+if [[ -f etc/restapi.secret ]]
+then
+	restapi_secret_file_existed=1
+else
+	restapi_secret_file_existed=0
 fi
 
 # Generate secrets
@@ -155,6 +161,14 @@ else
 		# We can't extract the password from the database because only the hash is stored, so we mark the password as unknown.
 		echo "[unknown]" > etc/initial_admin_password.secret
 	fi
+	if [ "${restapi_secret_file_existed}" -eq "0" ]
+	then
+		# The generated file does not match the database (similar to initial_admin_password.secret above).
+		{
+			echo "# NOTE(password-mismatch):"
+			echo "# The database was not automatically updated to use this judgehost password."
+		} >> etc/restapi.secret
+	fi
 	bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} upgrade
 fi
 echo "[ok] Database ready"; echo
@@ -207,8 +221,28 @@ then
 	echo -n "Initial admin password is "
 	cat etc/initial_admin_password.secret
 	echo
-	echo
-	echo
 fi
+echo -n "Initial judgehost password is "
+if grep -q "^# NOTE(password-mismatch)" < etc/restapi.secret
+then
+	# When restapi.secret was generated (either just now or in a previous run) it did not match the database
+	echo "[unknown]"
+	if [ "${restapi_secret_file_existed}" -eq "0" ]
+	then
+		# The file was generated just now
+		echo "A new judgehost password was generated in /opt/domjudge/domserver/etc/restapi.secret."
+		echo "However, the database was not automatically updated to use this judgehost password."
+	else
+		# The file was generated in a previous run
+		echo "The file /opt/domjudge/domserver/etc/restapi.secret contains a note indicating its password might not match the database."
+	fi
+	echo "The password in the database can be changed from the web interface by editing the 'judgehost' user."
+else
+	# Display the judgehost password
+	grep -v '^#' etc/restapi.secret | cut -f4
+fi
+echo
+echo
+echo
 
 exec supervisord -n -c /etc/supervisor/supervisord.conf
