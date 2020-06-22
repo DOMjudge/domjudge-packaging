@@ -44,7 +44,7 @@ This will start a MariaDB container, set the root password to `rootpw`, create a
 
 ### DOMserver container
 
-Next, if you are on Linux make sure you have cgroups enabled. See the [DOMjudge documentation about setting up a judgehost](https://www.domjudge.org/docs/admin-manual-3.html#ss3.7) for information about how to do this. Docker on Windows and macOS actually use a small Linux VM which already has these options set.
+Next, if you are on Linux make sure you have cgroups enabled. See the [DOMjudge documentation about setting up a judgehost](https://www.domjudge.org/docs/manual/master/install-judgehost.html#linux-control-groups) for information about how to do this. Docker on Windows and macOS actually use a small Linux VM which already has these options set.
 
 Now you can run the domserver using the following command:
 
