@@ -65,6 +65,8 @@ docker exec -it domserver cat /opt/domjudge/domserver/etc/restapi.secret
 
 You can now access the web interface on [http://localhost:12345/](http://localhost:12345/) and log in as admin.
 
+If you lose access to the admin user, see the [DOMjudge documentation on resetting the password](https://www.domjudge.org/docs/manual/master/config-basic.html#resetting-the-password-for-a-user).
+
 Make a note of the password for the `judgehost` user, it will be used when the judgehost container is configured. The password can be changed from the web interface by editing the `judgehost` user.
 
 #### Environment variables
