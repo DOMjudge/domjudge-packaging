@@ -123,8 +123,7 @@ To restart any of the services, run the following:
 docker exec -it domserver supervisorctl restart [service]
 ```
 
-where `[service]` is one of `nginx` or `php`,
-
+where `[service]` is one of `nginx` or `php`.
 
 ### Judgehost container
 
