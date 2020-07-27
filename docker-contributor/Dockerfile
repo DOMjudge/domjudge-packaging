@@ -32,7 +32,7 @@ RUN apt-get update \
     texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european latexmk \
     sudo debootstrap libcgroup-dev procps \
-    default-jre-headless default-jdk \
+    default-jre-headless default-jdk-headless \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
