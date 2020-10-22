@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
   devscripts shellcheck nginx libboost-regex-dev \
   php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
+  # W3c test \
+  httrack
   # Docs \
   python-sphinx python-sphinx-rtd-theme rst2pdf fontconfig python3-yaml \
   texlive-latex-recommended texlive-latex-extra \
