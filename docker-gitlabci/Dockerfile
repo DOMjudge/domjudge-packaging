@@ -17,6 +17,10 @@ RUN apt-get update && apt-get install -y \
   git python-pip moreutils \
   # Things we'd have in the chroot \
   ca-certificates default-jre-headless pypy locales software-properties-common \
+  # W3c WCAG \
+  npm libx11-xcb-dev libxtst-dev libnss3-dev libxss-dev libasound2-dev libatk-bridge2.0-dev libgtk-3-dev \
+  # Needed NPM packages \
+  npm install -g pa11y \
   && rm -rf /var/lib/apt/lists/*
 
 # Put the gitlab user in sudo
