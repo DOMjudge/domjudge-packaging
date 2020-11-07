@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
   # W3c WCAG \
   npm libx11-xcb-dev libxtst-dev libnss3-dev libxss-dev libasound2-dev libatk-bridge2.0-dev libgtk-3-dev \
   # Needed NPM packages \
-  npm install -g pa11y \
+  && npm install -g pa11y \
   && rm -rf /var/lib/apt/lists/*
 
 # Put the gitlab user in sudo
