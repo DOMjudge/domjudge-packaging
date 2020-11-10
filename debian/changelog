@@ -1,8 +1,14 @@
-domjudge (7.3.0-1) UNRELEASED; urgency=medium
+domjudge (7.3.1-1) unstable; urgency=medium
 
   * New upstream release.
 
- -- Thijs Kinkhorst <thijs@debian.org>  Tue, 28 Apr 2020 17:40:35 +0000
+ -- Thijs Kinkhorst <thijs@debian.org>  Tue, 10 Nov 2020 19:39:28 +0000
+
+domjudge (7.3.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Sat, 27 Jun 2020 04:31:14 +0000
 
 domjudge (7.0.3-1) unstable; urgency=medium
 
