@@ -1,3 +1,9 @@
+domjudge (7.3.1-2) unstable; urgency=medium
+
+  * Judgehost: do not overwrite restapi.secret if it exists.
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Wed, 11 Nov 2020 19:39:33 +0000
+
 domjudge (7.3.1-1) unstable; urgency=medium
 
   * New upstream release.

@@ -24,20 +24,23 @@ chown domjudge:adm /var/log/domjudge/judgehost \
 
 chmod 0751 /var/log/domjudge/judgehost /var/lib/domjudge/judgings
 
-# set up restapi credentials
-db_get domjudge/api_endpoint
-API_URL="$RET"
+# set up restapi credentials if not present
+RA_SECRET=/etc/domjudge/restapi.secret
+if [ ! -f $RA_SECRET ] ; then
+	db_get domjudge/api_endpoint
+	API_URL="$RET"
 
-db_get domjudge/api_endpoint_user
-API_USER="$RET"
+	db_get domjudge/api_endpoint_user
+	API_USER="$RET"
 
-db_get domjudge/api_endpoint_pass
-API_PASS="$RET"
+	db_get domjudge/api_endpoint_pass
+	API_PASS="$RET"
 
-touch /etc/domjudge/restapi.secret
-chmod 640 /etc/domjudge/restapi.secret
-chgrp domjudge /etc/domjudge/restapi.secret
-printf "default\t$API_URL\t$API_USER\t$API_PASS\n" > /etc/domjudge/restapi.secret
+	touch $RA_SECRET
+	chmod 640 $RA_SECRET
+	chgrp domjudge $RA_SECRET
+	printf "default\t$API_URL\t$API_USER\t$API_PASS\n" > $RA_SECRET
+fi
 
 #DEBHELPER#
 
