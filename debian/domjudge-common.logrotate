@@ -1,4 +1,4 @@
-/var/log/domjudge/*.log {
+/var/log/domjudge/*.log /var/log/domjudge/*/*.log {
 	weekly
 	missingok
 	rotate 6
