@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
   texlive-latex-recommended texlive-latex-extra \
   texlive-fonts-recommended texlive-lang-european \
   # Misc gitlab things \
-  mariadb-client curl build-essential composer packaging-dev  \
+  mariadb-client mysql-client-8.0 curl build-essential composer packaging-dev  \
   git python3-pip moreutils \
   # Things we'd have in the chroot \
   ca-certificates default-jre-headless pypy locales software-properties-common \
