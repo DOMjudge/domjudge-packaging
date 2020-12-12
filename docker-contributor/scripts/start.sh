@@ -67,8 +67,21 @@ mount -o bind /domjudge-judgings /domjudge/output/judgings
 chown -R domjudge output
 echo "[ok] Done setting up permissions"
 
-echo "[..] Checking database connection"
-if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+# Sometimes when running `docker-compose up` we're to fast at this step
+DB_UP=3
+while [ $DB_UP -gt 0 ]
+do
+  echo "[..] Checking database connection"
+  if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+  then
+    echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST};"
+    let "DB_UP--"
+    sleep 30s
+  else
+    DB_UP=0
+  fi
+done
+													if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
 then
   echo "MySQL database ${MYSQL_DATABASE} not found on host ${MYSQL_HOST}; exiting"
   exit 1
