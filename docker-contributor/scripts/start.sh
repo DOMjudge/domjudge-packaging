@@ -67,7 +67,7 @@ mount -o bind /domjudge-judgings /domjudge/output/judgings
 chown -R domjudge output
 echo "[ok] Done setting up permissions"
 
-# Sometimes when running `docker-compose up` we're to fast at this step
+# Sometimes when running `docker-compose up` we're too fast at this step
 DB_UP=3
 while [ $DB_UP -gt 0 ]
 do
