@@ -86,6 +86,10 @@ RUN useradd -m domjudge \
 	&& chmod 755 /scripts/start.sh \
 	&& chmod 755 /scripts/bin/* \
 	&& ln -s /scripts/bin/* /usr/bin/
+
+# Make the scripts available to the root user
+ENV PATH="$PATH:/opt/domjudge/domserver/bin"
+
 CMD ["/scripts/start.sh"]
 
 # Copy supervisor files

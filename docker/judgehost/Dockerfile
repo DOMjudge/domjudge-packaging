@@ -31,4 +31,8 @@ COPY ["judgehost/scripts", "/scripts/"]
 RUN chmod +x /scripts/start.sh \
 	&& useradd -m domjudge \
 	&& chown -R domjudge: /opt/domjudge
+
+# Make the scripts available to the root user
+ENV PATH="$PATH:/opt/domjudge/judgehost/bin"
+
 CMD ["/scripts/start.sh"]
