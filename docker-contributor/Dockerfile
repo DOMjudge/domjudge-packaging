@@ -48,8 +48,7 @@ RUN useradd -m domjudge \
   && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
 
 # Install composer
-ADD https://getcomposer.org/installer composer-setup.php
-RUN php composer-setup.php \
+RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Add exposed volume

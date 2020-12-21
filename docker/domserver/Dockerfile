@@ -27,8 +27,7 @@ RUN pip3 install pygments rst2pdf
 RUN useradd -m domjudge
 
 # Install composer
-ADD https://getcomposer.org/installer composer-setup.php
-RUN php composer-setup.php \
+RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Add DOMjudge source code and build script
@@ -63,8 +62,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install composer
-ADD https://getcomposer.org/installer composer-setup.php
-RUN php composer-setup.php \
+RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Copy domserver directory and add script files

@@ -19,8 +19,7 @@ RUN apt-get update \
 RUN useradd -m domjudge
 
 # Install composer
-ADD https://getcomposer.org/installer composer-setup.php
-RUN php composer-setup.php \
+RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Add DOMjudge source code and build script
