@@ -48,7 +48,10 @@ RUN useradd -m domjudge \
   && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
 
 # Install composer
-RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
+	&& rm -rf /var/lib/apt/lists/* \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Add exposed volume
