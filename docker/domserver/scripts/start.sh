@@ -197,7 +197,7 @@ if [[ -f /opt/domjudge/domserver/etc/domjudge-fpm.conf ]]
 then
 	# Replace nginx php socket location
 	sed -i 's!server unix:.*!server unix:/var/run/php-fpm-domjudge.sock;!' /etc/nginx/sites-enabled/default
-	# Remove default FPM pool config and link in DOMJudge version
+	# Remove default FPM pool config and link in DOMjudge version
 	if [[ -f /etc/php/7.3/fpm/pool.d/www.conf ]]
 	then
 		rm /etc/php/7.3/fpm/pool.d/www.conf
