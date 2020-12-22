@@ -12,10 +12,7 @@ RUN apt-get update \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
-	linuxdoc-tools linuxdoc-tools-text groff \
 	python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
-	texlive-latex-recommended texlive-latex-extra \
-	texlive-fonts-recommended texlive-lang-european \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
 	enscript lpr ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
