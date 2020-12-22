@@ -11,7 +11,7 @@ fi
 URL=https://www.domjudge.org/releases/domjudge-${VERSION}.tar.gz
 FILE=domjudge.tar.gz
 
-echo "[..] Downloading DOMJuge version ${VERSION}..."
+echo "[..] Downloading DOMjudge version ${VERSION}..."
 
 if ! curl -f -s -o ${FILE} ${URL}
 then
