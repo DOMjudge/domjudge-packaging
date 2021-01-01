@@ -9,7 +9,9 @@ then
 fi
 
 echo "[..] Building Docker image for Gitlab CI..."
-docker build -t domjudge/gitlabci:${VERSION} - <Dockerfile
+cp -r ../docker-contributor/php-config ./
+docker build -t domjudge/gitlabci:${VERSION} . 
+rm -r php-config
 echo "[ok] Done building Docker image for Gitlab CI"
 
 echo "All done. Image domjudge/gitlabci:${VERSION} created"

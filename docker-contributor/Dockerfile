@@ -31,6 +31,8 @@ RUN apt-get update \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
+    php-pear php-dev \
+    && pecl install pcov \
     && rm -rf /var/lib/apt/lists/*
 
 # Needed for building the docs
