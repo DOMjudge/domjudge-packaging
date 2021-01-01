@@ -21,9 +21,15 @@ RUN apt-get update && apt-get install -y \
   ca-certificates default-jre-headless pypy locales software-properties-common \
   # W3c WCAG \
   npm libnss3 libcups2 libxss1 libasound2 libatk1.0-0  libatk-bridge2.0-0 libpangocairo-1.0-0 libgtk-3-0 \
+  # Code coverage for unit test
+  php-pear php-dev \
+  && pecl install pcov \
   # Needed NPM packages \
   && npm install pa11y \
   && rm -rf /var/lib/apt/lists/*
+
+# Enable pcov (code coverage) in PHP
+COPY php-config/30-pcov.ini /etc/php/7.4/cli/conf.d/
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
