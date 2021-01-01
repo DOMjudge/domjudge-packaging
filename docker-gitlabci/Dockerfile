@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
   # W3c test \
   httrack \
   # Visual regression browser \
-  firefox openimageio-tools imagemagick \
+  cutycapt xvfb openimageio-tools imagemagick \
   # Docs \
   python3-sphinx python3-sphinx-rtd-theme rst2pdf fontconfig python3-yaml \
   texlive-latex-recommended texlive-latex-extra \
