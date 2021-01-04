@@ -53,7 +53,7 @@ RUN useradd -m domjudge \
 RUN apt-get update && \
     apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
-    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php --version=1.10.19 \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Add exposed volume
