@@ -59,7 +59,6 @@ release-ci:
   <<: *registry_dockerhub
   <<: *ci_template
   only:
-  only:
     refs:
       - master
     changes:
@@ -77,15 +76,33 @@ check-pr-contributor:
     - docker build .
 
 release-contributor:
-  <<: *registry_dockerhub
+  <<: *registry_gitlab
   only:
     refs:
       - master
     changes:
-      - .gitlab-ci.yml
       - docker-contributor/*
   script:
     - cd docker-contributor
-    - docker build -t $CONTRIBUTOR_IMAGE .
+    - docker build -t $CONTRIBUTOR_IMAGE
     - docker push $CONTRIBUTOR_IMAGE
+
+release-DOMjudge:
+  <<: *registry_dockerhub
+  only:
+
+    refs:
+      - master
+    changes:
+      - docker/*
+  script:
+    - cd docker
+    - ./build.sh $DOMJUDGE_VERSION
+    - >
+      for $IMG in "domserver" "judgehost" "default-judgehost-chroot"; do
+        docker push domjudge/$IMG:$DOMJUDGE_VERSION
+        if [ ! -z ${LATEST} ]; then
+          docker push domjudge/$IMG:latest
+        fi
+      done
 
