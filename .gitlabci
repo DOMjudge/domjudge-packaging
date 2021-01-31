@@ -1,0 +1,42 @@
+image: docker:19.03.12stages:
+  - testing
+  - release
+
+variables:
+  GITLABCI_IMAGE_TEST: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  GITLABCI_IMAGE:      $CI_REGISTRY_IMAGE:2.1
+
+check-pr:
+  stage: testing 
+  except:
+    - master
+  #only:
+  #  changes:
+  #    - docker-gitlabci/*
+  script:
+    - ./docker-gitlabci/build.sh
+
+build-gitlabci:
+  stage: testing
+  only:
+    refs:
+      - master
+    changes:
+      - docker-gitlabci/*
+  script:
+    - ./docker-gitlabci/build.sh
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $GITLABCI_IMAGE_TEST
+
+image-gitlabci:
+  stage: release
+  only:
+    refs:
+      - master
+    changes:
+      - docker-gitlabci/*
+  script:
+    - docker pull $GITLABCI_IMAGE_TEST
+    - docker tag $GITLABCI_IMAGE_TEST $GITLABCI_IMAGE
+    - docker push $GITLABCI_IMAGE
+
