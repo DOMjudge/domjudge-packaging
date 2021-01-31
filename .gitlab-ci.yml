@@ -1,0 +1,77 @@
+image: docker:latest
+
+stages:
+  - testing
+  - release
+
+variables:
+  GITLABCI_VERSION:    "2.1"
+  GITLABCI_IMAGE:      "gitlabci"
+  GITLABCI_BASE:       $CI_REGISTRY_IMAGE/$GITLABCI_IMAGE
+  CONTRIBUTOR_IMAGE:   "domjudge-contributor"
+  CONTRIBUTOR_BASE:    $CI_REGISTRY_IMAGE/$CONTRIBUTOR_IMAGE
+
+.job_template: &job_check-pr
+  stage: testing
+  services:
+    - docker:dind
+  except:
+    - master
+
+check-pr-ci:
+  <<: *job_check-pr
+  only:
+    changes:
+      - docker-gitlabci/*
+  script:
+    - cd docker-gitlabci
+    - sh ./build.sh $GITLABCI_VERSION $GITLABCI_BASE
+
+check-pr-contributor:
+  <<: *job_check-pr
+  only:
+    changes:
+      - docker-contributor/*
+  script:
+    - cd docker-contributor
+    - docker build .
+
+.release_template: &release_docker
+  stage: release
+  services:
+    - docker:dind
+
+.registry_template: &registry_gitlab
+  <<: *release_docker
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+.registry_template: &registry_dockerhub
+  <<: *release_docker
+  before_script:
+    - docker login -u $HUB_REGISTRY_USER -p $HUB_REGISTRY_PASSWORD $HUB_REGISTRY
+
+release-ci:
+  <<: *registry_gitlab
+  only:
+    refs:
+      - master
+    changes:
+      - docker-gitlabci/*
+  script:
+    - cd docker-gitlabci
+    - sh ./build.sh $GITLABCI_VERSION $GITLABCI_BASE
+    - docker push $GITLABCI_BASE:$GITLABCI_VERSION
+
+release-contributor:
+  <<: *registry_gitlab
+  only:
+    refs:
+      - master
+    changes:
+      - docker-contributor/*
+  script:
+    - cd docker-contributor
+    - docker build -t $CONTRIBUTOR_BASE .
+    - docker push $CONTRIBUTOR_BASE
+
