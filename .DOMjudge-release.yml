@@ -1,0 +1,20 @@
+test_sign:
+  stage: testing
+  if: '$TRIGGER_JOB == "tarball"'
+  script:
+    - >
+      for POST in '' '.sha256sum' '.asc'; do
+        wget "https://www.domjudge.org/releases/domjudge-$DJ_VERSION.tar.gz$POST"
+      done
+      gpg "domjudge-$DJ_VERSION.tar.gz.asc"
+      sha256sum -c "domjudge-$DJ_VERSION.tar.gz.sha256sum"
+
+test_tar:
+  stage: testing
+  if: '$TRIGGER_JOB == "tarball"'
+  script:
+    - wget "https://www.domjudge.org/releases/domjudge-$DJ_VERSION.tar.gz"
+    - tar xvf domjudge-$DJ_VERSION.tar.gz
+    - ./configure
+    - make all
+

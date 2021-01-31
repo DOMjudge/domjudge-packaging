@@ -1,3 +1,5 @@
+include: '.DOMjudge-release.yml'
+
 image: docker:latest
 
 stages:
@@ -48,6 +50,20 @@ variables:
     - sh ./build.sh $GITLABCI_VERSION $BASE
     - docker push $BASE:$GITLABCI_VERSION
 
+.job_template: &release_template
+  only:
+    - master
+  script:
+    - cd docker
+    - sh ./build.sh $DOMJUDGE_VERSION
+    - >
+      for IMG in domserver judgehost default-judgehost-chroot; do
+        docker push domjudge/$IMG:$DOMJUDGE_VERSION
+        if [ ! -z ${LATEST} ]; then
+          docker push domjudge/$IMG:latest
+        fi
+      done
+
 pr-ci:
   <<: *registry_gitlab
   <<: *ci_template
@@ -91,19 +107,13 @@ release-contributor:
     - docker build -t $CONTRIBUTOR_IMAGE .
     - docker push $CONTRIBUTOR_IMAGE
 
-release-DOMjudge:
+release-DOMjudge-manual:
   <<: *registry_dockerhub
+  <<: *release_template
   when: manual
-  only:
-    - master
-  script:
-    - cd docker
-    - sh ./build.sh $DOMJUDGE_VERSION
-    - >
-      for IMG in domserver judgehost default-judgehost-chroot; do
-        docker push domjudge/$IMG:$DOMJUDGE_VERSION
-        if [ ! -z ${LATEST} ]; then
-          docker push domjudge/$IMG:latest
-        fi
-      done
+
+release-DOMjudge-newrelease:
+  <<: *registry_dockerhub
+  <<: *release_template
+  if: '$TRIGGER_JOB == "docker"'
 
