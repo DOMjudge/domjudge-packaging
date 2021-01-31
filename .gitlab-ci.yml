@@ -8,6 +8,9 @@ variables:
   GITLABCI_VERSION:    "2.1"
   GITLABCI_IMAGE:      "gitlabci"
   CONTRIBUTOR_IMAGE:   "domjudge/domjudge-contributor"
+  DOMJUDGE_VERSION:
+    value:             "M.m.pp"
+    description:       "The DOMjudge version, Change this variable to 7.3.3 to release the 7.3.3 dockers. The file should be available on the domjudge.org webserver."
 
 # Docker Login steps
 .release_template: &release_docker
@@ -59,7 +62,6 @@ release-ci:
   <<: *registry_dockerhub
   <<: *ci_template
   only:
-  only:
     refs:
       - master
     changes:
@@ -88,4 +90,20 @@ release-contributor:
     - cd docker-contributor
     - docker build -t $CONTRIBUTOR_IMAGE .
     - docker push $CONTRIBUTOR_IMAGE
+
+release-DOMjudge:
+  <<: *registry_dockerhub
+  when: manual
+  only:
+    - master
+  script:
+    - cd docker
+    - sh ./build.sh $DOMJUDGE_VERSION
+    - >
+      for IMG in domserver judgehost default-judgehost-chroot; do
+        docker push domjudge/$IMG:$DOMJUDGE_VERSION
+        if [ ! -z ${LATEST} ]; then
+          docker push domjudge/$IMG:latest
+        fi
+      done
 
