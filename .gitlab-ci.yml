@@ -7,9 +7,24 @@ stages:
 variables:
   GITLABCI_VERSION:    "2.1"
   GITLABCI_IMAGE:      "gitlabci"
-  GITLABCI_BASE:       $CI_REGISTRY_IMAGE/$GITLABCI_IMAGE
-  CONTRIBUTOR_IMAGE:   "domjudge-contributor"
-  CONTRIBUTOR_BASE:    $CI_REGISTRY_IMAGE/$CONTRIBUTOR_IMAGE
+  CONTRIBUTOR_IMAGE:   "domjudge/domjudge-contributor"
+
+# Docker Login steps
+.release_template: &release_docker
+  services:
+    - docker:dind
+
+.registry_template: &registry_gitlab
+  <<: *release_docker
+  stage: testing
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+.registry_template: &registry_dockerhub
+  <<: *release_docker
+  stage: release
+  before_script:
+    - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_ACCESS_TOKEN
 
 .job_template: &job_check-pr
   stage: testing
@@ -18,60 +33,59 @@ variables:
   except:
     - master
 
-check-pr-ci:
-  <<: *job_check-pr
-  only:
-    changes:
-      - docker-gitlabci/*
+.job_template: &ci_template
   script:
     - cd docker-gitlabci
-    - sh ./build.sh $GITLABCI_VERSION $GITLABCI_BASE
+    - >
+      if [[ -z $DOCKER_HUB_USERNAME ]]; then
+        BASE=$CI_REGISTRY_IMAGE/$GITLABCI_IMAGE
+      else
+        BASE="domjudge/"$GITLABCI_IMAGE
+      fi
+    - sh ./build.sh $GITLABCI_VERSION $BASE
+    - docker push $BASE:$GITLABCI_VERSION
+
+pr-ci:
+  <<: *registry_gitlab
+  <<: *ci_template
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - docker-gitlabci/*
+  except:
+    - master
+
+release-ci:
+  <<: *registry_dockerhub
+  <<: *ci_template
+  only:
+  only:
+    refs:
+      - master
+    changes:
+      - .gitlab-ci.yml
+      - docker-gitlabci/*
 
 check-pr-contributor:
   <<: *job_check-pr
   only:
     changes:
+      - .gitlab-ci.yml
       - docker-contributor/*
   script:
     - cd docker-contributor
     - docker build .
 
-.release_template: &release_docker
-  stage: release
-  services:
-    - docker:dind
-
-.registry_template: &registry_gitlab
-  <<: *release_docker
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
-.registry_template: &registry_dockerhub
-  <<: *release_docker
-  before_script:
-    - docker login -u $HUB_REGISTRY_USER -p $HUB_REGISTRY_PASSWORD $HUB_REGISTRY
-
-release-ci:
-  <<: *registry_gitlab
-  only:
-    refs:
-      - master
-    changes:
-      - docker-gitlabci/*
-  script:
-    - cd docker-gitlabci
-    - sh ./build.sh $GITLABCI_VERSION $GITLABCI_BASE
-    - docker push $GITLABCI_BASE:$GITLABCI_VERSION
-
 release-contributor:
-  <<: *registry_gitlab
+  <<: *registry_dockerhub
   only:
     refs:
       - master
     changes:
+      - .gitlab-ci.yml
       - docker-contributor/*
   script:
     - cd docker-contributor
-    - docker build -t $CONTRIBUTOR_BASE .
-    - docker push $CONTRIBUTOR_BASE
+    - docker build -t $CONTRIBUTOR_IMAGE .
+    - docker push $CONTRIBUTOR_IMAGE
 
