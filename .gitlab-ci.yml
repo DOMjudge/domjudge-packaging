@@ -50,9 +50,7 @@ variables:
     - sh ./build.sh $GITLABCI_VERSION $BASE
     - docker push $BASE:$GITLABCI_VERSION
 
-.job_template: &release_template
-  only:
-    - master
+.job_template: &major_template
   script:
     - cd docker
     - sh ./build.sh $DOMJUDGE_VERSION
@@ -111,10 +109,11 @@ release-DOMjudge-manual:
   <<: *registry_dockerhub
   <<: *release_template
   when: manual
+  only: master
 
 release-DOMjudge-newrelease:
   <<: *registry_dockerhub
-  <<: *release_template
+  <<: *major_template
   rules:
     - if: '$TRIGGER_JOB == "docker"'
 
