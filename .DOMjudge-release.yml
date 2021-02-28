@@ -1,6 +1,7 @@
 test_sign:
-  stage: testing
-  if: '$TRIGGER_JOB == "tarball"'
+  stage: test
+  rules:
+    - if: '$TRIGGER_JOB == "tarball"'
   script:
     - >
       for POST in '' '.sha256sum' '.asc'; do
@@ -10,8 +11,9 @@ test_sign:
       sha256sum -c "domjudge-$DJ_VERSION.tar.gz.sha256sum"
 
 test_tar:
-  stage: testing
-  if: '$TRIGGER_JOB == "tarball"'
+  stage: test
+  rules:
+    - if: '$TRIGGER_JOB == "tarball"'
   script:
     - wget "https://www.domjudge.org/releases/domjudge-$DJ_VERSION.tar.gz"
     - tar xvf domjudge-$DJ_VERSION.tar.gz
@@ -19,11 +21,12 @@ test_tar:
     - make all
 
 debian-debs:
-  stage: testing
-  if: '$TRIGGER_JOB == "deb"'
+  stage: test
+  rules:
+    - if: '$TRIGGER_JOB == "deb"'
   parallel:
     matrix:
-      - PACKAGE: "doc" "domserver" "judgehost" 
+      - PACKAGE: ["doc","domserver","judgehost"]
   script:
     - curl -o - https://www.domjudge.org/repokey.asc | sudo apt-key add -
     - echo "deb     https://domjudge.org/debian unstable/" >> /etc/apt/sources.list.d/tmp
