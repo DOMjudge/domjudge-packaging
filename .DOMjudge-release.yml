@@ -5,18 +5,18 @@ test_sign:
   script:
     - >
       for POST in '' '.sha256sum' '.asc'; do
-        wget "https://www.domjudge.org/releases/domjudge-$DJ_VERSION.tar.gz$POST"
+        wget "https://www.domjudge.org/releases/domjudge-$DOMJUDGE_VERSION.tar.gz$POST"
       done
-      gpg "domjudge-$DJ_VERSION.tar.gz.asc"
-      sha256sum -c "domjudge-$DJ_VERSION.tar.gz.sha256sum"
+      gpg "domjudge-$DOMJUDGE_VERSION.tar.gz.asc"
+      sha256sum -c "domjudge-$DOMJUDGE_VERSION.tar.gz.sha256sum"
 
 test_tar:
   stage: test
   rules:
     - if: '$TRIGGER_JOB == "tarball"'
   script:
-    - wget "https://www.domjudge.org/releases/domjudge-$DJ_VERSION.tar.gz"
-    - tar xvf domjudge-$DJ_VERSION.tar.gz
+    - wget "https://www.domjudge.org/releases/domjudge-$DOMJUDGE_VERSION.tar.gz"
+    - tar xvf domjudge-$DOMJUDGE_VERSION.tar.gz
     - ./configure
     - make all
 

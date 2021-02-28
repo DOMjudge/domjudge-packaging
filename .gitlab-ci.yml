@@ -115,5 +115,6 @@ release-DOMjudge-manual:
 release-DOMjudge-newrelease:
   <<: *registry_dockerhub
   <<: *release_template
-  if: '$TRIGGER_JOB == "docker"'
+  rules:
+    - if: '$TRIGGER_JOB == "docker"'
 
