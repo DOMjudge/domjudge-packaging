@@ -107,7 +107,7 @@ release-contributor:
 
 release-DOMjudge-manual:
   <<: *registry_dockerhub
-  <<: *release_template
+  <<: *major_template
   when: manual
   only: master
 
