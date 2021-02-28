@@ -109,7 +109,8 @@ release-DOMjudge-manual:
   <<: *registry_dockerhub
   <<: *major_template
   when: manual
-  only: master
+  only:
+    - master
 
 release-DOMjudge-newrelease:
   <<: *registry_dockerhub
