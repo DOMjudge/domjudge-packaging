@@ -18,3 +18,14 @@ test_tar:
     - ./configure
     - make all
 
+debian-debs:
+  stage: testing
+  if: '$TRIGGER_JOB == "deb"'
+  parallel:
+    matrix:
+      - PACKAGE: "doc" "domserver" "judgehost" 
+  script:
+    - curl -o - https://www.domjudge.org/repokey.asc | sudo apt-key add -
+    - echo "deb     https://domjudge.org/debian unstable/" >> /etc/apt/sources.list.d/tmp
+    - apt update; apt install domserver-"$PACKAGE"
+
