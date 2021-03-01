@@ -1,4 +1,4 @@
-include: '.DOMjudge-release.yml'
+include: '.release.yml'
 
 image: docker:latest
 
