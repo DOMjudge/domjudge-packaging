@@ -1,7 +1,5 @@
 .debs_template: &debs
   stage: test
-  only:
-    - master
   when: manual
   parallel:
     matrix:
