@@ -25,5 +25,5 @@ ubuntu-debs-latest:
 
 ubuntu-debs-rolling:
   <<: *debs
-  image: debian:rolling
+  image: ubuntu:rolling
 
