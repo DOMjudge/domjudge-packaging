@@ -12,17 +12,17 @@
 
 debian-debs-stab:
   <<: *debs
-  image: debian/stable
+  image: debian:stable
 
 debian-debs-oldstab:
   <<: *debs
-  image: debian/oldstable
+  image: debian:oldstable
 
 ubuntu-debs-latest:
   <<: *debs
-  image: ubuntu/latest
+  image: ubuntu:latest
 
 ubuntu-debs-rolling:
   <<: *debs
-  image: debian/rolling
+  image: debian:rolling
 
