@@ -5,10 +5,10 @@
     matrix:
       - PACKAGE: ["doc","domserver","judgehost"]
   script:
-    - apt update; apt install -y curl gnupg
+    - apt update; apt install -y curl gnupg apt-transport-https
     - curl -o - https://www.domjudge.org/repokey.asc | apt-key add -
-    - echo "deb     https://domjudge.org/debian unstable/" >> /etc/apt/sources.list.d/tmp
-    - apt update; apt install -y domserver-"$PACKAGE"
+    - echo "deb     https://domjudge.org/debian unstable/" >> /etc/apt/sources.list.d/domjudge.list
+    - apt update; apt install -y domjudge-"$PACKAGE"
     - apt list domjudge*
 
 debian-debs-stab:
