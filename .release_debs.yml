@@ -8,7 +8,7 @@
     - apt update; apt install -y curl gnupg
     - curl -o - https://www.domjudge.org/repokey.asc | apt-key add -
     - echo "deb     https://domjudge.org/debian unstable/" >> /etc/apt/sources.list.d/tmp
-    - apt install -y domserver-"$PACKAGE"
+    - apt update; apt install -y domserver-"$PACKAGE"
     - apt list domjudge*
 
 debian-debs-stab:
