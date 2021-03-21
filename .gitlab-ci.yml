@@ -1,8 +1,8 @@
 image: docker:latest
 
 stages:
-  - testing
-  - release
+  - test
+  - deploy
 
 variables:
   GITLABCI_VERSION:    "2.1"
@@ -19,18 +19,18 @@ variables:
 
 .registry_template: &registry_gitlab
   <<: *release_docker
-  stage: testing
+  stage: test
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 .registry_template: &registry_dockerhub
   <<: *release_docker
-  stage: release
+  stage: deploy
   before_script:
     - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_ACCESS_TOKEN
 
 .job_template: &job_check-pr
-  stage: testing
+  stage: test
   services:
     - docker:dind
   except:
