@@ -76,6 +76,7 @@ RUN chmod 755 /scripts/start.sh \
 CMD ["/scripts/start.sh"]
 
 # Copy supervisor files
+COPY ["supervisord.conf", "/etc/supervisor/"]
 COPY ["supervisor", "/etc/supervisor/conf.d/"]
 
 # Expose HTTP port
