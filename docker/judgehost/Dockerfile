@@ -13,6 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install required packages for running of judgehost
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
+	dumb-init \
 	acl zip unzip supervisor sudo procps libcgroup1 \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
 	php-gmp php-xml php-mbstring python3 \
@@ -35,4 +36,5 @@ RUN chmod +x /scripts/start.sh \
 # Make the scripts available to the root user
 ENV PATH="$PATH:/opt/domjudge/judgehost/bin"
 
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/scripts/start.sh"]
