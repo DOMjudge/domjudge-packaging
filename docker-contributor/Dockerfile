@@ -15,7 +15,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install required packages and clean up afterwards to make this image layer smaller
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
-    autoconf automake git acl \
+    dumb-init autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
     nginx php7.4 php7.4-cli php7.4-fpm php7.4-zip \
     php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-intl \
@@ -73,6 +73,7 @@ COPY ["scripts", "/scripts/"]
 RUN chmod 755 /scripts/start.sh \
   && chmod 755 /scripts/bin/* \
   && ln -s /scripts/bin/* /usr/bin/
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/scripts/start.sh"]
 
 # Copy supervisor files
