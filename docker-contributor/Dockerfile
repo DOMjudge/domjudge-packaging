@@ -46,8 +46,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 # Set up users
 RUN useradd -m domjudge \
   && groupadd domjudge-run \
-  && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0 \
-  && useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
+  && for id in `seq 0 4`; do useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-$id; done
 
 # Install composer
 RUN apt-get update && \
