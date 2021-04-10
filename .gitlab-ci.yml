@@ -56,7 +56,7 @@ pr-ci:
   only:
     changes:
       - .gitlab-ci.yml
-      - docker-gitlabci/*
+      - docker-gitlabci/**/*
   except:
     - master
 
@@ -68,14 +68,14 @@ release-ci:
       - master
     changes:
       - .gitlab-ci.yml
-      - docker-gitlabci/*
+      - docker-gitlabci/**/*
 
 check-pr-contributor:
   <<: *job_check-pr
   only:
     changes:
       - .gitlab-ci.yml
-      - docker-contributor/*
+      - docker-contributor/**/*
   script:
     - cd docker-contributor
     - docker build .
@@ -87,7 +87,7 @@ release-contributor:
       - master
     changes:
       - .gitlab-ci.yml
-      - docker-contributor/*
+      - docker-contributor/**/*
   script:
     - cd docker-contributor
     - docker build -t $CONTRIBUTOR_IMAGE .
@@ -114,7 +114,7 @@ check-pr-DOMjudge:
   only:
     changes:
       - .gitlab-ci.yml
-      - docker/*
+      - docker/**/*
   script:
     - HUBURL="https://registry.hub.docker.com/v1/repositories/domjudge/domserver/tags"
     - apk add jq curl
