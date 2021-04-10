@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [[ -z $1 ]] 
+then
+  echo "Usage: $0 [start|stop]"
+  exit 1
+fi
+
+for id in `seq 2 3`; do
+  supervisorctl $1 judgedaemon$id
+done
+
