@@ -108,6 +108,7 @@ release-DOMjudge:
       for IMG in domserver judgehost default-judgehost-chroot; do
         docker push domjudge/$IMG:$DOMJUDGE_VERSION
         if [ ${DOMJUDGE_LATEST} == "true" ]; then
+          docker tag domjudge/$IMG:$DOMJUDGE_VERSION domjudge/$IMG:latest
           docker push domjudge/$IMG:latest
         fi
       done
