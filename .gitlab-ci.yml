@@ -13,6 +13,9 @@ variables:
   DOMJUDGE_VERSION:
     value:             "M.m.pp"
     description:       "The DOMjudge version, Change this variable to 7.3.3 to release the 7.3.3 dockers. The file should be available on the domjudge.org webserver."
+  DOMJUDGE_LATEST:
+    value:             "true"
+    description:       "Whether this is the latest release"    
 
 # Docker Login steps
 .release_template: &release_docker
@@ -104,7 +107,7 @@ release-DOMjudge:
     - >
       for IMG in domserver judgehost default-judgehost-chroot; do
         docker push domjudge/$IMG:$DOMJUDGE_VERSION
-        if [ ! -z ${LATEST} ]; then
+        if [ ${LATEST} == "true" ]; then
           docker push domjudge/$IMG:latest
         fi
       done
