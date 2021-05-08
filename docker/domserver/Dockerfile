@@ -1,4 +1,4 @@
-FROM debian:latest-slim AS domserver-build
+FROM debian:stable-slim AS domserver-build
 MAINTAINER DOMjudge team <team@domjudge.org>
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -38,7 +38,7 @@ ADD domserver/build.sh /domjudge-src
 RUN /domjudge-src/build.sh
 
 # Now create an image with the actual build in it
-FROM debian:latest
+FROM debian:stable-slim
 MAINTAINER DOMjudge team <team@domjudge.org>
 
 ENV DEBIAN_FRONTEND=noninteractive \
