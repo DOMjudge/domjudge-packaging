@@ -1,4 +1,4 @@
-FROM debian-slim:latest
+FROM debian:latest-slim
 MAINTAINER DOMjudge team <team@domjudge.org>
 
 ENV DEBIAN_FRONTEND=noninteractive \
