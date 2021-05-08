@@ -1,4 +1,4 @@
-FROM debian-slim:latest AS domserver-build
+FROM debian:latest-slim AS domserver-build
 MAINTAINER DOMjudge team <team@domjudge.org>
 
 ENV DEBIAN_FRONTEND=noninteractive
