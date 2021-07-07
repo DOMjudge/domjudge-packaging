@@ -5,7 +5,7 @@ createtar:
   image: domjudge/gitlabci:2.1
   script:
     - echo -e "\e[0Ksection_start:`date +%s`:buildrelease\r\e[0KBuild of release tarball"
-    - wget https://raw.githubusercontent.com/DOMjudge/domjudge-scripts/master/make_release.sh
+    - wget https://raw.githubusercontent.com/DOMjudge/domjudge-scripts/main/make_release.sh
     - sh ./make_release.sh $DOMJUDGE_VERSION
     - echo -e "\e[0Ksection_end:`date +%s`:buildrelease\r\e[0K"
     - echo -e "\e[0Ksection_start:`date +%s`:aptpackages\r\e[0KInstall the expected packages for new release"

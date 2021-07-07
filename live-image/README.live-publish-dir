@@ -25,7 +25,7 @@ and dependencies added. Everything is preconfigured for running a
 
 For more information, boot the default image and see the file /README
 and http://<hostname>/, or view it online at
-https://github.com/DOMjudge/domjudge-packaging/blob/master/live-image/README.md
+https://github.com/DOMjudge/domjudge-packaging/blob/main/live-image/README.md
 
 The images contain the following versions of software:
 
