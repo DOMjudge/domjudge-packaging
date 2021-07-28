@@ -39,7 +39,7 @@ variables:
   services:
     - docker:dind
   except:
-    - master
+    - main
 
 .job_template: &ci_template
   script:
@@ -61,14 +61,14 @@ pr-ci:
       - .gitlab-ci.yml
       - docker-gitlabci/**/*
   except:
-    - master
+    - main
 
 release-ci:
   <<: *registry_dockerhub
   <<: *ci_template
   only:
     refs:
-      - master
+      - main
     changes:
       - .gitlab-ci.yml
       - docker-gitlabci/**/*
@@ -87,7 +87,7 @@ release-contributor:
   <<: *registry_dockerhub
   only:
     refs:
-      - master
+      - main
     changes:
       - .gitlab-ci.yml
       - docker-contributor/**/*
@@ -100,7 +100,7 @@ release-DOMjudge:
   <<: *registry_dockerhub
   when: manual
   only:
-    - master
+    - main
   script:
     - cd docker
     - sh ./build.sh $DOMJUDGE_VERSION
