@@ -24,7 +24,7 @@ RUN apt-get update \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
     texlive-latex-recommended texlive-latex-extra \
-    texlive-fonts-recommended texlive-lang-european \
+    texlive-fonts-recommended texlive-lang-european latexmk \
     sudo debootstrap libcgroup-dev procps \
     default-jre-headless \
     default-jdk ghc fp-compiler \

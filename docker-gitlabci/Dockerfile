@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
   # Docs \
   python3-sphinx python3-sphinx-rtd-theme rst2pdf fontconfig python3-yaml \
   texlive-latex-recommended texlive-latex-extra \
-  texlive-fonts-recommended texlive-lang-european \
+  texlive-fonts-recommended texlive-lang-european latexmk \
   # Misc gitlab things \
   mariadb-client curl build-essential packaging-dev  \
   git python3-pip moreutils w3m \
