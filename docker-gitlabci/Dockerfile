@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
   httrack \
   # Visual regression browser \
   cutycapt xvfb openimageio-tools imagemagick \
+  # Submit client \
+  python3-requests python3-magic \
   # Docs \
   python3-sphinx python3-sphinx-rtd-theme rst2pdf fontconfig python3-yaml \
   texlive-latex-recommended texlive-latex-extra \
