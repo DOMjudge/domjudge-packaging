@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
   texlive-fonts-recommended texlive-lang-european latexmk \
   # Misc gitlab things \
   mariadb-client curl build-essential packaging-dev  \
-  git python3-pip moreutils w3m \
+  git python3-pip moreutils w3m python3-yaml \
   # Things we'd have in the chroot \
   ca-certificates default-jre-headless pypy locales software-properties-common \
   # W3c WCAG \
