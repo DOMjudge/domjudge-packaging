@@ -99,6 +99,7 @@ release-contributor:
 release-DOMjudge:
   <<: *registry_dockerhub
   when: manual
+  timeout: 2 hours
   only:
     - main
   script:
@@ -115,6 +116,7 @@ release-DOMjudge:
 
 check-pr-DOMjudge:
   <<: *job_check-pr
+  timeout: 2 hours
   only:
     changes:
       - .gitlab-ci.yml
