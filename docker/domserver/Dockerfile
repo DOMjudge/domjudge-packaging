@@ -19,7 +19,7 @@ RUN apt-get update \
 	enscript lpr ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
 
-# Needed for building the docs
+## Needed for building the docs
 RUN pip3 install pygments rst2pdf
 
 # Set up user
