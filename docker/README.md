@@ -27,6 +27,7 @@ These containers do not include MySQL / MariaDB; the [MariaDB](https://hub.docke
     - [Environment variables](#environment-variables)
     - [Example AWS Setup](#example-aws-setup)
 - [Building the images](#building-the-images)
+- [Customizing the image](#customizing-the-image)
 
 ## Using the images
 
@@ -202,3 +203,30 @@ If you want to build the images yourself, you can just run
 ```
 
 where `version` is the DOMjudge version to create the images for, e.g. `5.3.0`.
+
+To build domjudge with local sources, run
+```bash
+  tar --exclude-vcs -czf <path to domjudge-packaging>/docker/domjudge.tar.gz <domjudge source directory>
+  cd <path to domjudge-packaging>/docker
+  docker build -t domjudge -f domserver/Dockerfile .
+```
+Note that the source directory name has to match `domjudge-*`.
+
+
+## Customizing the image
+
+### Domjudge
+
+The image initalizes itself with the `start.sh` script.
+This script runs all executable files in `/scripts/start.d/` in alphabetical order.
+Before that, all files from `/scripts/start.ro/` are copied into the `start.d` folder.
+To customize any settings (e.g. modify the nginx config), add scripts to `start.ro` via a bind mount.
+
+*Warning*: The scripts inside this folder have full access to everything in the container (including passwords etc.).
+Only run trusted code there.
+
+To enable `REMOTE_USER` processing provided by a proxy in front of this image, mount the scripts from `examples/remote_user_scripts` to `start.ro`.
+
+### Judgehost
+
+To customize the packages available in the chroot (e.g. runtimes needed for submission languages), modify the `judgehost/chroot-and-tar.sh`, adding `-i <comma separated list of packages>` to the `dj_make_chroot` call.

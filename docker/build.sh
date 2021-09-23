@@ -1,18 +1,19 @@
-#!/bin/bash -e
+#!/bin/sh -eu
 
-if [[ ! -z ${CI} ]]
+if [ -n "${CI+}" ]
 then
-        set -euxo pipefail
+	set -x
         export PS4='(${0}:${LINENO}): - [$?] $ '
 fi
 
-VERSION=$1
-if [[ -z ${VERSION} ]]
+if [ "$#" -ne 1 ]
 then
 	echo "Usage: $0 domjudge-version"
 	echo "	For example: $0 5.3.0"
 	exit 1
 fi
+
+VERSION="$1"
 
 URL=https://www.domjudge.org/releases/domjudge-${VERSION}.tar.gz
 FILE=domjudge.tar.gz
@@ -27,19 +28,12 @@ fi
 
 echo "[ok] DOMjudge version ${VERSION} downloaded as domjudge.tar.gz"; echo
 
-echo "[..] Building Docker image for domserver using intermediate build image..."
-docker build -t domjudge/domserver:${VERSION} -f domserver/Dockerfile .
+echo "[..] Building Docker image for domserver..."
+./build-domjudge.sh "domjudge/domserver:${VERSION}"
 echo "[ok] Done building Docker image for domserver"
 
 echo "[..] Building Docker image for judgehost using intermediate build image..."
-docker build -t domjudge/judgehost:${VERSION}-build -f judgehost/Dockerfile.build .
-docker rm -f domjudge-judgehost-${VERSION}-build > /dev/null 2>&1 || true
-docker run --name domjudge-judgehost-${VERSION}-build --privileged domjudge/judgehost:${VERSION}-build
-docker cp domjudge-judgehost-${VERSION}-build:/chroot.tar.gz .
-docker cp domjudge-judgehost-${VERSION}-build:/judgehost.tar.gz .
-docker rm -f domjudge-judgehost-${VERSION}-build
-docker rmi domjudge/judgehost:${VERSION}-build
-docker build -t domjudge/judgehost:${VERSION} -f judgehost/Dockerfile .
+./build-judgehost.sh "domjudge/judgehost:${VERSION}"
 echo "[ok] Done building Docker image for judgehost"
 
 echo "[..] Building Docker image for judgehost chroot..."
