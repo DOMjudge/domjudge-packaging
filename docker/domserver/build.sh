@@ -2,6 +2,8 @@
 
 cd /domjudge-src/domjudge*
 chown -R domjudge: .
+# If we used a local source tarball, it might not have been built yet
+sudo -u domjudge make dist
 sudo -u domjudge ./configure -with-baseurl=http://localhost/
 
 # Passwords should not be included in the built image. We create empty files here to prevent passwords from being generated.
