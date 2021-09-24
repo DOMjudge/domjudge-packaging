@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -eu
 
 # Add user, create PHP FPM socket dir, change permissions for domjudge directory and fix scripts
 useradd -m domjudge
@@ -12,18 +12,21 @@ then
 fi
 
 chmod 755 /scripts/start.sh
-if compgen -G "/scripts/bin/*"
-then
-	chmod 755 /scripts/bin/*
-	ln -s /scripts/bin/* /usr/bin/
-fi
+for script in "/scripts/bin/*"
+do
+	if [ -f "$script" ]
+	then
+		chmod 755 "$script"
+		ln -s "$script" /usr/bin/
+	fi
+done
 
 # Configure php
 
 php_folder=$(echo "/etc/php/7."?"/")
 php_version=$(basename "$php_folder")
 
-if [[ ! -d "$php_folder" ]]
+if [ ! -d "$php_folder" ]
 then
 	echo "[!!] Could not find php path"
 	exit 1
@@ -42,16 +45,16 @@ ln -s "/usr/sbin/php-fpm$php_version" "/usr/sbin/php-fpm"
 
 # Set up vhost
 cp /opt/domjudge/domserver/etc/nginx-conf /etc/nginx/sites-enabled/default
-if [[ -f /opt/domjudge/domserver/etc/domjudge-fpm.conf ]]
+if [ -f /opt/domjudge/domserver/etc/domjudge-fpm.conf ]
 then
 	# Replace nginx php socket location
 	sed -i 's!server unix:.*!server unix:/var/run/php-fpm-domjudge.sock;!' /etc/nginx/sites-enabled/default
 	# Remove default FPM pool config and link in DOMjudge version
-	if [[ -f "$php_version/fpm/pool.d/www.conf" ]]
+	if [ -f "$php_version/fpm/pool.d/www.conf" ]
 	then
 		rm "$php_version/fpm/pool.d/www.conf"
 	fi
-	if [[ ! -f "$php_version/fpm/pool.d/domjudge.conf" ]]
+	if [ ! -f "$php_version/fpm/pool.d/domjudge.conf" ]
 	then
 		ln -s /opt/domjudge/domserver/etc/domjudge-fpm.conf "$php_folder/fpm/pool.d/domjudge.conf"
 	fi
@@ -66,12 +69,12 @@ cp /opt/domjudge/domserver/etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inn
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
 sed -i 's/\/opt\/domjudge\/domserver\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
 # Run DOMjudge in root
-sed -i '/^# location \//,/^# \}/ s/# //' $NGINX_CONFIG_FILE
-sed -i '/^location \/domjudge/,/^\}/ s/^/#/' $NGINX_CONFIG_FILE
-sed -i 's/\/domjudge;/"";/' $NGINX_CONFIG_FILE
+sed -i '/^# location \//,/^# \}/ s/# //' "$NGINX_CONFIG_FILE"
+sed -i '/^location \/domjudge/,/^\}/ s/^/#/' "$NGINX_CONFIG_FILE"
+sed -i 's/\/domjudge;/"";/' "$NGINX_CONFIG_FILE"
 # Remove access_log and error_log entries
-sed -i '/access_log/d' $NGINX_CONFIG_FILE
-sed -i '/error_log/d' $NGINX_CONFIG_FILE
+sed -i '/access_log/d' "$NGINX_CONFIG_FILE"
+sed -i '/error_log/d' "$NGINX_CONFIG_FILE"
 
 # Fix permissions on cache and log directories
 chown www-data: -R /opt/domjudge/domserver/webapp/var

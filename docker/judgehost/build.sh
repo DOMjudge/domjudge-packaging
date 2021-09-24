@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -eu
 
 cd /domjudge-src/domjudge*
 chown -R domjudge: .

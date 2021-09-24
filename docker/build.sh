@@ -3,7 +3,7 @@
 if [ -n "${CI+}" ]
 then
 	set -x
-        export PS4='(${0}:${LINENO}): - [$?] $ '
+	export PS4='(${0}:${LINENO}): - [$?] $ '
 fi
 
 if [ "$#" -ne 1 ]
@@ -20,7 +20,7 @@ FILE=domjudge.tar.gz
 
 echo "[..] Downloading DOMjudge version ${VERSION}..."
 
-if ! wget ${URL} -O ${FILE}
+if ! wget --quiet ${URL} -O ${FILE}
 then
 	echo "[!!] DOMjudge version ${VERSION} file not found on https://www.domjudge.org/releases"
 	exit 1
