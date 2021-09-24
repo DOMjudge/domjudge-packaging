@@ -1,6 +1,6 @@
-#!/bin/bash -e
+#!/bin/sh -eu
 
-if [[ -d /scripts/start.ro ]]
+if [ -d /scripts/start.ro ]
 then
 	for i in /scripts/start.ro/*
 	do
@@ -11,7 +11,7 @@ fi
 
 for i in /scripts/start.d/*
 do
-	if [[ -x "$i" ]]
+	if [ -x "$i" ]
 	then
 		echo "[..] Running start script $(basename $i)"
 		if ! "$i"
@@ -22,5 +22,6 @@ do
 	fi
 done
 
-echo
+echo "[..] Starting supervisor"
+
 exec supervisord -n -c /etc/supervisor/supervisord.conf

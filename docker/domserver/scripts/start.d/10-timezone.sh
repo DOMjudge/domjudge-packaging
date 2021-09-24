@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -eu
 
 ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime
 echo ${CONTAINER_TIMEZONE} > /etc/timezone
