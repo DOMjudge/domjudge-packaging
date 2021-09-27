@@ -99,6 +99,7 @@ release-contributor:
 release-DOMjudge:
   <<: *registry_dockerhub
   when: manual
+  allow_failure: false
   only:
     - main
   script:
