@@ -74,11 +74,11 @@ install: build
 		rm COPYING* README.md README.country_flags ChangeLog
 
 	# This must be shipped in domjudge-common
-	rm $(DJDS)/etc/domjudge/common-config.php $(DJDS)/etc/domjudge/genrestapicredentials \
+	rm $(DJDS)/etc/domjudge/genrestapicredentials \
 		$(DJDS)/usr/share/domjudge/*.php $(DJDS)/usr/share/domjudge/alert
 
 	# This is in domjudge-common
-	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
+	rm -r $(DJJH)/usr/share/domjudge/* \
 		$(DJJH)/etc/domjudge/genrestapicredentials
 
 	# Saviour lib.error.sh before we trash /u/s/d
