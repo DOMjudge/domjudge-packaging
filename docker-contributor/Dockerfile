@@ -1,4 +1,5 @@
-FROM ubuntu:focal
+ARG ARCH=
+FROM ${ARCH}ubuntu:focal
 LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \

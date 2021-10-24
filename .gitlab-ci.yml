@@ -41,6 +41,11 @@ variables:
   except:
     - main
 
+.matrix_contributor_template: &matrix_contributor_template
+  parallel:
+    matrix:
+      - ARCH: [amd64, arm64v8]
+
 .job_template: &ci_template
   script:
     - cd docker-gitlabci
@@ -75,16 +80,19 @@ release-ci:
 
 check-pr-contributor:
   <<: *job_check-pr
+  <<: *matrix_contributor_template
   only:
     changes:
       - .gitlab-ci.yml
       - docker-contributor/**/*
   script:
     - cd docker-contributor
-    - docker build .
+    - docker pull $CONTRIBUTOR_IMAGE:${ARCH} || true
+    - docker build --build-arg ARCH=${ARCH}/ .
 
-release-contributor:
+release-contributor-arch:
   <<: *registry_dockerhub
+  <<: *matrix_contributor_template
   only:
     refs:
       - main
@@ -93,8 +101,23 @@ release-contributor:
       - docker-contributor/**/*
   script:
     - cd docker-contributor
-    - docker build -t $CONTRIBUTOR_IMAGE .
-    - docker push $CONTRIBUTOR_IMAGE
+    - docker pull $CONTRIBUTOR_IMAGE:${ARCH} || true
+    - docker build -t $CONTRIBUTOR_IMAGE:${ARCH} --build-arg ARCH=${ARCH}/ .
+    - docker push $CONTRIBUTOR_IMAGE:${ARCH}
+
+release-contributor-latest:
+  <<: *registry_dockerhub
+  only:
+    refs:
+      - main
+    changes:
+      - .gitlab-ci.yml
+      - docker-contributor/**/*
+  needs:
+    - release-contributor-arch
+  script:
+    - docker manifest create $CONTRIBUTOR_IMAGE:latest -a $CONTRIBUTOR_IMAGE:amd64 -a $CONTRIBUTOR_IMAGE:arm64v8
+    - docker manifest push $CONTRIBUTOR_IMAGE:latest
 
 release-DOMjudge:
   <<: *registry_dockerhub
