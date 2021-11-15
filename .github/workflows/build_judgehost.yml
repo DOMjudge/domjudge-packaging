@@ -52,5 +52,5 @@ jobs:
           context: ./docker
           file: ./docker/judgehost/Dockerfile.all
           platforms: linux/amd64,linux/arm64
-          push: false
+          push: true
           tags: dup4/domjudge-judgehost:${{ github.event.inputs.version }}
