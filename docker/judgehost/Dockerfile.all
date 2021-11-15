@@ -34,7 +34,7 @@ COPY ["judgehost/chroot-and-tar.sh", "/scripts/"]
 
 # Build and install judgehost
 RUN /domjudge-src/build.sh \
-	&& /scripts/judgehost/chroot-and-tar.sh 
+	&& /scripts/chroot-and-tar.sh 
 
 
 FROM debian:stable
