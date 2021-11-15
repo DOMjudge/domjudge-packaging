@@ -50,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./docker
-          file: ./docker/domserver/Dockerfile
+          file: ./docker/judgehost/Dockerfile.all
           platforms: linux/amd64,linux/arm64
           push: false
           tags: dup4/domjudge-judgehost:${{ github.event.inputs.version }}
