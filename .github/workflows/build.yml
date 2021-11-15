@@ -44,7 +44,7 @@ jobs:
 
       - name: Download DOMjudge
         run: |
-          bash ./docker/download.sh
+          bash ./docker/download.sh ${{ github.event.inputs.version }} 
 
       - name: Build and Push domserver
         uses: docker/build-push-action@v2
