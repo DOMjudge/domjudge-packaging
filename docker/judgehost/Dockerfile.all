@@ -32,7 +32,7 @@ ADD judgehost/build.sh /domjudge-src
 
 # Build and install judgehost
 RUN /domjudge-src/build.sh \
-	&& judgehost/chroot-and-tar.sh 
+	&& ./judgehost/chroot-and-tar.sh 
 
 
 FROM debian:stable
