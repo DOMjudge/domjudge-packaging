@@ -30,9 +30,11 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 ADD domjudge.tar.gz /domjudge-src
 ADD judgehost/build.sh /domjudge-src
 
+COPY ["judgehost/chroot-and-tar.sh", "/scripts/"]
+
 # Build and install judgehost
 RUN /domjudge-src/build.sh \
-	&& ./judgehost/chroot-and-tar.sh 
+	&& /scripts/judgehost/chroot-and-tar.sh 
 
 
 FROM debian:stable
