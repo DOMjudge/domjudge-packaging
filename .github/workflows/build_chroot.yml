@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json-schema.org/draft-07/schema#
-name: Build
+name: Build Chroot
 on:
   workflow_dispatch:
     inputs:
@@ -9,7 +9,7 @@ on:
         default: 'latest'
 
 jobs:
-  build:
+  build-chroot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,11 +46,11 @@ jobs:
         run: |
           bash ./docker/download.sh ${{ github.event.inputs.version }} 
 
-      - name: Build and Push domserver
+      - name: Build and Push
         uses: docker/build-push-action@v2
         with:
           context: ./docker
-          file: ./docker/domserver/Dockerfile
+          file: ./docker/judgehost/Dockerfile.chroot
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: dup4/domjudge-domserver:${{ github.event.inputs.version }}
+          tags: dup4/domjudge-default-judgehost-chroot:${{ github.event.inputs.version }}
