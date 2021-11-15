@@ -43,6 +43,7 @@ MAINTAINER DOMjudge team <team@domjudge.org>
 
 ENV DEBIAN_FRONTEND=noninteractive \
 	CONTAINER_TIMEZONE=Europe/Amsterdam \
+	CONTAINER_TIMEZONE=Asia/Shanghai \
 	MYSQL_HOST=mariadb \
 	MYSQL_USER=domjudge \
 	MYSQL_DATABASE=domjudge \
