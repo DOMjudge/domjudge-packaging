@@ -34,10 +34,10 @@ fi
 
 # Set correct settings
 sed -ri -e "s/^user.*/user www-data;/" /etc/nginx/nginx.conf
-sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
-	-e "s/^post_max_size.*/post_max_size = 100M/" \
+sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 512M/" \
+	-e "s/^post_max_size.*/post_max_size = 512M/" \
 	-e "s/^memory_limit.*/memory_limit = 2G/" \
-	-e "s/^max_file_uploads.*/max_file_uploads = 200/" \
+	-e "s/^max_file_uploads.*/max_file_uploads = 512/" \
 	-e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
 	 "$php_folder/fpm/php.ini"
 
@@ -69,9 +69,9 @@ cp /opt/domjudge/domserver/etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inn
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
 sed -i 's/\/opt\/domjudge\/domserver\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
 # Run DOMjudge in root
-sed -i '/^# location \//,/^# \}/ s/# //' "$NGINX_CONFIG_FILE"
-sed -i '/^location \/domjudge/,/^\}/ s/^/#/' "$NGINX_CONFIG_FILE"
-sed -i 's/\/domjudge;/"";/' "$NGINX_CONFIG_FILE"
+# sed -i '/^# location \//,/^# \}/ s/# //' "$NGINX_CONFIG_FILE"
+# sed -i '/^location \/domjudge/,/^\}/ s/^/#/' "$NGINX_CONFIG_FILE"
+# sed -i 's/\/domjudge;/"";/' "$NGINX_CONFIG_FILE"
 # Remove access_log and error_log entries
 sed -i '/access_log/d' "$NGINX_CONFIG_FILE"
 sed -i '/error_log/d' "$NGINX_CONFIG_FILE"
