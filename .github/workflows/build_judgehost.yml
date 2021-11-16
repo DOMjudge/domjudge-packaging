@@ -58,7 +58,7 @@ jobs:
       - name: Build
         run: |
           cd ./docker
-          bash -e build-judgehost.sh dup4/domjudge-judgehost:${{ github.event.inputs.version }}
+          sudo bash -e build-judgehost.sh dup4/domjudge-judgehost:${{ github.event.inputs.version }}
 
       - name: Push
         run: |
