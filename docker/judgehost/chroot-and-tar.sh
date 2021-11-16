@@ -4,7 +4,7 @@
 /opt/domjudge/judgehost/bin/dj_make_chroot
 
 CHROOTDIR=/chroot/domjudge
-INSTALLDEBS=gcc g++ make default-jdk-headless default-jre-headless pypy pypy3 python3 locales
+INSTALLDEBS="gcc g++ make default-jdk-headless default-jre-headless pypy pypy3 python3 locales"
 
 chroot "$CHROOTDIR" /bin/sh -c "apt-get update && apt-get dist-upgrade"
 chroot "$CHROOTDIR" /bin/sh -c "apt-get clean"
