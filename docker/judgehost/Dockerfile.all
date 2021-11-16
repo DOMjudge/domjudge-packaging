@@ -36,7 +36,6 @@ COPY ["judgehost/chroot-and-tar.sh", "/scripts/"]
 RUN /domjudge-src/build.sh \
 	&& /scripts/chroot-and-tar.sh 
 
-
 FROM debian:stable
 
 ENV DEBIAN_FRONTEND=noninteractive \
