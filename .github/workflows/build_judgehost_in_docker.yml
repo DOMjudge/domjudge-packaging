@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json-schema.org/draft-07/schema#
-name: Build Judgehost
+name: Build Judgehost In Docker
 on:
   workflow_dispatch:
     inputs:
@@ -9,7 +9,7 @@ on:
         default: 'latest'
 
 jobs:
-  build-judgehost:
+  build-judgehost-in-docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,11 +46,11 @@ jobs:
         run: |
           bash ./docker/download.sh ${{ github.event.inputs.version }} 
 
-      - name: Build
-        run: |
-          cd ./docker
-          sudo bash -e build-judgehost.sh dup4/domjudge-judgehost:${{ github.event.inputs.version }}
-
-      - name: Push
-        run: |
-          docker push dup4/domjudge-judgehost:${{ github.event.inputs.version }}
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./docker
+          file: ./docker/judgehost/Dockerfile.all
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: dup4/domjudge-judgehost:${{ github.event.inputs.version }}
