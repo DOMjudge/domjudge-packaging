@@ -46,11 +46,20 @@ jobs:
         run: |
           bash ./docker/download.sh ${{ github.event.inputs.version }} 
 
-      - name: Build and Push
-        uses: docker/build-push-action@v2
-        with:
-          context: ./docker
-          file: ./docker/judgehost/Dockerfile.all
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: dup4/domjudge-judgehost:${{ github.event.inputs.version }}
+      # - name: Build and Push
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: ./docker
+      #     file: ./docker/judgehost/Dockerfile.all
+      #     platforms: linux/amd64,linux/arm64
+      #     push: true
+      #     tags: dup4/domjudge-judgehost:${{ github.event.inputs.version }}
+
+      - name: Build
+        run: |
+          cd ./docker
+          bash -e build-judgehost.sh dup4/domjudge-judgehost:${{ github.event.inputs.version }}
+
+      - name: Push
+        run: |
+          docker push dup4/domjudge-judgehost:${{ github.event.inputs.version }}
