@@ -36,10 +36,9 @@ echo "[..] Copying resolv.conf to chroot"
 cp /etc/resolv.conf /chroot/domjudge/etc/resolv.conf
 echo "[ok] resolv.conf copied"; echo
 
-# CHROOTDIR=/chroot/domjudge
-# mount -t proc proc "$CHROOTDIR"/proc
-# mount -t sysfs sysfs "$CHROOTDIR"/sys
-# mount --bind /dev/pts "$CHROOTDIR"/dev/pts
+CHROOTDIR=/chroot/domjudge
+mount -t proc proc "$CHROOTDIR"/proc
+mount -t sysfs sysfs "$CHROOTDIR"/sys
 
 if ! id domjudge-run-${DAEMON_ID} > /dev/null 2>&1; then
   groupadd -g ${RUN_USER_UID_GID} domjudge-run
