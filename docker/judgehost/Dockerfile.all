@@ -41,7 +41,6 @@ FROM debian:stable
 
 ENV DEBIAN_FRONTEND=noninteractive \
 	CONTAINER_TIMEZONE=Europe/Amsterdam \
-	CONTAINER_TIMEZONE=Asia/Shanghai \
 	DOMSERVER_BASEURL=http://domserver/ \
 	JUDGEDAEMON_USERNAME=judgehost \
 	JUDGEDAEMON_PASSWORD=password \
