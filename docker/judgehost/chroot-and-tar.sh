@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Add packages with -i "<apt package name>" here
-/opt/domjudge/judgehost/bin/dj_make_chroot -i
+/opt/domjudge/judgehost/bin/dj_make_chroot
 
 CHROOTDIR=/chroot/domjudge
 INSTALLDEBS=gcc g++ make default-jdk-headless default-jre-headless pypy pypy3 python3 locales
