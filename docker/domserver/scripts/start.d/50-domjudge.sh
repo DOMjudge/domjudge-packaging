@@ -82,9 +82,10 @@ fi
 # Add the Docker gateway as a trusted proxy
 if grep -q TRUSTED_PROXIES webapp/.env.local > /dev/null 2>&1
 then
-	sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
+	PRE_TRUSTED_PROXIES=$(grep "TRUSTED_PROXIES" webapp/.env.local | sed 's|TRUSTED_PROXIES=||g')
+	sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP},${PRE_TRUSTED_PROXIES},${TRUSTED_PROXIES}|" webapp/.env.local
 else
-	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
+	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP},${TRUSTED_PROXIES}" >> webapp/.env.local
 fi
 
 if [[ ! -f webapp/config/load_db_secrets.php ]]
