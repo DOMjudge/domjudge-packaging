@@ -8,5 +8,7 @@ echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 # Configure php
 php_folder=$(echo "/etc/php/7."?"/")
 
-sed -ri -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
-	"$php_folder/fpm/php.ini"
+cat > "$php_folder/fpm/conf.d/99-timezone.ini" <<- EOF 
+[Date]
+date.timezone = ${CONTAINER_TIMEZONE}
+EOF
