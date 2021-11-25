@@ -11,7 +11,7 @@ Forwarded: not-needed
 -CHROOTDIR="@judgehost_chrootdir@"
 +CHROOTDIR="/var/lib/domjudge/chroot.new"
  
- # Fallback Debian and release (codename) to bootstrap (note: overriden right below):
+ # Fallback Debian and release (codename) to bootstrap (note: overridden right below):
  DISTRO="Debian"
 @@ -205,6 +205,7 @@
  	rm -rf "$CHROOTDIR"
@@ -21,7 +21,7 @@ Forwarded: not-needed
  mkdir -p "$CHROOTDIR"
  cd "$CHROOTDIR"
  CHROOTDIR="$PWD"
-@@ -379,5 +380,10 @@
+@@ -383,5 +384,10 @@
  umount "$CHROOTDIR/sys"
  umount "$CHROOTDIR/proc"
  
