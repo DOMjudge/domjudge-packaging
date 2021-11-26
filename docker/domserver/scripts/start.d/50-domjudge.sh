@@ -16,6 +16,8 @@ MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
 DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 
+TRUSTED_PROXIES=$(file_or_env TRUSTED_PROXIES)
+
 echo "[..] Generating credential files"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" | (umask 077 && cat > etc/dbpasswords.secret)
 
