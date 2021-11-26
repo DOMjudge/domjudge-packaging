@@ -95,6 +95,26 @@ if [ -n "${TRUSTED_PROXIES}" ]; then
 	sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${PRE_TRUSTED_PROXIES},${TRUSTED_PROXIES}|" webapp/.env.local
 fi
 
+# Add trusted proxies for Nginx
+NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
+
+# Remove the previous configuration 
+sed -i "/^set_real_ip_from.*/d" ${NGINX_CONFIG_FILE}
+sed -i "/^real_ip_header.*/d" ${NGINX_CONFIG_FILE}
+sed -i "/^real_ip_recursive.*/d" ${NGINX_CONFIG_FILE}
+
+echo "set_real_ip_from ${DOCKER_GATEWAY_IP};" >> ${NGINX_CONFIG_FILE} 
+
+IFS="," read -r -a TRUSTED_PROXIES_ARRAY <<< "${TRUSTED_PROXIES}" 
+
+for TRUSTED_PROXY in "${TRUSTED_PROXIES_ARRAY[@]}"
+do
+	echo "set_real_ip_from ${TRUSTED_PROXY};" >> ${NGINX_CONFIG_FILE}
+done
+
+echo "real_ip_header    X-Forwarded-For;" >> ${NGINX_CONFIG_FILE}
+echo "real_ip_recursive on;" >> ${NGINX_CONFIG_FILE}
+
 if [[ ! -f webapp/config/load_db_secrets.php ]]
 then
 	# DOMjudge 7.1 dumps the environment into webapp/.env.local.php for improved speed
