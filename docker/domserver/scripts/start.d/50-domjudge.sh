@@ -81,6 +81,14 @@ else
 	fi
 fi
 
+# Add the Docker gateway as a trusted proxy
+if grep -q TRUSTED_PROXIES webapp/.env.local > /dev/null 2>&1
+then
+	sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}|" webapp/.env.local
+else
+	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
+fi
+
 # Add trusted proxies for Nginx
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
 
