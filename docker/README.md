@@ -82,6 +82,7 @@ The following environment variables are supported by the `domserver` container:
 * `MYSQL_DATABASE` (defaults to `domjudge`): set the database to use.
 * `DJ_DB_INSTALL_BARE` (defaults to `0`): set to `1` to do a `bare-install` for the database instead of a normal `install`.
 * `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
+* `TRUSTED_PROXIES` (defaults to empty): The IP list of trusted proxy servers, separated by a comma(`,`).
 
 #### Passwords through files
 
@@ -151,7 +152,6 @@ The following environment variables are supported by the `judgehost` container:
 * `DAEMON_ID` (defaults to `0`): ID of the daemon to use for this judgedaemon. If you start multiple judgehosts on one (physical) machine, make sure each one has a different `DAEMON_ID`.
 * `DOMJUDGE_CREATE_WRITABLE_TEMP_DIR` (defaults to `0`): if set to 1, a writable temporary directory will be created for submissions. This only works for DOMjudge versions >= 6.1.
 * `RUN_USER_UID_GID` (defaults to `62860`): UID/GID of the user that will submissions. Make sure this UID/GID is **not** used on your host OS.
-* `TRUSTED_PROXIES` (defaults to empty): The IP list of trusted proxy servers, separated by a comma(`,`).
 
 #### Example AWS Setup
 
