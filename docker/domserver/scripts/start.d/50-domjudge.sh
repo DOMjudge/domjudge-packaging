@@ -16,6 +16,8 @@ MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
 DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 
+TRUSTED_PROXIES=$(file_or_env TRUSTED_PROXIES)
+
 echo "[..] Generating credential files"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" | (umask 077 && cat > etc/dbpasswords.secret)
 
@@ -86,6 +88,26 @@ then
 else
 	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
 fi
+
+# Add trusted proxies for Nginx
+NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
+
+# Remove the previous configuration 
+sed -i "/^set_real_ip_from.*/d" ${NGINX_CONFIG_FILE}
+sed -i "/^real_ip_header.*/d" ${NGINX_CONFIG_FILE}
+sed -i "/^real_ip_recursive.*/d" ${NGINX_CONFIG_FILE}
+
+echo "set_real_ip_from ${DOCKER_GATEWAY_IP};" >> ${NGINX_CONFIG_FILE} 
+
+IFS="," read -r -a TRUSTED_PROXIES_ARRAY <<< "${TRUSTED_PROXIES}" 
+
+for TRUSTED_PROXY in "${TRUSTED_PROXIES_ARRAY[@]}"
+do
+	echo "set_real_ip_from ${TRUSTED_PROXY};" >> ${NGINX_CONFIG_FILE}
+done
+
+echo "real_ip_header    X-Forwarded-For;" >> ${NGINX_CONFIG_FILE}
+echo "real_ip_recursive on;" >> ${NGINX_CONFIG_FILE}
 
 if [[ ! -f webapp/config/load_db_secrets.php ]]
 then
