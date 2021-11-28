@@ -6,7 +6,7 @@ chown -R domjudge: .
 sudo -u domjudge make configure
 sudo -u domjudge ./configure -with-baseurl=http://localhost/
 
-sudo -u domjudge echo "default	http://localhost/api	dummy	dummy" > etc/restapi.secret
+echo "default	http://localhost/api	dummy	dummy" | sudo -u domjudge tee etc/restapi.secret > /dev/null
 
 sudo -u domjudge make judgehost
 make install-judgehost
