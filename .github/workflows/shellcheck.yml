@@ -19,3 +19,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
+        with:
+          ignore_paths: live-image debian
+          disable_matcher: true
