@@ -21,7 +21,7 @@ dj_pwhash()
 	htpasswd -nbB -C 10 foouser "$1" | sed 's/^foouser://'
 }
 
-[ `id -u` -eq 0 ] || error "this program must be run as root."
+[ "$(id -u)" -eq 0 ] || error "this program must be run as root."
 
 case "$1" in
 	rootpass)
