@@ -18,6 +18,8 @@ DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 
 TRUSTED_PROXIES=$(file_or_env TRUSTED_PROXIES)
 
+WEBAPP_BASEURL=$(file_or_env WEBAPP_BASEURL)
+
 echo "[..] Generating credential files"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" | (umask 077 && cat > etc/dbpasswords.secret)
 
