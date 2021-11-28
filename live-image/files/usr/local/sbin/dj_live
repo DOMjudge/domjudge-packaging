@@ -9,7 +9,7 @@ set -e
 
 error()
 {
-	echo "Error: $@"
+	echo "Error: $*"
 	exit 1
 }
 
