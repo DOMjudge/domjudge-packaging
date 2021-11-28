@@ -5,13 +5,13 @@ function file_or_env {
     if [ ! -z "${!file}" ]; then
         cat "${!file}"
     else
-        echo -n ${!1}
+        echo -n "${!1}"
     fi
 }
 
 echo "[..] Setting timezone"
-ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime
-echo ${CONTAINER_TIMEZONE} > /etc/timezone
+ln -snf "/usr/share/zoneinfo/${CONTAINER_TIMEZONE}" /etc/localtime
+echo "${CONTAINER_TIMEZONE}" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 
@@ -36,8 +36,8 @@ echo "[..] Copying resolv.conf to chroot"
 cp /etc/resolv.conf /chroot/domjudge/etc/resolv.conf
 echo "[ok] resolv.conf copied"; echo
 
-if ! id domjudge-run-${DAEMON_ID} > /dev/null 2>&1; then
-  groupadd -g ${RUN_USER_UID_GID} domjudge-run
-  useradd -u ${RUN_USER_UID_GID} -N -d /nonexistent -g nogroup -s /bin/false domjudge-run-${DAEMON_ID}
+if ! id "domjudge-run-${DAEMON_ID}" > /dev/null 2>&1; then
+  groupadd -g "${RUN_USER_UID_GID}" domjudge-run
+  useradd -u "${RUN_USER_UID_GID}" -N -d /nonexistent -g nogroup -s /bin/false "domjudge-run-${DAEMON_ID}"
 fi
-exec sudo -u domjudge DOMJUDGE_CREATE_WRITABLE_TEMP_DIR=${DOMJUDGE_CREATE_WRITABLE_TEMP_DIR} /opt/domjudge/judgehost/bin/judgedaemon -n ${DAEMON_ID}
+exec sudo -u domjudge DOMJUDGE_CREATE_WRITABLE_TEMP_DIR="${DOMJUDGE_CREATE_WRITABLE_TEMP_DIR}" /opt/domjudge/judgehost/bin/judgedaemon -n "${DAEMON_ID}"

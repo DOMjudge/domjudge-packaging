@@ -9,7 +9,7 @@ set -e
 
 error()
 {
-	echo "Error: $@"
+	echo "Error: $*"
 	exit 1
 }
 
@@ -21,7 +21,7 @@ dj_pwhash()
 	htpasswd -nbB -C 10 foouser "$1" | sed 's/^foouser://'
 }
 
-[ `id -u` -eq 0 ] || error "this program must be run as root."
+[ "$(id -u)" -eq 0 ] || error "this program must be run as root."
 
 case "$1" in
 	rootpass)
@@ -138,7 +138,7 @@ EOF
 		dj_upgrade_chroot
 		;;
 
-     *|help)
+    help|*)
      cat <<EOF
 Usage: $0 <command> [argument]...
 

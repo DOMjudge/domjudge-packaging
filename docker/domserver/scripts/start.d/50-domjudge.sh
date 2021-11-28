@@ -5,7 +5,7 @@ function file_or_env {
     if [ ! -z "${!file}" ]; then
         cat "${!file}"
     else
-        echo -n ${!1}
+        echo -n "${!1}"
     fi
 }
 
@@ -15,8 +15,9 @@ MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
 MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
 DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
-
 TRUSTED_PROXIES=$(file_or_env TRUSTED_PROXIES)
+
+WEBAPP_BASEURL=$(file_or_env WEBAPP_BASEURL)
 
 echo "[..] Generating credential files"
 echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" | (umask 077 && cat > etc/dbpasswords.secret)
@@ -89,17 +90,65 @@ else
 	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
 fi
 
-# Add trusted proxies for Nginx
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
 
-# Remove the previous configuration 
+# Set up BaseURL
+
+# Fix BaseURL, Such as
+# "" -> "/"
+# "domjudge" -> "/domjudge"
+if [[ -z "${WEBAPP_BASEURL}" ]] || [[ "${WEBAPP_BASEURL:0:1}" != '/' ]]; then
+	WEBAPP_BASEURL="/${WEBAPP_BASEURL}"
+	echo "Fix WEBAPP_BASEURL ${WEBAPP_BASEURL:1} -> ${WEBAPP_BASEURL}"
+fi
+
+# Fix BaseURL, Such as
+# "/" -> "/"
+# "/domjudge/" -> "/domjudge"
+if [[ "${WEBAPP_BASEURL}" != "/" ]] && [[ "${WEBAPP_BASEURL: -1}" == '/' ]]; then
+	WEBAPP_BASEURL="${WEBAPP_BASEURL%?}"
+fi
+
+# Remove the previous location configuration
+sed -i "/^location \/.*/,/^\}/d" ${NGINX_CONFIG_FILE}
+
+if [[ "${WEBAPP_BASEURL}" == "/" ]]; then
+	sed -i "s/^set \$prefix .*;$/set \$prefix \"\";/" ${NGINX_CONFIG_FILE}
+	sed "/^set \$prefix .*;/a\
+\ \n\
+# run it out of the root of your system\n\
+location / {\n\
+	root \$domjudgeRoot;\n\
+	try_files \$uri @domjudgeFront;\n\
+}
+" ${NGINX_CONFIG_FILE}
+else
+	sed -i "s/^set \$prefix .*;$/set \$prefix \"${WEBAPP_BASEURL}\";/" ${NGINX_CONFIG_FILE}
+	sed "/^set \$prefix .*;/a\
+\ \n\
+# install it with a prefix\n\
+location $WEBAPP_BASEURL { return 301 $WEBAPP_BASEURL\/; }\n\
+location $WEBAPP_BASEURL\/ {\n\
+	root \$domjudgeRoot;\n\
+	rewrite ^$WEBAPP_BASEURL\/(.*)$ \/$1 break;\n\
+	try_files \$uri @domjudgeFront;\n\
+}
+" ${NGINX_CONFIG_FILE}
+fi
+
+sed -i "s|    domjudge.baseurl: .*|    domjudge.baseurl: http:\/\/localhost${WEBAPP_BASEURL}\/|" /opt/domjudge/domserver/webapp/config/static.yaml
+sed -i "s|define('BASEURL',     '.*');|define('BASEURL',     'http:\/\/localhost${WEBAPP_BASEURL}/');|" /opt/domjudge/domserver/etc/domserver-static.php
+
+# Add trusted proxies for Nginx
+
+# Remove the previous configuration
 sed -i "/^set_real_ip_from.*/d" ${NGINX_CONFIG_FILE}
 sed -i "/^real_ip_header.*/d" ${NGINX_CONFIG_FILE}
 sed -i "/^real_ip_recursive.*/d" ${NGINX_CONFIG_FILE}
 
-echo "set_real_ip_from ${DOCKER_GATEWAY_IP};" >> ${NGINX_CONFIG_FILE} 
+echo "set_real_ip_from ${DOCKER_GATEWAY_IP};" >> ${NGINX_CONFIG_FILE}
 
-IFS="," read -r -a TRUSTED_PROXIES_ARRAY <<< "${TRUSTED_PROXIES}" 
+IFS="," read -r -a TRUSTED_PROXIES_ARRAY <<< "${TRUSTED_PROXIES}"
 
 for TRUSTED_PROXY in "${TRUSTED_PROXIES_ARRAY[@]}"
 do
@@ -145,7 +194,7 @@ DB_UP=9
 while [ $DB_UP -gt 0 ]
 do
 	echo "[..] Checking database connection"
-	if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+	if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 	then
 		echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST};"
 		let "DB_UP--"
@@ -154,13 +203,13 @@ do
 		DB_UP=0
 	fi
 done
-if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 then
 	echo "MySQL database ${MYSQL_DATABASE} not found on host ${MYSQL_HOST}; exiting"
 	exit 1
 fi
 
-if ! bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} status > /dev/null 2>&1
+if ! bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" status > /dev/null 2>&1
 then
 	echo "  Database not installed; installing..."
 	INSTALL=install
@@ -169,7 +218,7 @@ then
 		INSTALL=bare-install
 	fi
 	echo "Using ${INSTALL}..."
-	bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} ${INSTALL}
+	bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" ${INSTALL}
 else
 	echo "  Database installed; upgrading..."
 	if [ "${admin_pw_file_existed}" -eq "0" ] && [[ -f etc/initial_admin_password.secret ]]
@@ -187,7 +236,7 @@ else
 			echo "# The database was not automatically updated to use this judgehost password."
 		} >> etc/restapi.secret
 	fi
-	bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} upgrade
+	bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" upgrade
 fi
 echo "[ok] Database ready"; echo
 
@@ -227,9 +276,9 @@ then
 	do
 		if [[ -x "$i" ]]
 		then
-			echo "[..] Running post start script $(basename $i)"
+			echo "[..] Running post start script $(basename "$i")"
 			if ! output=$("$i" 2>&1); then
-				echo "[!!] Post start script $(basename $i) failed"
+				echo "[!!] Post start script $(basename "$i") failed"
 				echo "$output"
 				exit 1
 			fi

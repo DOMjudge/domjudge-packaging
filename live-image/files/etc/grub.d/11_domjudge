@@ -3,7 +3,7 @@ set -e
 
 # This file adds DOMjudge specific versions of the first linux menuentry.
 
-LINUX="`dirname $0`/10_linux"
+LINUX="$(dirname "$0")/10_linux"
 
 make_entry()
 {
@@ -11,7 +11,7 @@ make_entry()
 	NAME="$2"
 	shift 2
 	$LINUX | sed -n '/^ *menuentry /,/^ *}/ p' | \
-	sed -e 's/\(linux.* root=.*\)/\1'" systemd.unit=$TARGET.target $@/" \
+	sed -e 's/\(linux.* root=.*\)/\1'" systemd.unit=$TARGET.target $*/" \
 	    -e "s/^\( *menuentry\) '[^']*'/\1 '$NAME'/"
 }
 
