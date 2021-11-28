@@ -20,7 +20,7 @@ FILE=domjudge.tar.gz
 
 echo "[..] Downloading DOMjudge version ${VERSION}..."
 
-if ! wget --quiet ${URL} -O ${FILE}
+if ! wget --quiet "${URL}" -O ${FILE}
 then
 	echo "[!!] DOMjudge version ${VERSION} file not found on https://www.domjudge.org/releases"
 	exit 1
@@ -37,7 +37,7 @@ echo "[..] Building Docker image for judgehost using intermediate build image...
 echo "[ok] Done building Docker image for judgehost"
 
 echo "[..] Building Docker image for judgehost chroot..."
-docker build -t domjudge/default-judgehost-chroot:${VERSION} -f judgehost/Dockerfile.chroot .
+docker build -t "domjudge/default-judgehost-chroot:${VERSION}" -f judgehost/Dockerfile.chroot .
 echo "[ok] Done building Docker image for judgehost chroot"
 
 echo "All done. Image domjudge/domserver:${VERSION} and domjudge/judgehost:${VERSION} created"

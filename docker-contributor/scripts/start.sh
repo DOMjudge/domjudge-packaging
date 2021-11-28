@@ -5,13 +5,13 @@ function file_or_env {
     if [ ! -z "${!file}" ]; then
         cat "${!file}"
     else
-        echo -n ${!1}
+        echo -n "${!1}"
     fi
 }
 
 echo "[..] Setting timezone"
-ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime
-echo ${CONTAINER_TIMEZONE} > /etc/timezone
+ln -snf "/usr/share/zoneinfo/${CONTAINER_TIMEZONE}" /etc/localtime
+echo "${CONTAINER_TIMEZONE}" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 
@@ -72,7 +72,7 @@ DB_UP=3
 while [ $DB_UP -gt 0 ]
 do
   echo "[..] Checking database connection"
-  if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+  if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
   then
     echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST};"
     let "DB_UP--"
@@ -81,13 +81,13 @@ do
     DB_UP=0
   fi
 done
-													if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+													if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 then
   echo "MySQL database ${MYSQL_DATABASE} not found on host ${MYSQL_HOST}; exiting"
   exit 1
 fi
 
-if ! bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} status > /dev/null 2>&1
+if ! bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" status > /dev/null 2>&1
 then
   echo "  Database not installed; installing..."
   INSTALL=install
@@ -96,10 +96,10 @@ then
     INSTALL=bare-install
   fi
   echo "Using ${INSTALL}..."
-  bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} ${INSTALL}
+  bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" ${INSTALL}
 else
   echo "  Database installed; upgrading..."
-  bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} upgrade
+  bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" upgrade
 fi
 echo "[ok] Database ready"; echo
 
