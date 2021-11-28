@@ -109,6 +109,9 @@ if [[ "${WEBAPP_BASEURL}" != "/" ]] && [[ "${WEBAPP_BASEURL: -1}" == '/' ]]; the
 	WEBAPP_BASEURL="${WEBAPP_BASEURL%?}"
 fi
 
+# Remove the previous location configuration
+sed -i "/^location \/.*/,/^\}/d" ${NGINX_CONFIG_FILE}
+
 if [[ "${WEBAPP_BASEURL}" == "/" ]]; then
 	sed -i "s/^set \$prefix .*;$/set \$prefix \"\";/" ${NGINX_CONFIG_FILE}
 	sed "/^set \$prefix .*;/a\
