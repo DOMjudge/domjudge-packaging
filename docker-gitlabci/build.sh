@@ -22,7 +22,7 @@ fi
 
 echo "[..] Building Docker image for Gitlab CI..."
 cp -r ../docker-contributor/php-config ./
-docker build -t ${REGISTRY}:${VERSION} . 
+docker build -t "${REGISTRY}:${VERSION}" . 
 rm -r php-config
 echo "[ok] Done building Docker image for Gitlab CI"
 

@@ -5,7 +5,7 @@ function file_or_env {
     if [ ! -z "${!file}" ]; then
         cat "${!file}"
     else
-        echo -n ${!1}
+        echo -n "${!1}"
     fi
 }
 
@@ -145,7 +145,7 @@ DB_UP=9
 while [ $DB_UP -gt 0 ]
 do
 	echo "[..] Checking database connection"
-	if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+	if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 	then
 		echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST};"
 		let "DB_UP--"
@@ -154,13 +154,13 @@ do
 		DB_UP=0
 	fi
 done
-if ! mysqlshow -u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} ${MYSQL_DATABASE} > /dev/null 2>&1
+if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 then
 	echo "MySQL database ${MYSQL_DATABASE} not found on host ${MYSQL_HOST}; exiting"
 	exit 1
 fi
 
-if ! bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} status > /dev/null 2>&1
+if ! bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" status > /dev/null 2>&1
 then
 	echo "  Database not installed; installing..."
 	INSTALL=install
@@ -169,7 +169,7 @@ then
 		INSTALL=bare-install
 	fi
 	echo "Using ${INSTALL}..."
-	bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} ${INSTALL}
+	bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" ${INSTALL}
 else
 	echo "  Database installed; upgrading..."
 	if [ "${admin_pw_file_existed}" -eq "0" ] && [[ -f etc/initial_admin_password.secret ]]
@@ -187,7 +187,7 @@ else
 			echo "# The database was not automatically updated to use this judgehost password."
 		} >> etc/restapi.secret
 	fi
-	bin/dj_setup_database -uroot -p${MYSQL_ROOT_PASSWORD} upgrade
+	bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" upgrade
 fi
 echo "[ok] Database ready"; echo
 
@@ -227,9 +227,9 @@ then
 	do
 		if [[ -x "$i" ]]
 		then
-			echo "[..] Running post start script $(basename $i)"
+			echo "[..] Running post start script $(basename "$i")"
 			if ! output=$("$i" 2>&1); then
-				echo "[!!] Post start script $(basename $i) failed"
+				echo "[!!] Post start script $(basename "$i") failed"
 				echo "$output"
 				exit 1
 			fi
