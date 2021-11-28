@@ -15,7 +15,6 @@ MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
 MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
 DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
-
 TRUSTED_PROXIES=$(file_or_env TRUSTED_PROXIES)
 
 WEBAPP_BASEURL=$(file_or_env WEBAPP_BASEURL)
@@ -91,17 +90,62 @@ else
 	echo "TRUSTED_PROXIES=${DOCKER_GATEWAY_IP}" >> webapp/.env.local
 fi
 
-# Add trusted proxies for Nginx
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
 
-# Remove the previous configuration 
+# Set up BaseURL
+
+# Fix BaseURL, Such as
+# "" -> "/"
+# "domjudge" -> "/domjudge"
+if [[ -z "${WEBAPP_BASEURL}" ]] || [[ "${WEBAPP_BASEURL:0:1}" != '/' ]]; then
+	WEBAPP_BASEURL="/${WEBAPP_BASEURL}"
+	echo "Fix WEBAPP_BASEURL ${WEBAPP_BASEURL:1} -> ${WEBAPP_BASEURL}"
+fi
+
+# Fix BaseURL, Such as
+# "/" -> "/"
+# "/domjudge/" -> "/domjudge"
+if [[ "${WEBAPP_BASEURL}" != "/" ]] && [[ "${WEBAPP_BASEURL: -1}" == '/' ]]; then
+	WEBAPP_BASEURL="${WEBAPP_BASEURL%?}"
+fi
+
+if [[ "${WEBAPP_BASEURL}" == "/" ]]; then
+	sed -i "s/^set \$prefix .*;$/set \$prefix \"\";/" ${NGINX_CONFIG_FILE}
+	sed "/^set \$prefix .*;/a\
+\ \n\
+# run it out of the root of your system\n\
+location / {\n\
+	root \$domjudgeRoot;\n\
+	try_files \$uri @domjudgeFront;\n\
+}
+" ${NGINX_CONFIG_FILE}
+else
+	sed -i "s/^set \$prefix .*;$/set \$prefix \"${WEBAPP_BASEURL}\";/" ${NGINX_CONFIG_FILE}
+	sed "/^set \$prefix .*;/a\
+\ \n\
+# install it with a prefix\n\
+location $WEBAPP_BASEURL { return 301 $WEBAPP_BASEURL\/; }\n\
+location $WEBAPP_BASEURL\/ {\n\
+	root \$domjudgeRoot;\n\
+	rewrite ^$WEBAPP_BASEURL\/(.*)$ \/$1 break;\n\
+	try_files \$uri @domjudgeFront;\n\
+}
+" ${NGINX_CONFIG_FILE}
+fi
+
+sed -i "s|    domjudge.baseurl: .*|    domjudge.baseurl: http:\/\/localhost${WEBAPP_BASEURL}\/|" /opt/domjudge/domserver/webapp/config/static.yaml
+sed -i "s|define('BASEURL',     '.*');|define('BASEURL',     'http:\/\/localhost${WEBAPP_BASEURL}/');|" /opt/domjudge/domserver/etc/domserver-static.php
+
+# Add trusted proxies for Nginx
+
+# Remove the previous configuration
 sed -i "/^set_real_ip_from.*/d" ${NGINX_CONFIG_FILE}
 sed -i "/^real_ip_header.*/d" ${NGINX_CONFIG_FILE}
 sed -i "/^real_ip_recursive.*/d" ${NGINX_CONFIG_FILE}
 
-echo "set_real_ip_from ${DOCKER_GATEWAY_IP};" >> ${NGINX_CONFIG_FILE} 
+echo "set_real_ip_from ${DOCKER_GATEWAY_IP};" >> ${NGINX_CONFIG_FILE}
 
-IFS="," read -r -a TRUSTED_PROXIES_ARRAY <<< "${TRUSTED_PROXIES}" 
+IFS="," read -r -a TRUSTED_PROXIES_ARRAY <<< "${TRUSTED_PROXIES}"
 
 for TRUSTED_PROXY in "${TRUSTED_PROXIES_ARRAY[@]}"
 do
