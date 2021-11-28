@@ -3,9 +3,9 @@
 
 include /usr/share/dpkg/pkg-info.mk
 
-DJDS=`pwd`/debian/domjudge-domserver
-DJJH=`pwd`/debian/domjudge-judgehost
-DJDC=`pwd`/debian/domjudge-doc
+DJDS=$(pwd)/debian/domjudge-domserver
+DJJH=$(pwd)/debian/domjudge-judgehost
+DJDC=$(pwd)/debian/domjudge-doc
 
 build: build-arch build-indep
 build-arch: build-stamp
