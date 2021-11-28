@@ -68,10 +68,13 @@ fi
 cp /opt/domjudge/domserver/etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
 sed -i 's/\/opt\/domjudge\/domserver\/etc\/nginx-conf-inner/\/etc\/nginx\/snippets\/domjudge-inner/' /etc/nginx/sites-enabled/default
-# Run DOMjudge in root
-sed -i '/^# location \//,/^# \}/ s/# //' "$NGINX_CONFIG_FILE"
-sed -i '/^location \/domjudge/,/^\}/ s/^/#/' "$NGINX_CONFIG_FILE"
-sed -i 's/\/domjudge;/"";/' "$NGINX_CONFIG_FILE"
+
+# Remove the location configuration
+# Wait until the container starts before adding the relevant configuration
+sed -i "/^# Uncomment to run it out of the root of your system/,/^# \}/d" "$NGINX_CONFIG_FILE"
+sed -i "/^# Or you can install it with a prefix/,/^}/d" "$NGINX_CONFIG_FILE"
+sed -i "s/^set \$prefix .*;$/set \$prefix \"\";/" "$NGINX_CONFIG_FILE"
+
 # Remove access_log and error_log entries
 sed -i '/access_log/d' "$NGINX_CONFIG_FILE"
 sed -i '/error_log/d' "$NGINX_CONFIG_FILE"
