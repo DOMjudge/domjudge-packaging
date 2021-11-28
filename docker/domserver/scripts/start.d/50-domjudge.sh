@@ -113,8 +113,8 @@ fi
 sed -i "/^location \/.*/,/^\}/d" ${NGINX_CONFIG_FILE}
 
 if [[ "${WEBAPP_BASEURL}" == "/" ]]; then
-	sed -i "s/^set \$prefix .*;$/set \$prefix \"\";/" ${NGINX_CONFIG_FILE}
-	sed "/^set \$prefix .*;/a\
+	sed -i "s|^set \$prefix .*;$|set \$prefix \"\";|" ${NGINX_CONFIG_FILE}
+	sed -i "/^set \$prefix .*;/a\
 \ \n\
 # run it out of the root of your system\n\
 location / {\n\
@@ -123,8 +123,8 @@ location / {\n\
 }
 " ${NGINX_CONFIG_FILE}
 else
-	sed -i "s/^set \$prefix .*;$/set \$prefix \"${WEBAPP_BASEURL}\";/" ${NGINX_CONFIG_FILE}
-	sed "/^set \$prefix .*;/a\
+	sed -i "s|^set \$prefix .*;$|set \$prefix \"${WEBAPP_BASEURL}\";|" ${NGINX_CONFIG_FILE}
+	sed -i "/^set \$prefix .*;/a\
 \ \n\
 # install it with a prefix\n\
 location $WEBAPP_BASEURL { return 301 $WEBAPP_BASEURL\/; }\n\
@@ -241,8 +241,8 @@ fi
 echo "[ok] Database ready"; echo
 
 echo "[..] Fixing restapi path"
-sed -i 's/localhost\/domjudge/localhost/' etc/restapi.secret
-echo "[ok] Changed restapi URL from http://localhost/domjudge to http://localhost"
+sed -i "s|localhost/domjudge|localhost${WEBAPP_BASEURL}|" etc/restapi.secret
+echo "[ok] Changed restapi URL from http://localhost/domjudge to http://localhost${WEBAPP_BASEURL}"
 
 if [[ -f etc/initial_admin_password.secret ]]
 then
