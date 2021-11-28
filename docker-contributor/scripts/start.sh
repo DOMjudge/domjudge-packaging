@@ -126,6 +126,7 @@ sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/p
 
 chown domjudge: /domjudge/etc/dbpasswords.secret
 chown domjudge: /domjudge/etc/restapi.secret
+# shellcheck disable=SC2034
 HAS_INNER_NGINX=1
 cp etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
 NGINX_CONFIG_FILE=/etc/nginx/snippets/domjudge-inner
