@@ -12,7 +12,7 @@ then
 fi
 
 chmod 755 /scripts/start.sh
-for script in "/scripts/bin/*"
+for script in "/scripts/bin"/*
 do
 	if [ -f "$script" ]
 	then
@@ -62,7 +62,7 @@ then
 	sed --follow-symlinks -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" "$php_folder/fpm/pool.d/domjudge.conf"
 else
 	# Replace nginx php socket location
-	sed -i 's!server unix:.*!server unix:/var/run/php/php$php_version-fpm.sock;!' /etc/nginx/sites-enabled/default
+	sed -i "s!server unix:.*!server unix:/var/run/php/php$php_version-fpm.sock;!" /etc/nginx/sites-enabled/default
 fi
 
 cp /opt/domjudge/domserver/etc/nginx-conf-inner /etc/nginx/snippets/domjudge-inner
