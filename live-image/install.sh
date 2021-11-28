@@ -111,6 +111,7 @@ apt-get install -q -y \
 	enscript lpr zip unzip mlocate
 
 # Use DOMjudge debian packages if present under /tmp:
+# shellcheck disable=SC2144
 if [ -f /tmp/domjudge-domserver_*.deb ]; then
 	dpkg -i /tmp/domjudge-common_*.deb    /tmp/domjudge-doc_*.deb \
 	        /tmp/domjudge-domserver_*.deb /tmp/domjudge-judgehost_*.deb \
