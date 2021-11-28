@@ -130,7 +130,7 @@ else
 location $WEBAPP_BASEURL { return 301 $WEBAPP_BASEURL\/; }\n\
 location $WEBAPP_BASEURL\/ {\n\
 	root \$domjudgeRoot;\n\
-	rewrite ^$WEBAPP_BASEURL\/(.*)$ \/$1 break;\n\
+	rewrite ^$WEBAPP_BASEURL\/(.*)\$ \/\$1 break;\n\
 	try_files \$uri @domjudgeFront;\n\
 }
 " ${NGINX_CONFIG_FILE}
