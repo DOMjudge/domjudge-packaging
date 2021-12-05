@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y \
   && pecl install pcov \
   # Needed NPM packages \
   && npm install pa11y \
+  # Needed python packages \
+  && pip install codespell \
   && rm -rf /var/lib/apt/lists/*
 
 # Install composer
