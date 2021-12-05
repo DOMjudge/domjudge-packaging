@@ -37,6 +37,9 @@ RUN apt-get update && \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
+# Install needed global PHP modules
+RUN composer -n require justinrainbow/json-schema
+
 # Enable pcov (code coverage) in PHP
 COPY php-config/30-pcov.ini /etc/php/7.4/cli/conf.d/
 
