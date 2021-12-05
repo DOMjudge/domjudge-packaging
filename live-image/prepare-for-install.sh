@@ -9,12 +9,12 @@ set -e
 
 IMG=$1
 
-if [ "`id -un`" != 'root' -o -z "$IMG" -o ! -e "$IMG" ]; then
+if [ "$(id -un)" != 'root' ] || [ -z "$IMG" ] || [ ! -e "$IMG" ]; then
 	echo "Error: this script must be run as root with argument a disk image."
 	exit 1
 fi
 
-ROOTPART=`kpartx -asv "$IMG" | tail -n1 | sed -r 's/^(add map *)?([^ ]*).*/\2/'`
+ROOTPART=$(kpartx -asv "$IMG" | tail -n1 | sed -r 's/^(add map *)?([^ ]*).*/\2/')
 ROOTPART="/dev/mapper/$ROOTPART"
 
 e2fsck -f "$ROOTPART"
