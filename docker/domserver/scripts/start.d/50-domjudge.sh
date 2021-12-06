@@ -173,7 +173,7 @@ then
 fi
 
 # Set up permissions
-chown -R www-data: /opt/domjudge/domserver/webapp/public/images
+chown -R www-data: webapp/public/images
 chown www-data: etc/dbpasswords.secret
 chown www-data: etc/restapi.secret
 if [[ -f etc/symfony_app.secret ]]
