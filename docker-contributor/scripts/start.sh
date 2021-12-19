@@ -75,7 +75,7 @@ do
   if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
   then
     echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST};"
-    let "DB_UP--"
+    (( DB_UP-- ))
     sleep 30s
   else
     DB_UP=0

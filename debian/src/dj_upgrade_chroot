@@ -7,7 +7,7 @@ CHROOTDIR=/var/lib/domjudge/chroot
 # To prevent (libc6) upgrade questions:
 export DEBIAN_FRONTEND=noninteractive
 
-if [ `id -u` != 0 ]; then
+if [ "$(id -u)" != 0 ]; then
     echo "Warning: you probably need to run this program as root."
 fi
 
