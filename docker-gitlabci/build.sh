@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if [[ ! -z ${CI} ]]
+if [[ -n ${CI} ]]
 then
         set -euxo pipefail
         export PS4='(${0}:${LINENO}): - [$?] $ '
