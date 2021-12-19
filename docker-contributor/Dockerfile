@@ -1,5 +1,5 @@
 ARG ARCH=
-FROM ${ARCH}ubuntu:focal
+FROM "${ARCH}ubuntu:focal"
 LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -49,7 +49,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 # Set up users
 RUN useradd -m domjudge \
   && groupadd domjudge-run \
-  && for id in $(seq 0 4); do useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-$id; done
+  && for id in $(seq 0 4); do useradd -d /nonexistent -g nogroup -s /bin/false "domjudge-run-$id"; done
 
 # Install composer
 RUN apt update && \
