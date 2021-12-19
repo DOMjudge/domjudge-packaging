@@ -2,7 +2,7 @@
 
 function file_or_env {
     file=${1}_FILE
-    if [ ! -z "${!file}" ]; then
+    if [ -n "${!file}" ]; then
         cat "${!file}"
     else
         echo -n "${!1}"
