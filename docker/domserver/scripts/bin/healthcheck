@@ -13,7 +13,10 @@ for service in "${SERVICES[@]}"; do
     fi
 done
 
-if php -r 'exit(@file_get_contents("http://localhost/api/") === false ? 1 : 0);'; then
+# This script has access to $WEBAPP_BASEURL, but not to the sanity checks done by 50-domejudge. So we fallback looking
+# at the configuration file where this path is stored.
+BASEURL=$(grep domjudge.baseurl /opt/domjudge/domserver/webapp/config/static.yaml | awk '{ print $2 }')
+if curl --silent --fail "$BASEURL/api" >/dev/null; then
     printf "http ok"
 else
     printf "http error"
