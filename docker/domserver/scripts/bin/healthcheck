@@ -1,0 +1,23 @@
+#!/bin/bash
+
+SERVICES=(nginx php)
+
+ret=0
+for service in "${SERVICES[@]}"; do
+    status=$(supervisorctl status "$service" | awk '{print $2}')
+    if [ "$status" = "RUNNING" ]; then
+        printf "%s ok | " "$service"
+    else
+        printf "%s %s | " "$service" "$status"
+        ret=1
+    fi
+done
+
+if php -r 'exit(@file_get_contents("http://localhost/api/") === false ? 1 : 0);'; then
+    printf "http ok"
+else
+    printf "http error"
+    ret=1
+fi
+
+exit $ret
