@@ -1,5 +1,5 @@
 FROM debian:stable-slim AS domserver-build
-MAINTAINER DOMjudge team <team@domjudge.org>
+LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -39,7 +39,7 @@ RUN /domjudge-src/build.sh
 
 # Now create an image with the actual build in it
 FROM debian:stable-slim
-MAINTAINER DOMjudge team <team@domjudge.org>
+LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
 	CONTAINER_TIMEZONE=Europe/Amsterdam \
@@ -54,7 +54,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install required packages for running of domserver
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
-	acl zip unzip supervisor mariadb-client apache2-utils \
+	acl curl zip unzip supervisor mariadb-client apache2-utils \
 	nginx php-cli php-fpm php-zip \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
@@ -84,5 +84,8 @@ RUN chmod 700 /configure.sh && /configure.sh && rm -f /configure.sh
 
 # Expose HTTP port
 EXPOSE 80
+
+# Healthchecking script
+HEALTHCHECK --interval=10s --timeout=10s --start-period=30s --retries=3 CMD [ "/scripts/bin/healthcheck" ]
 
 CMD ["/scripts/start.sh"]

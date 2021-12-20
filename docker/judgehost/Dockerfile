@@ -1,5 +1,5 @@
 FROM debian:stable
-MAINTAINER DOMjudge team <team@domjudge.org>
+LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
 	CONTAINER_TIMEZONE=Europe/Amsterdam \

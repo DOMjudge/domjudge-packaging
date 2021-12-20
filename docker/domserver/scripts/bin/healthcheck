@@ -1,0 +1,26 @@
+#!/bin/bash
+
+SERVICES=(nginx php)
+
+ret=0
+for service in "${SERVICES[@]}"; do
+    status=$(supervisorctl status "$service" | awk '{print $2}')
+    if [ "$status" = "RUNNING" ]; then
+        printf "%s ok | " "$service"
+    else
+        printf "%s %s | " "$service" "$status"
+        ret=1
+    fi
+done
+
+# This script has access to $WEBAPP_BASEURL, but not to the sanity checks done by 50-domejudge. So we fallback looking
+# at the configuration file where this path is stored.
+BASEURL=$(grep domjudge.baseurl /opt/domjudge/domserver/webapp/config/static.yaml | awk '{ print $2 }')
+if curl --silent --fail "$BASEURL/api" >/dev/null; then
+    printf "http ok"
+else
+    printf "http error"
+    ret=1
+fi
+
+exit $ret
