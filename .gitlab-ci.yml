@@ -61,10 +61,6 @@ variables:
 pr-ci:
   <<: *registry_gitlab
   <<: *ci_template
-  only:
-    changes:
-      - .gitlab-ci.yml
-      - docker-gitlabci/**/*
   except:
     - main
 
@@ -74,17 +70,10 @@ release-ci:
   only:
     refs:
       - main
-    changes:
-      - .gitlab-ci.yml
-      - docker-gitlabci/**/*
 
 check-pr-contributor:
   <<: *job_check-pr
   <<: *matrix_contributor_template
-  only:
-    changes:
-      - .gitlab-ci.yml
-      - docker-contributor/**/*
   script:
     - cd docker-contributor
     - docker pull $CONTRIBUTOR_IMAGE:${ARCH} || true
@@ -96,9 +85,6 @@ release-contributor-arch:
   only:
     refs:
       - main
-    changes:
-      - .gitlab-ci.yml
-      - docker-contributor/**/*
   script:
     - cd docker-contributor
     - docker pull $CONTRIBUTOR_IMAGE:${ARCH} || true
@@ -110,9 +96,6 @@ release-contributor-latest:
   only:
     refs:
       - main
-    changes:
-      - .gitlab-ci.yml
-      - docker-contributor/**/*
   needs:
     - release-contributor-arch
   script:
@@ -139,10 +122,6 @@ release-DOMjudge:
 
 check-pr-DOMjudge:
   <<: *job_check-pr
-  only:
-    changes:
-      - .gitlab-ci.yml
-      - docker/**/*
   script:
     - HUBURL="https://registry.hub.docker.com/v1/repositories/domjudge/domserver/tags"
     - apk add jq curl
