@@ -63,8 +63,8 @@ EOF
 
 		echo "Updating DOMjudge web interface admin user password..."
 		if [ -z "$PASS" ]; then
-			read -es -p "Enter new admin user password: "  PASS1 ; echo
-			read -es -p "Retype new admin user password: " PASS2 ; echo
+			read -esr -p "Enter new admin user password: "  PASS1 ; echo
+			read -esr -p "Retype new admin user password: " PASS2 ; echo
 			[ "x$PASS1" = "x$PASS2" ] || error "passwords do not match."
 			PASS="$PASS1"
 		fi
