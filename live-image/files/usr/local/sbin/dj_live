@@ -65,7 +65,7 @@ EOF
 		if [ -z "$PASS" ]; then
 			read -esr -p "Enter new admin user password: "  PASS1 ; echo
 			read -esr -p "Retype new admin user password: " PASS2 ; echo
-			[ "x$PASS1" = "x$PASS2" ] || error "passwords do not match."
+			[ "$PASS1" = "$PASS2" ] || error "passwords do not match."
 			PASS="$PASS1"
 		fi
 
