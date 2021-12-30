@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get -y install \
+RUN apt update && apt -y install \
   ca-certificates default-jre-headless pypy3 locales \
   && rm -rf /var/lib/apt/lists/*
 

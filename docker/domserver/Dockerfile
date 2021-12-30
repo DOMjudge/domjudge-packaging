@@ -4,8 +4,8 @@ LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install required packages for build of domserver
-RUN apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt update \
+	&& apt install --no-install-recommends --no-install-suggests -y \
 	autoconf automake git \
 	gcc g++ make acl zip unzip \
 	php-cli php-zip \
@@ -52,8 +52,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	DJ_DB_INSTALL_BARE=0
 
 # Install required packages for running of domserver
-RUN apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt update \
+	&& apt install --no-install-recommends --no-install-suggests -y \
 	acl curl zip unzip supervisor mariadb-client apache2-utils \
 	nginx php-cli php-fpm php-zip \
 	php-gd php-curl php-mysql php-json php-intl \

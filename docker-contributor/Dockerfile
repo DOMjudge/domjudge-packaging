@@ -14,8 +14,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
   DJ_DB_INSTALL_BARE=0
 
 # Install required packages and clean up afterwards to make this image layer smaller
-RUN apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt update \
+    && apt install --no-install-recommends --no-install-suggests -y \
     dumb-init autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
     nginx php7.4 php7.4-cli php7.4-fpm php7.4-zip \
@@ -50,8 +50,8 @@ RUN useradd -m domjudge \
   && for id in `seq 0 4`; do useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-$id; done
 
 # Install composer
-RUN apt-get update && \
-    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
+RUN apt update && \
+    apt install --no-install-recommends --no-install-suggests -y ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer

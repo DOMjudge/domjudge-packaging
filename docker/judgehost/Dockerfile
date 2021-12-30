@@ -11,8 +11,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	RUN_USER_UID_GID=62860
 
 # Install required packages for running of judgehost
-RUN apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt update \
+	&& apt install --no-install-recommends --no-install-suggests -y \
 	dumb-init \
 	acl zip unzip supervisor sudo procps libcgroup1 \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
