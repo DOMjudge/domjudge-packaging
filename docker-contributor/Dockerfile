@@ -81,11 +81,6 @@ WORKDIR /domjudge
 # Add PHP configuration
 COPY ["php-config", "//etc/php/7.4/fpm/conf.d"]
 COPY ["php-config", "//etc/php/7.4/cli/conf.d"]
-RUN for VERSION in $PHPSUPPORTED; do \
-        for DIR in fpm cli; do \
-            cp /etc/php/7.4/$DIR/conf.d/* /etc/php/$VERSION/$DIR/conf.d/; \
-        done; \
-    done
 
 # Disable Xdebug by default
 RUN phpdismod xdebug

@@ -56,9 +56,6 @@ RUN add-apt-repository ppa:ondrej/php -y && apt update && \
 
 # Enable pcov (code coverage) in PHP
 COPY php-config/30-pcov.ini /etc/php/7.4/cli/conf.d/
-RUN for version in $PHPSUPPORTED; do \
-        cp /etc/php/7.4/cli/conf.d/30-pcov.ini /etc/php/${version}/cli/conf.d/; \
-    done
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
