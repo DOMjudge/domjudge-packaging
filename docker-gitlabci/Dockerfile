@@ -1,6 +1,8 @@
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y \
+ENV PHPSUPPORTED="7.2 7.3 8.0 8.1"
+ENV APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+RUN apt update && apt install -y \
   acl make zip unzip apache2-utils bsdmainutils libcurl4-gnutls-dev \
   libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
@@ -33,8 +35,8 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Install composer
-RUN apt-get update && \
-    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
+RUN apt update && \
+    apt install --no-install-recommends --no-install-suggests -y ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
@@ -42,8 +44,21 @@ RUN apt-get update && \
 # Install needed global PHP modules
 RUN composer -n require justinrainbow/json-schema
 
+# Install other PHP versions
+RUN add-apt-repository ppa:ondrej/php -y && apt update && \
+    PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-") && \
+    for VERSION in $PHPSUPPORTED; do \
+        $APTINSTALL php${VERSION} && \
+        for PACKAGE in $PACKAGES; do \
+            $APTINSTALL php${VERSION}-${PACKAGE#php*-}; \
+        done; \
+    done && update-alternatives --set php /usr/bin/php7.4
+
 # Enable pcov (code coverage) in PHP
 COPY php-config/30-pcov.ini /etc/php/7.4/cli/conf.d/
+RUN for version in $PHPSUPPORTED; do \
+        cp /etc/php/7.4/cli/conf.d/30-pcov.ini /etc/php/${version}/cli/conf.d/; \
+    done
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -55,4 +70,4 @@ RUN groupadd domjudge-run
 
 # Do some extra setup
 RUN mkdir -p /run/php \
- && rm /etc/php/7.4/fpm/pool.d/www.conf
+ && rm /etc/php/*/fpm/pool.d/www.conf
