@@ -2,7 +2,7 @@
 
 function file_or_env {
     file=${1}_FILE
-    if [ ! -z "${!file}" ]; then
+    if [ -n "${!file}" ]; then
         cat "${!file}"
     else
         echo -n "${!1}"
@@ -198,7 +198,7 @@ do
 	if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 	then
 		echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST};"
-		let "DB_UP--"
+		(( DB_UP-- ))
 		sleep 10s
 	else
 		DB_UP=0
