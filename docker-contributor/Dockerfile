@@ -12,7 +12,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
   FPM_MAX_CHILDREN=40 \
   DJ_SKIP_MAKE=0 \
   DJ_DB_INSTALL_BARE=0 \
-  PHPSUPPORTED="7.2 7.3 8.0 8.1" \
+  PHPSUPPORTED="7.2 7.3 7.4 8.0 8.1" \
+  DEFAULTPHPVERSION="8.1" \
   APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
 # Install required packages and clean up afterwards to make this image layer smaller
@@ -22,20 +23,18 @@ RUN apt update \
     gcc g++ make zip unzip mariadb-client \
     nginx php7.4 php7.4-cli php7.4-fpm php7.4-zip \
     php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-intl \
-    php7.4-gmp php7.4-xml php7.4-mbstring php-xdebug \
+    php7.4-gmp php7.4-xml php7.4-mbstring php-xdebug php-pcov \
     bsdmainutils ntp \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
     texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european latexmk \
     sudo debootstrap libcgroup-dev procps \
-    default-jre-headless \
-    default-jdk ghc fp-compiler \
+    default-jre-headless default-jdk \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
     php-pear php-dev software-properties-common \
-    && pecl install pcov \
     && rm -rf /var/lib/apt/lists/*
 
 # Needed for building the docs
@@ -61,17 +60,28 @@ RUN apt update && \
 # Install all supported PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt update
 RUN for VERSION in $PHPSUPPORTED; do \
-        $APTINSTALL php${VERSION}; \
+        if [ "${VERSION}" != "7.4" ]; then \
+            $APTINSTALL php${VERSION}; \
+        fi; \
     done
 RUN PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-"); \
     for PACKAGE in $PACKAGES; do \
         PACKAGEALLVERSIONS="" && \
         for VERSION in $PHPSUPPORTED; do \
-            PACKAGEALLVERSIONS="$PACKAGEALLVERSIONS php${VERSION}-${PACKAGE#php*-}"; \
+            if [ "${VERSION}" != "7.4" ]; then \
+                PACKAGEALLVERSIONS="$PACKAGEALLVERSIONS php${VERSION}-${PACKAGE#php*-}"; \
+            fi; \
         done; \
         $APTINSTALL $PACKAGEALLVERSIONS; \
     done
-RUN update-alternatives --set php /usr/bin/php7.4
+RUN update-alternatives --set php /usr/bin/php${DEFAULTPHPVERSION}
+
+# Set up alternatives for PHP-FPM
+RUN for VERSION in $PHPSUPPORTED; do \
+        PRIORTIY=$(echo ${VERSION} | tr -d '.'); \
+        update-alternatives --install /usr/sbin/php-fpm php-fpm /usr/sbin/php-fpm${VERSION} ${PRIORTIY}; \
+    done
+RUN update-alternatives --set php-fpm /usr/sbin/php-fpm${DEFAULTPHPVERSION}
 
 # Add exposed volume
 VOLUME ["/domjudge"]
@@ -79,8 +89,13 @@ VOLUME ["/domjudge"]
 WORKDIR /domjudge
 
 # Add PHP configuration
-COPY ["php-config", "//etc/php/7.4/fpm/conf.d"]
-COPY ["php-config", "//etc/php/7.4/cli/conf.d"]
+RUN mkdir /php-config
+COPY ["php-config", "/php-config"]
+RUN for VERSION in $PHPSUPPORTED; do \
+        cp -Rf /php-config/* /etc/php/${VERSION}/cli/conf.d; \
+        cp -Rf /php-config/* /etc/php/${VERSION}/fpm/conf.d; \
+    done; \ 
+    rm -Rf /php-config
 
 # Disable Xdebug by default
 RUN phpdismod xdebug

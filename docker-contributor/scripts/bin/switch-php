@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+import glob
+import os
+import shlex
+import sys
+
+if os.getuid() != 0:
+    # Automatically give ourself root privileges
+    arguments = " ".join(shlex.quote(arg) for arg in sys.argv)
+    command = f"sudo {arguments}"
+    exit(os.system(command))
+
+def currentPhpVersion():
+    return os.readlink('/etc/alternatives/php').replace('/usr/bin/php', '')
+
+def supportedVersions():
+    return sorted([binary.replace('/usr/bin/php', '') for binary in glob.glob('/usr/bin/php?.?')])
+
+def usage():
+    u = f"Usage: {sys.argv[0]} <version>\n\n"
+    u += f"Supported PHP versions:\n"
+    for version in supportedVersions():
+        u += f"- {version}"
+        if version == currentPhpVersion():
+            u += " *"
+        u += "\n"
+
+    u += "\n*: currently used version"
+
+    print(u)
+
+if len(sys.argv) != 2:
+    usage()
+    exit(0)
+
+newVersion = sys.argv[1]
+
+if newVersion not in supportedVersions():
+    print(f"{newVersion} is not a supported PHP version")
+    usage()
+    exit(1)
+
+# Version is supported, switch to it
+os.system(f"update-alternatives --set php /usr/bin/php{newVersion}")
+os.system(f"update-alternatives --set php-fpm /usr/sbin/php-fpm{newVersion}")
+
+# Restart PHP FPM supervisor job
+os.system("supervisorctl restart php")
+
+print(f"Successfully switched to PHP {newVersion} and restarted PHP FPM")

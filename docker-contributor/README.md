@@ -96,6 +96,7 @@ The following commands are available:
 * `submit-test-programs`: submit all test programs (by executing `make check test-stress` in the `tests` directory of the DOMjudge installation. This will also add a `dummy` user to your database if it does not exist yet. It's password will be set to `dummy`.
 * `xdebug-enable`: enable Xdebug debugging. See note below
 * `xdebug-disable`: disable Xdebug debugging. See note below
+* `switch-php <version>`: switch to using the given PHP version.
 
 Of course, you can always run `docker exec -it domjudge bash` to get a bash shell inside the container.
 
