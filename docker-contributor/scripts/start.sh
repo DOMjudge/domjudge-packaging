@@ -18,14 +18,17 @@ echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 echo "[..] Changing nginx and PHP configuration settings"
 # Set correct settings
 sed -ri -e "s/^user.*/user domjudge;/" /etc/nginx/nginx.conf
-sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
-    -e "s/^post_max_size.*/post_max_size = 100M/" \
-    -e "s/^memory_limit.*/memory_limit = 2G/" \
-    -e "s/^max_file_uploads.*/max_file_uploads = 200/" \
-    -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
-     /etc/php/7.4/fpm/php.ini
-sed -ri -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
-     /etc/php/7.4/cli/php.ini
+for VERSION in $PHPSUPPORTED
+do
+  sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
+      -e "s/^post_max_size.*/post_max_size = 100M/" \
+      -e "s/^memory_limit.*/memory_limit = 2G/" \
+      -e "s/^max_file_uploads.*/max_file_uploads = 200/" \
+      -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
+      "/etc/php/${VERSION}/fpm/php.ini"
+  sed -ri -e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
+      "/etc/php/${VERSION}/cli/php.ini"
+done
 echo "[ok] Done changing nginx and PHP configuration settings"; echo
 
 cd /domjudge
@@ -114,16 +117,19 @@ cp etc/nginx-conf /etc/nginx/sites-enabled/default
 # Replace nginx php socket location
 sed -i 's/server unix:.*/server unix:\/var\/run\/php-fpm-domjudge.sock;/' /etc/nginx/sites-enabled/default
 # Remove default FPM pool config and link in DOMjudge version
-if [[ -f /etc/php/7.4/fpm/pool.d/www.conf ]]
-then
-  rm /etc/php/7.4/fpm/pool.d/www.conf
-fi
-if [[ ! -f /etc/php/7.4/fpm/pool.d/domjudge.conf ]]
-then
-  ln -s /domjudge/etc/domjudge-fpm.conf /etc/php/7.4/fpm/pool.d/domjudge.conf
-fi
-# Change pm.max_children
-sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" /etc/php/7.4/fpm/pool.d/domjudge.conf
+for VERSION in $PHPSUPPORTED
+do
+  if [[ -f /etc/php/${VERSION}/fpm/pool.d/www.conf ]]
+  then
+    rm "/etc/php/${VERSION}/fpm/pool.d/www.conf"
+  fi
+  if [[ ! -f /etc/php/${VERSION}/fpm/pool.d/domjudge.conf ]]
+  then
+    ln -s /domjudge/etc/domjudge-fpm.conf "/etc/php/${VERSION}/fpm/pool.d/domjudge.conf"
+  fi
+  # Change pm.max_children
+  sed -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" "/etc/php/${VERSION}/fpm/pool.d/domjudge.conf"
+done
 
 chown domjudge: /domjudge/etc/dbpasswords.secret
 chown domjudge: /domjudge/etc/restapi.secret
