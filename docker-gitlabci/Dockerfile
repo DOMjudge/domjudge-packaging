@@ -7,7 +7,7 @@ RUN apt update && apt install -y \
   libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
   devscripts shellcheck nginx libboost-regex-dev \
-  php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl \
+  php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl php-pcov \
   # W3c test \
   httrack \
   # Visual regression browser \
@@ -27,7 +27,6 @@ RUN apt update && apt install -y \
   npm libnss3 libcups2 libxss1 libasound2 libatk1.0-0  libatk-bridge2.0-0 libpangocairo-1.0-0 libgtk-3-0 \
   # Code coverage for unit test
   php-pear php-dev \
-  && pecl install pcov \
   # Needed NPM packages \
   && npm install pa11y \
   # Needed python packages \
@@ -53,9 +52,6 @@ RUN add-apt-repository ppa:ondrej/php -y && apt update && \
             $APTINSTALL php${VERSION}-${PACKAGE#php*-}; \
         done; \
     done && update-alternatives --set php /usr/bin/php7.4
-
-# Enable pcov (code coverage) in PHP
-COPY php-config/30-pcov.ini /etc/php/7.4/cli/conf.d/
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
