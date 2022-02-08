@@ -7,7 +7,7 @@ RUN apt update && apt install -y \
   libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
   devscripts shellcheck nginx libboost-regex-dev \
-  php php-cli php-gd php-curl php-mysql php-json php-gmp php-zip php-xml php-mbstring php-fpm php-intl php-pcov \
+  php7.4 php7.4-cli php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-gmp php7.4-zip php7.4-xml php7.4-mbstring php7.4-fpm php7.4-intl php7.4-pcov \
   # W3c test \
   httrack \
   # Visual regression browser \

@@ -23,7 +23,7 @@ RUN apt update \
     gcc g++ make zip unzip mariadb-client \
     nginx php7.4 php7.4-cli php7.4-fpm php7.4-zip \
     php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-intl \
-    php7.4-gmp php7.4-xml php7.4-mbstring php-xdebug php-pcov \
+    php7.4-gmp php7.4-xml php7.4-mbstring php7.4-xdebug php7.4-pcov \
     bsdmainutils ntp \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
