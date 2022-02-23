@@ -7,6 +7,10 @@ on:
         description: 'version'
         required: true
         default: 'latest'
+      repo:
+        description: 'repo'
+        required: true
+        default: 'DOMjudge/domjudge'
 
 jobs:
   build-chroot:
@@ -44,7 +48,7 @@ jobs:
 
       - name: Download DOMjudge
         run: |
-          bash ./docker/download.sh ${{ github.event.inputs.version }} 
+          bash ./docker/download.sh ${{ github.event.inputs.version }} ${{ github.event.inputs.repo }}
 
       - name: Build and Push
         uses: docker/build-push-action@v2

@@ -3,11 +3,12 @@
 TOP_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 VERSION="$1"
+REPO="$2"
 
 if [[ X"${VERSION}" = X"latest" ]]; then
-	URL=https://codeload.github.com/DOMjudge/domjudge/tar.gz/refs/heads/main
+	URL=https://codeload.github.com/${REPO}/tar.gz/refs/heads/main
 else
-	URL=https://codeload.github.com/DOMjudge/domjudge/tar.gz/refs/tags/${VERSION}
+	URL=https://codeload.github.com/${REPO}/tar.gz/refs/tags/${VERSION}
 fi
 
 FILE="${TOP_DIR}"/domjudge.tar.gz
