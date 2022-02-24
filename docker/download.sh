@@ -9,7 +9,7 @@ VERSION="$1"
 REPO="$2"
 
 if command -v git >/dev/null 2>&1; then
-	GIT_COMMAND="git clone https://github.com/DOMjudge/domjudge.git --depth=1"
+	GIT_COMMAND="git clone https://github.com/${REPO}.git --depth=1"
 	if [[ X"${VERSION}" != X"latest" ]]; then
 		GIT_COMMAND="${GIT_COMMAND} -b ${VERSION}"
 	fi
