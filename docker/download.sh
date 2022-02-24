@@ -8,6 +8,14 @@ DIR="${TOP_DIR}/${FILE_NAME}"
 VERSION="$1"
 REPO="$2"
 
+if [[ -z "${VERSION}" ]]; then
+	VERSION="latest"
+fi
+
+if [[ -z "${REPO}" ]]; then
+	REPO="DOMjudge/domjudge"
+fi
+
 if command -v git >/dev/null 2>&1; then
 	GIT_COMMAND="git clone https://github.com/${REPO}.git --depth=1"
 	if [[ X"${VERSION}" != X"latest" ]]; then
