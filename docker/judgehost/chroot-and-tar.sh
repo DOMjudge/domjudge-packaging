@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Add packages with -i "<apt package name>" here
+# Usage: https://github.com/DOMjudge/domjudge/blob/main/misc-tools/dj_make_chroot.in#L58-L87
 /opt/domjudge/judgehost/bin/dj_make_chroot
 
 cd /
