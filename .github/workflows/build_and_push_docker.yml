@@ -1,0 +1,83 @@
+name: 'Build version'
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+
+env:
+  REGISTRY: ghcr.io
+  REPO_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: "Checkout Repository"
+      uses: actions/checkout@v2
+    - name: Explain why this job ran
+      run: echo "The ${{ github.event_name }} event triggered this step."
+
+    - name: Get latest version
+      if: "${{ github.event.inputs.version == '' || github.event.inputs.version == 'latest' }}"
+      run: echo "version_to_build=$(curl -s https://api.github.com/repos/DOMjudge/domjudge/git/refs/tags | jq 'reverse | ((.[].ref) / "refs/tags/" )[1]' | rev | cut -c2- | rev | cut -c2- | head -n 1)" >> $GITHUB_ENV
+    - name: Store input version
+      if: "${{ github.event.inputs.version != '' && github.event.inputs.version != 'latest' }}"
+      run: echo "version_to_build=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+    - name: Print version
+      run: echo "${{ env.version_to_build }}"
+    - name: Check valid version
+      run: curl -s https://api.github.com/repos/DOMjudge/domjudge/git/refs/tags | jq 'reverse | ((.[].ref) / "refs/tags/" )[1]' | rev | cut -c2- | rev | cut -c2- | grep -Fxq ${{ env.version_to_build }}
+    - name: Set flag for latest
+      run: |
+        if [[ "${{ env.version_to_build }}" == "$(curl -s https://api.github.com/repos/DOMjudge/domjudge/git/refs/tags | jq 'reverse | ((.[].ref) / "refs/tags/" )[1]' | rev | cut -c2- | rev | cut -c2- | head -n 1)" ]]; then
+          echo "latest=true" >> $GITHUB_ENV
+          echo "latest set to true"
+        else
+          echo "latest=false" >> $GITHUB_ENV
+          echo "latest set to false"
+        fi
+    - name: Repo name
+      run: echo "IMAGE_ID=$(echo ${{ env.REGISTRY }}/${{ env.REPO_NAME }} | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
+
+    - name: Build containers
+      working-directory: ./docker
+      run: ./build.sh ${{ env.version_to_build }}
+
+    - name: Add tags
+      run: |
+        docker tag domjudge/domserver:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/domserver:${{ env.version_to_build }}
+        docker tag domjudge/judgehost:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/judgehost:${{ env.version_to_build }}
+        docker tag domjudge/default-judgehost-chroot:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/default-judgehost-chroot:${{ env.version_to_build }}
+
+    - name: Add latest tags
+      if: ${{ env.latest == 'true' }}
+      run: |
+        docker tag domjudge/domserver:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/domserver:latest
+        docker tag domjudge/judgehost:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/judgehost:latest
+        docker tag domjudge/default-judgehost-chroot:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/default-judgehost-chroot:latest
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push image
+      run: |
+        docker push ${{ env.IMAGE_ID }}/domserver:${{ env.version_to_build }}
+        docker push ${{ env.IMAGE_ID }}/judgehost:${{ env.version_to_build }}
+        docker push ${{ env.IMAGE_ID }}/default-judgehost-chroot:${{ env.version_to_build }}
+
+    - name: Push latest
+      if: ${{ env.latest == 'true' }}
+      run: |
+        docker push ${{ env.IMAGE_ID }}/domserver:latest
+        docker push ${{ env.IMAGE_ID }}/judgehost:latest
+        docker push ${{ env.IMAGE_ID }}/default-judgehost-chroot:latest
