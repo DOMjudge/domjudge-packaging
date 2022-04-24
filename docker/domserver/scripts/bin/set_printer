@@ -1,0 +1,26 @@
+#!/bin/bash
+printerIP=$1
+
+if [[ ! $printerIP =~ "://" ]]; then
+  printerIP="socket://$printerIP"
+fi
+
+# Clear out all old printers
+for PRINTER in $(lpstat -v 2>/dev/null| cut -d ' ' -f 3 | tr -d ':')
+do
+  lpadmin -x $PRINTER
+done
+lpadmin -x ContestPrinter > /dev/null 2>&1
+
+lpadmin -p Printer0 -v $printerIP -E
+lpadmin -p Printer0 -c ContestPrinter
+cupsenable Printer0
+cupsaccept Printer0
+
+# Check if we have any printers present, if so make sure we enable the class and set it as default
+lpstat -v 2>/dev/null | grep Printer0 >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+  lpadmin -d ContestPrinter
+  cupsenable ContestPrinter
+  cupsaccept ContestPrinter
+fi

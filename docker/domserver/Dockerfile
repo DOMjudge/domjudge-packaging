@@ -58,7 +58,8 @@ RUN apt update \
 	nginx php-cli php-fpm php-zip \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
-	enscript lpr \
+	enscript \
+	printer-driver-all cups cups-pdf cups-client cups-bsd cups-filters \
 	ca-certificates python3-yaml \
 	&& rm -rf /var/lib/apt/lists/*
 
