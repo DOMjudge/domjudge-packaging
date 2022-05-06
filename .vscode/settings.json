@@ -9,6 +9,7 @@
         "buildx",
         "DOCKERHUB",
         "domjudge",
-        "judgehost"
+        "judgehost",
+        "shellcheck"
     ],
 }
