@@ -40,4 +40,4 @@ if ! id "domjudge-run-${DAEMON_ID}" > /dev/null 2>&1; then
   groupadd -g "${RUN_USER_UID_GID}" domjudge-run
   useradd -u "${RUN_USER_UID_GID}" -N -d /nonexistent -g nogroup -s /bin/false "domjudge-run-${DAEMON_ID}"
 fi
-exec sudo -u domjudge DOMJUDGE_CREATE_WRITABLE_TEMP_DIR="${DOMJUDGE_CREATE_WRITABLE_TEMP_DIR}" /opt/domjudge/judgehost/bin/judgedaemon -n "${DAEMON_ID}"
+exec sudo -u domjudge DOMJUDGE_CREATE_WRITABLE_TEMP_DIR="${DOMJUDGE_CREATE_WRITABLE_TEMP_DIR}" /opt/domjudge/judgehost/bin/judgedaemon -n "${DAEMON_ID}" -v7
