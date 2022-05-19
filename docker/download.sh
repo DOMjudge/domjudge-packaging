@@ -5,8 +5,9 @@ FILE_NAME="domjudge"
 FILE="${TOP_DIR}/${FILE_NAME}.tar.gz"
 DIR="${TOP_DIR}/${FILE_NAME}"
 
-VERSION="$1"
-REPO="$2"
+VERSION="${1}"
+REPO="${2}"
+COMMIT_ID="${3}"
 
 if [[ -z "${VERSION}" ]]; then
     VERSION="latest"
@@ -17,7 +18,7 @@ if [[ -z "${REPO}" ]]; then
 fi
 
 if command -v git >/dev/null 2>&1; then
-    GIT_COMMAND="git clone https://github.com/${REPO}.git --depth=1"
+    GIT_COMMAND="git clone https://github.com/${REPO}.git"
     if [[ X"${VERSION}" != X"latest" ]]; then
         GIT_COMMAND="${GIT_COMMAND} -b ${VERSION}"
     fi
@@ -25,6 +26,12 @@ if command -v git >/dev/null 2>&1; then
     GIT_COMMAND="${GIT_COMMAND} ${DIR}"
 
     ${GIT_COMMAND}
+
+    if [[ -n "${COMMIT_ID}" ]]; then
+        cd "${DIR}" || exit 1
+        git reset --hard "${COMMIT_ID}"
+        cd - || exit 1
+    fi
 
     tar -cvzf "${FILE}" -C "${TOP_DIR}" "${FILE_NAME}"
     rm -rf "${DIR}"
