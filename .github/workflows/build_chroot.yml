@@ -4,13 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'version'
+        description: "version"
         required: true
-        default: 'latest'
+        default: "latest"
       repo:
-        description: 'repo'
+        description: "repo"
         required: true
-        default: 'DOMjudge/domjudge'
+        default: "DOMjudge/domjudge"
+      commit_id:
+        description: "git commit id"
+        required: false
 
 jobs:
   build-chroot:
@@ -48,7 +51,7 @@ jobs:
 
       - name: Download DOMjudge
         run: |
-          bash ./docker/download.sh ${{ github.event.inputs.version }} ${{ github.event.inputs.repo }}
+          bash ./docker/download.sh ${{ github.event.inputs.version }} ${{ github.event.inputs.repo }} ${{ github.event.inputs.commit_id }}
 
       - name: Build and Push
         uses: docker/build-push-action@v2
