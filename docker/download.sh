@@ -19,7 +19,7 @@ fi
 
 if command -v git >/dev/null 2>&1; then
     GIT_COMMAND="git clone https://github.com/${REPO}.git"
-    if [[ X"${VERSION}" != X"latest" ]]; then
+    if [[ -z "${COMMIT_ID}" ]] && [[ X"${VERSION}" != X"latest" ]]; then
         GIT_COMMAND="${GIT_COMMAND} -b ${VERSION}"
     fi
 
