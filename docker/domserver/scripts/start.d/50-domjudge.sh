@@ -14,13 +14,15 @@ cd /opt/domjudge/domserver
 MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
 MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
+if [ -z "${MYSQL_PORT}" ]; then MYSQL_PORT=3306; fi
+
 DOCKER_GATEWAY_IP=$(/sbin/ip route|awk '/default/ { print $3 }')
 TRUSTED_PROXIES=$(file_or_env TRUSTED_PROXIES)
 
 WEBAPP_BASEURL=$(file_or_env WEBAPP_BASEURL)
 
 echo "[..] Generating credential files"
-echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}" | (umask 077 && cat > etc/dbpasswords.secret)
+echo "dummy:${MYSQL_HOST}:${MYSQL_DATABASE}:${MYSQL_USER}:${MYSQL_PASSWORD}:${MYSQL_PORT}" | (umask 077 && cat > etc/dbpasswords.secret)
 
 # Make a note of whether some of the credential files existed originally
 if [[ -f etc/initial_admin_password.secret ]]
@@ -77,7 +79,7 @@ else
 			echo "# Uncomment the following line to run the application in development mode"
 			echo "#APP_ENV=dev"
 			echo "APP_SECRET=$SECRET"
-			echo "DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
+			echo "DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}"
 		} | (umask 077 && cat > webapp/.env.local)
 	fi
 fi
@@ -195,18 +197,18 @@ DB_UP=9
 while [ $DB_UP -gt 0 ]
 do
 	echo "[..] Checking database connection"
-	if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
+	if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 	then
-		echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST};"
+		echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST}:${MYSQL_PORT};"
 		(( DB_UP-- ))
 		sleep 10s
 	else
 		DB_UP=0
 	fi
 done
-if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" "${MYSQL_DATABASE}" > /dev/null 2>&1
+if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 then
-	echo "MySQL database ${MYSQL_DATABASE} not found on host ${MYSQL_HOST}; exiting"
+	echo "MySQL database ${MYSQL_DATABASE} not found on host ${MYSQL_HOST}:${MYSQL_PORT}; exiting"
 	exit 1
 fi
 
