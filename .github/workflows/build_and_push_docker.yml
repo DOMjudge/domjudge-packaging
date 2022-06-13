@@ -16,12 +16,30 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: "Checkout Repository"
+    - name: Checkout
       uses: actions/checkout@v2
-    - name: Explain why this job ran
-      run: echo "The ${{ github.event_name }} event triggered this step."
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+      with:
+        image: tonistiigi/binfmt:latest
+        platforms: all
+
+    - name: Available platforms
+      run: echo ${{ steps.qemu.outputs.platforms }}
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Inspect builder
+      run: |
+        echo "Name:      ${{ steps.buildx.outputs.name }}"
+        echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
+        echo "Status:    ${{ steps.buildx.outputs.status }}"
+        echo "Flags:     ${{ steps.buildx.outputs.flags }}"
+        echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
 
     - name: Get latest version
       if: "${{ github.event.inputs.version == '' || github.event.inputs.version == 'latest' }}"
@@ -46,8 +64,9 @@ jobs:
       run: echo "IMAGE_ID=$(echo ${{ env.REGISTRY }}/${{ env.REPO_NAME }} | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
 
     - name: Build containers
-      working-directory: ./docker
-      run: ./build.sh ${{ env.version_to_build }}
+      run: |
+          cd ./docker
+          sudo bash -e build.sh ${{ env.version_to_build }}
 
     - name: Add tags
       run: |
