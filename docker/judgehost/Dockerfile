@@ -20,8 +20,14 @@ RUN apt update \
 	gcc g++ default-jre-headless default-jdk ghc fp-compiler \
 	&& rm -rf /var/lib/apt/lists/*
 
+# Install more languages
 COPY judgehost/add_repositories.sh /add_repositories.sh
 RUN chmod 700 /add_repositories.sh && /add_repositories.sh && rm -f /add_repositories.sh
+RUN apt update \
+	&& apt install --no-install-recommends --no-install-suggests -y \
+	openjdk-17-jre-headless openjdk-17-jdk-headless pypy3 icpc-kotlinc \
+	&& rm -rf /var/lib/apt/lists/*
+
 # Add chroot and judgehost data
 ADD chroot.tar.gz /
 ADD judgehost.tar.gz /
