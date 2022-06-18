@@ -2,9 +2,8 @@
 
 import pathlib
 
-# dj_source = next(pathlib.Path("/domjudge-src").glob("domjudge*"))
-# kt_run = dj_source / "sql/files/defaultdata/kt/run"
-kt_run = pathlib.Path("run")
+dj_source = next(pathlib.Path("/domjudge-src").glob("domjudge*"))
+kt_run = dj_source / "sql/files/defaultdata/kt/run"
 
 with open(kt_run) as f:
      lines = f.readlines()
