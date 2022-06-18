@@ -20,6 +20,8 @@ RUN apt update \
 	gcc g++ default-jre-headless default-jdk ghc fp-compiler \
 	&& rm -rf /var/lib/apt/lists/*
 
+COPY judgehost/add_repositories.sh /add_repositories.sh
+RUN chmod 700 /add_repositories.sh && /add_repositories.sh && rm -f /add_repositories.sh
 # Add chroot and judgehost data
 ADD chroot.tar.gz /
 ADD judgehost.tar.gz /

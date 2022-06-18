@@ -3,6 +3,8 @@ LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+COPY judgehost/add_repositories.sh /scripts/add_repositories.sh
+
 # Install required packages for build of judgehost
 RUN apt update \
 	&& apt install --no-install-recommends --no-install-suggests -y \
