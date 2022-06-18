@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  mariadb:
+    image: docker.io/mariadb
+    hostname: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=domjudge
+      - MYSQL_USER=domjudge
+      - MYSQL_PASSWORD=djpw
+      - MYSQL_DATABASE=domjudge
+    ports:
+      - 13306:3306
+    command: --max-connections=1000 --max-allowed-packet=512M
+    volumes:
+      - /var/lib/mysql
+  domjudge:
+    image: docker.io/domjudge/domserver
+    hostname: domserver
+    environment:
+      - MYSQL_ROOT_PASSWORD=domjudge
+      - MYSQL_USER=domjudge
+      - MYSQL_PASSWORD=djpw
+      - MYSQL_DATABASE=domjudge
+      - MYSQL_HOST=mariadb
+    ports:
+      - 12345:80
