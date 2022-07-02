@@ -128,6 +128,9 @@ docker exec -it domserver supervisorctl restart [service]
 
 where `[service]` is one of `nginx` or `php`.
 
+#### Docker-compose
+See https://github.com/DOMjudge/domjudge-packaging/blob/main/docker/docker-compose.yml for a docker-compose example which automates the steps above.
+
 ### Judgehost container
 
 To run a single judgehost, run the following command:
