@@ -66,6 +66,7 @@ RUN apt update \
 	enscript \
 	printer-driver-all cups cups-pdf cups-client cups-bsd cups-filters \
 	ca-certificates python3-yaml \
+	vim wget httpie \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install composer
