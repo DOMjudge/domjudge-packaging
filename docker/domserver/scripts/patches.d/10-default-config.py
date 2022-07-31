@@ -19,6 +19,13 @@ for category in list_doc:
         for item in category["items"]:
             if item["name"] == "print_command":
                  item["default_value"] = "/usr/bin/enscript --columns=2 --pages=-10 --landscape --pretty-print  \"--header='[original]'; page $% of $=; time=$C; room='[location]'; team='[teamname]'\" [file]"
+            if item["name"] == "data_source":
+                 item["default_value"] = 1
+
+    if category["category"] == "Display":
+        for item in category["items"]:
+            if item["name"] == "show_affiliation_logos":
+                 item["default_value"] = True
 
 with open(config, "w") as f:
     yaml.dump(list_doc, f)
