@@ -29,7 +29,7 @@ RUN apt update \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
     texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-european latexmk \
-    sudo debootstrap libcgroup-dev procps \
+    sudo debootstrap libcgroup-dev procps add-apt-key gnupg-agent \
     default-jre-headless default-jdk \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
