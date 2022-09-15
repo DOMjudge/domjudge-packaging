@@ -9,6 +9,7 @@ stages:
 variables:
   GITLABCI_VERSION:    "2.1"
   GITLABCI_IMAGE:      "gitlabci"
+  CI_PRE_CLONE_SCRIPT: "umask 0022" # required until feature flag FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR is set to true on GitLab.com, see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1736
   CONTRIBUTOR_IMAGE:   "domjudge/domjudge-contributor"
   DOMJUDGE_VERSION:
     value:             "M.m.pp"
