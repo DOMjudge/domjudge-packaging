@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PHPSUPPORTED="7.2 7.3 8.0 8.1 8.2"
 ENV APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
@@ -7,7 +7,7 @@ RUN apt update && apt install -y \
   libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
   devscripts shellcheck nginx libboost-regex-dev \
-  php7.4 php7.4-cli php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-gmp php7.4-zip php7.4-xml php7.4-mbstring php7.4-fpm php7.4-intl php7.4-pcov \
+  php8.1 php8.1-cli php8.1-gd php8.1-curl php8.1-mysql php8.1-gmp php8.1-zip php8.1-xml php8.1-mbstring php8.1-fpm php8.1-intl php8.1-pcov \
   # W3c test \
   httrack \
   # Visual regression browser \
@@ -28,7 +28,7 @@ RUN apt update && apt install -y \
   # Code coverage for unit test
   php-pear php-dev \
   # Needed NPM packages \
-  && npm install pa11y \
+  && npm install -g pa11y \
   # Needed python packages \
   && pip install codespell \
   && rm -rf /var/lib/apt/lists/*
@@ -51,7 +51,7 @@ RUN add-apt-repository ppa:ondrej/php -y && apt update && \
         for PACKAGE in $PACKAGES; do \
             $APTINSTALL php${VERSION}-${PACKAGE#php*-}; \
         done; \
-    done && update-alternatives --set php /usr/bin/php7.4
+    done && update-alternatives --set php /usr/bin/php8.1
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers

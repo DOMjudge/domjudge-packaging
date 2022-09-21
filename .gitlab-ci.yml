@@ -8,7 +8,7 @@ stages:
 
 variables:
   FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: "true" # see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1736
-  GITLABCI_VERSION:    "2.1"
+  GITLABCI_VERSION:    "22.04"
   GITLABCI_IMAGE:      "gitlabci"
   CONTRIBUTOR_IMAGE:   "domjudge/domjudge-contributor"
   DOMJUDGE_VERSION:
