@@ -49,7 +49,7 @@ clean:
 	$(MAKE) distclean
 	# Because the build process overwrites the docs in the tarball,
 	# we remove everything so a second build does not fail. Missing
-	# files are acceptable to dpkg-bp (but triggers warnings) 
+	# files are acceptable to dpkg-bp (but triggers warnings)
 	rm -rf doc/manual/build/
 	dh_clean
 
@@ -71,14 +71,14 @@ install: build
 
 	# clean up docs
 	cd $(DJDC)/usr/share/doc/domjudge-doc && \
-		rm COPYING* README.md README.country_flags ChangeLog
+		rm COPYING* README.md ChangeLog
 
 	# This must be shipped in domjudge-common
-	rm $(DJDS)/etc/domjudge/common-config.php $(DJDS)/etc/domjudge/genrestapicredentials \
+	rm $(DJDS)/etc/domjudge/genrestapicredentials \
 		$(DJDS)/usr/share/domjudge/*.php $(DJDS)/usr/share/domjudge/alert
 
 	# This is in domjudge-common
-	rm -r $(DJJH)/usr/share/domjudge/* $(DJJH)/etc/domjudge/common-config.php \
+	rm -r $(DJJH)/usr/share/domjudge/* \
 		$(DJJH)/etc/domjudge/genrestapicredentials
 
 	# Saviour lib.error.sh before we trash /u/s/d
@@ -99,9 +99,6 @@ install: build
 	# Needs to be web-writable:
 	chgrp www-data $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
 	chmod 0770 $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
-
-	# Fix correct systemd unit file location for Debian systems
-	mv $(DJJH)/usr/lib/systemd/system $(DJJH)/lib/systemd/
 
 	# Fixup sudoers file to match our assumptions for user/chroot location
 	sed -i 's#^root #domjudge #;s# root\\:# domjudge\\:#' $(DJJH)/etc/domjudge/sudoers-domjudge
