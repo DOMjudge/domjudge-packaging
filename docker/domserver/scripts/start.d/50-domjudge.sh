@@ -11,6 +11,9 @@ function file_or_env {
 
 cd /opt/domjudge/domserver
 
+# Check required environment variables are set (to satisfy ShellCheck)
+: "${MYSQL_HOST:?}" "${MYSQL_DATABASE:?}" "${MYSQL_USER:?}"
+
 MYSQL_PASSWORD=$(file_or_env MYSQL_PASSWORD)
 MYSQL_ROOT_PASSWORD=$(file_or_env MYSQL_ROOT_PASSWORD)
 
