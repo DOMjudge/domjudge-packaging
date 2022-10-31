@@ -46,6 +46,13 @@ The above command will start the container, set up DOMjudge for a maintainer ins
 
 You can now access the web interface on [http://localhost:12345/](http://localhost:12345/). Use username `admin` and the password from `etc/initial_admin_password.secret` to log in. Note that for DOMjudge 6.0.0 and higher the webserver configuration will be set up such that the debug front controller will be used.
 
+Note that example data is not loaded, you need to do that yourself by running
+
+
+```bash
+bin/dj_setup_database install-examples
+```
+
 ### Environment variables
 
 The following environment variables are supported by the container:
@@ -58,7 +65,6 @@ The following environment variables are supported by the container:
 * `MYSQL_DATABASE` (defaults to `domjudge`): set the database to use.
 * `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
 * `DJ_SKIP_MAKE` (defaults to `0`): set to `1` to skip the maintainer setup and install commands. This will speed up the startup process of the container and is useful if this is already done before.
-* `DJ_DB_INSTALL_BARE` (defaults to `0`): set to `1` to do a `bare-install` for the database instead of a normal `install`.
 
 #### Passwords through files
 
