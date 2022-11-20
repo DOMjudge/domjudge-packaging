@@ -103,7 +103,7 @@ ADMINPASS=$(cat /opt/domjudge/domserver/etc/initial_admin_password.secret)
 
 curl -s https://api.github.com/repos/$_arg_git_repository/releases/latest \
 | grep browser_download_url \
-| grep background_64.zip \
+| grep transparent_64.zip \
 | cut -d : -f 2,3 \
 | tr -d \" \
 | wget -P $tmp_dir -qi -
@@ -116,8 +116,8 @@ curl -s https://api.github.com/repos/$_arg_git_repository/releases/latest \
 | wget -P $tmp_dir -qi -
 
 
-unzip -j -o -q $tmp_dir/background_64.zip -d /opt/domjudge/domserver/webapp/public/images/affiliations
-http -a admin:$ADMINPASS --check-status -b -f POST "http://localhost:80/api/users/organizations" json@$tmp_dir/organizations.json --ignore-stdin
+unzip -j -o -q $tmp_dir/transparent_64.zip -d /opt/domjudge/domserver/webapp/public/images/affiliations
+# http -a admin:$ADMINPASS --check-status -b -f POST "http://localhost:80/api/users/organizations" json@$tmp_dir/organizations.json --ignore-stdin
 
 rm -rf $tmp_dir
 
