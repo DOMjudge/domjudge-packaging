@@ -43,6 +43,7 @@ variables:
     - main
 
 .matrix_contributor_template: &matrix_contributor_template
+  timeout: 90 minutes
   parallel:
     matrix:
       - ARCH: [amd64, arm64v8]
