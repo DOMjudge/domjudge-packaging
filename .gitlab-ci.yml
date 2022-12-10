@@ -125,8 +125,9 @@ release-DOMjudge:
 check-pr-DOMjudge:
   <<: *job_check-pr
   script:
-    - HUBURL="https://registry.hub.docker.com/v1/repositories/domjudge/domserver/tags"
+    - set -x
+    - HUBURL="https://registry.hub.docker.com/v2/repositories/domjudge/domserver/tags"
     - apk add jq curl
-    - TAG=$(curl "$HUBURL" | jq -r '.[].name' |sort|tail -n2|head -n1)
+    - TAG=$(curl $HUBURL|jq '.results | sort_by(.name) | .[length-2].name')
     - cd docker
-    - sh ./build.sh $TAG
+    - sh ./build.sh ${TAG//\"}
