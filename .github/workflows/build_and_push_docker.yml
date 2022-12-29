@@ -1,3 +1,4 @@
+---
 name: 'Build version'
 
 on:
@@ -7,96 +8,181 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        required: true
+        required: false
 
 env:
   REGISTRY: ghcr.io
   REPO_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  get_version:
+    runs-on: ubuntu-latest
+    outputs:
+        docker_tags: ${{ steps.dowload_domjudge.outputs.docker_tags }}
+        domjudge_cache_key: ${{ steps.domjudge_cache_key.outputs.domjudge_cache_key }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Domjudge
+        id: dowload_domjudge
+        run: |
+          FILE="domjudge.tar.gz"
+          REPO="DOMjudge/domjudge"
+          INPUT_VERSION=${{ github.event.inputs.version }}
+          DOCKER_TAGS=( "latest" )
+          DOCKER_TAGS+=( "packaging-$(git rev-parse --short HEAD)" )
+
+          DJ_TAGS=$(curl -s https://api.github.com/repos/${REPO}/git/refs/tags | jq 'reverse | ((.[].ref) / "refs/tags/" )[1]' | rev | cut -c2- | rev | cut -c2-)
+          RELEASE_VERSION=$(echo "${DJ_TAGS}" | head -n 1)
+          TAG_TO_BUILD=""
+
+          if [[ "$INPUT_VERSION" == "" || "$INPUT_VERSION" == "release" || "$INPUT_VERSION" == "$RELEASE_VERSION" ]]; then
+            TAG_TO_BUILD=$RELEASE_VERSION
+            DOCKER_TAGS+=( "$RELEASE_VERSION" )
+          fi
+
+          if [[ "$TAG_TO_BUILD" == "" ]] && echo "$DJ_TAGS" | grep -F -q -x "$INPUT_VERSION"; then
+            TAG_TO_BUILD=$INPUT_VERSION
+            DOCKER_TAGS+=( "$INPUT_VERSION" )
+          fi
+
+          if [[ "$TAG_TO_BUILD" != "" ]]; then
+            echo "DOCKER_TAGS: ${DOCKER_TAGS[*]}"
+            echo "TAG_TO_BUILD: $TAG_TO_BUILD"
+            echo "docker_tags=${DOCKER_TAGS[*]}" >> $GITHUB_OUTPUT
+            wget "https://github.com/${REPO}/archive/refs/tags/${TAG_TO_BUILD}.tar.gz" -O ${FILE}
+            exit 0
+          fi
+
+          DJ_BRANCHES=$(curl -s https://api.github.com/repos/${REPO}/branches | jq '.[].name' | rev | cut -c2- | rev | cut -c2-)
+          BRANCH_TO_BUILD=""
+
+          if [[ "$BRANCH_TO_BUILD" == "" ]] && echo "$DJ_BRANCHES" | grep -F -q -x "$INPUT_VERSION"; then
+            BRANCH_TO_BUILD=$INPUT_VERSION
+            DOCKER_TAGS+=( "$INPUT_VERSION" )
+          fi
+
+          if [[ "$BRANCH_TO_BUILD" != "" ]]; then
+            echo "DOCKER_TAGS: ${DOCKER_TAGS[*]}"
+            echo "BRANCH_TO_BUILD: $BRANCH_TO_BUILD"
+            echo "docker_tags=${DOCKER_TAGS[*]}" >> $GITHUB_OUTPUT
+            wget "https://github.com/${REPO}/archive/refs/heads/${BRANCH_TO_BUILD}.tar.gz" -O ${FILE}
+            exit 0
+          fi
+
+          DJ_COMMITS=$(curl -s https://api.github.com/repos/${REPO}/commits | jq '.[].sha' | rev | cut -c2- | rev | cut -c2-)
+          COMMIT_TO_BUILD=""
+
+          if [[ "$COMMIT_TO_BUILD" == "" ]] && echo "$DJ_COMMITS" | grep -F -q -x "$INPUT_VERSION"; then
+            COMMIT_TO_BUILD=$INPUT_VERSION
+            DOCKER_TAGS+=( "$INPUT_VERSION" )
+          fi
+
+          if [[ "$COMMIT_TO_BUILD" != "" ]]; then
+            echo "DOCKER_TAGS: ${DOCKER_TAGS[*]}"
+            echo "COMMIT_TO_BUILD: $COMMIT_TO_BUILD"
+            echo "docker_tags=${DOCKER_TAGS[*]}" >> $GITHUB_OUTPUT
+            wget "https://github.com/${REPO}/archive/${COMMIT_TO_BUILD}.tar.gz" -O ${FILE}
+            exit 0
+          fi
+
+          exit 1
+      - id: domjudge_cache_key
+        run: echo "domjudge_cache_key=${{ runner.os }}-${{ hashFiles('domjudge.tar.gz') }}" >> $GITHUB_OUTPUT
+      - name: Print docker tags
+        run: echo ${{ steps.dowload_domjudge.outputs.docker_tags }}
+      - uses: actions/cache@v3
+        with:
+          path: domjudge.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('domjudge.tar.gz') }}
+
+  build_domserver:
+    needs: get_version
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-      with:
-        image: tonistiigi/binfmt:latest
-        platforms: all
+      - uses: actions/cache@v3
+        with:
+          path: domjudge.tar.gz
+          key: ${{ needs.get_version.outputs.domjudge_cache_key }}
 
-    - name: Available platforms
-      run: echo ${{ steps.qemu.outputs.platforms }}
+      - run: mv domjudge.tar.gz ./docker
 
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: all
 
-    - name: Inspect builder
-      run: |
-        echo "Name:      ${{ steps.buildx.outputs.name }}"
-        echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
-        echo "Status:    ${{ steps.buildx.outputs.status }}"
-        echo "Flags:     ${{ steps.buildx.outputs.flags }}"
-        echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
 
-    - name: Get latest version
-      if: "${{ github.event.inputs.version == '' || github.event.inputs.version == 'latest' }}"
-      run: echo "version_to_build=$(curl -s https://api.github.com/repos/DOMjudge/domjudge/git/refs/tags | jq 'reverse | ((.[].ref) / "refs/tags/" )[1]' | rev | cut -c2- | rev | cut -c2- | head -n 1)" >> $GITHUB_ENV
-    - name: Store input version
-      if: "${{ github.event.inputs.version != '' && github.event.inputs.version != 'latest' }}"
-      run: echo "version_to_build=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-    - name: Print version
-      run: echo "${{ env.version_to_build }}"
-    - name: Check valid version
-      run: curl -s https://api.github.com/repos/DOMjudge/domjudge/git/refs/tags | jq 'reverse | ((.[].ref) / "refs/tags/" )[1]' | rev | cut -c2- | rev | cut -c2- | grep -Fxq ${{ env.version_to_build }}
-    - name: Set flag for latest
-      run: |
-        if [[ "${{ env.version_to_build }}" == "$(curl -s https://api.github.com/repos/DOMjudge/domjudge/git/refs/tags | jq 'reverse | ((.[].ref) / "refs/tags/" )[1]' | rev | cut -c2- | rev | cut -c2- | head -n 1)" ]]; then
-          echo "latest=true" >> $GITHUB_ENV
-          echo "latest set to true"
-        else
-          echo "latest=false" >> $GITHUB_ENV
-          echo "latest set to false"
-        fi
-    - name: Repo name
-      run: echo "IMAGE_ID=$(echo ${{ env.REGISTRY }}/${{ env.REPO_NAME }} | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
-
-    - name: Build containers
-      run: |
+      - name: Build container
+        run: |
           cd ./docker
-          sudo bash -e build.sh ${{ env.version_to_build }}
+          sudo bash -e ./build-domjudge.sh "domjudge/domserver:chipcie"
 
-    - name: Add tags
-      run: |
-        docker tag domjudge/domserver:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/domserver:${{ env.version_to_build }}
-        docker tag domjudge/judgehost:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/judgehost:${{ env.version_to_build }}
-        docker tag domjudge/default-judgehost-chroot:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/default-judgehost-chroot:${{ env.version_to_build }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Add latest tags
-      if: ${{ env.latest == 'true' }}
-      run: |
-        docker tag domjudge/domserver:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/domserver:latest
-        docker tag domjudge/judgehost:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/judgehost:latest
-        docker tag domjudge/default-judgehost-chroot:${{ env.version_to_build }} ${{ env.IMAGE_ID }}/default-judgehost-chroot:latest
+      - name: Docker tag and push
+        run: |
+          IMAGE_ID=$(echo ${{ env.REGISTRY }}/${{ env.REPO_NAME }} | tr '[A-Z]' '[a-z]')
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+          for TAG in ${{ needs.get_version.outputs.docker_tags }}; do
+            docker tag domjudge/domserver:chipcie ${IMAGE_ID}/domserver:$TAG
+            docker push ${IMAGE_ID}/domserver:$TAG
+          done
 
-    - name: Push image
-      run: |
-        docker push ${{ env.IMAGE_ID }}/domserver:${{ env.version_to_build }}
-        docker push ${{ env.IMAGE_ID }}/judgehost:${{ env.version_to_build }}
-        docker push ${{ env.IMAGE_ID }}/default-judgehost-chroot:${{ env.version_to_build }}
+  build_judgehost:
+    needs: get_version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Push latest
-      if: ${{ env.latest == 'true' }}
-      run: |
-        docker push ${{ env.IMAGE_ID }}/domserver:latest
-        docker push ${{ env.IMAGE_ID }}/judgehost:latest
-        docker push ${{ env.IMAGE_ID }}/default-judgehost-chroot:latest
+      - uses: actions/cache@v3
+        with:
+          path: domjudge.tar.gz
+          key: ${{ needs.get_version.outputs.domjudge_cache_key }}
+
+      - run: mv domjudge.tar.gz ./docker
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: all
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build container
+        run: |
+          cd ./docker
+          sudo bash -e ./build-judgehost.sh "domjudge/judgehost:chipcie"
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker tag and push
+        run: |
+          IMAGE_ID=$(echo ${{ env.REGISTRY }}/${{ env.REPO_NAME }} | tr '[A-Z]' '[a-z]')
+
+          for TAG in ${{ needs.get_version.outputs.docker_tags }}; do
+            docker tag domjudge/judgehost:chipcie ${IMAGE_ID}/judgehost:$TAG
+            docker push ${IMAGE_ID}/judgehost:$TAG
+          done
