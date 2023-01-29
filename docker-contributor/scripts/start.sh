@@ -94,18 +94,23 @@ fi
 if ! bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" status > /dev/null 2>&1
 then
   echo "  Database not installed; installing..."
-  INSTALL=install
-  if [ "${DJ_DB_INSTALL_BARE}" -eq "1" ]
-  then
-    INSTALL=bare-install
-  fi
-  echo "Using ${INSTALL}..."
-  bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" ${INSTALL}
+  bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" bare-install
 else
   echo "  Database installed; upgrading..."
   bin/dj_setup_database -uroot -p"${MYSQL_ROOT_PASSWORD}" upgrade
 fi
 echo "[ok] Database ready"; echo
+
+if [ ! -f /home/domjudge/.netrc ]
+then
+  initial_admin_password=$(cat /domjudge/etc/initial_admin_password.secret)
+  cat > /home/domjudge/.netrc <<EOF
+machine localhost
+login admin
+password $initial_admin_password
+EOF
+  chown domjudge: /home/domjudge/.netrc
+fi
 
 echo "[..] Fixing restapi path"
 sed -i 's/localhost\/domjudge/localhost/' etc/restapi.secret
