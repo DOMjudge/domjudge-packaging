@@ -57,6 +57,8 @@ bin/dj_setup_database install-examples
 
 The following environment variables are supported by the container:
 
+* `UID` (defaults to `1000`): the ID of the user to run DOMjudge as. Should match the host OS user ID.
+* `GID` (defaults to `1000`): the ID of the group to run DOMjudge as. Should match the host OS group ID.
 * `CONTAINER_TIMEZONE` (defaults to `Europe/Amsterdam`): allows you to change the timezone used inside the container.
 * `MYSQL_HOST` (defaults to `mariadb`): set the host to connect to for MySQL. Can be hostname or IP. Docker will add hostnames for any containers you `--link`, so in the example above, the MariaDB container will be available under the hostname `mariadb`.
 * `MYSQL_USER` (defaults to `domjudge`): set the user to use for connecting to MySQL.
