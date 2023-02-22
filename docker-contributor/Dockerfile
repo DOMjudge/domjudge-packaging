@@ -4,6 +4,8 @@ LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
   CONTAINER_TIMEZONE=Europe/Amsterdam \
+  UID=1000 \
+  GID=1000 \
   MYSQL_HOST=mariadb \
   MYSQL_USER=domjudge \
   MYSQL_DATABASE=domjudge \
@@ -43,7 +45,8 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
   && mkdir -p /run/php
 
 # Set up users
-RUN useradd -m domjudge \
+RUN groupadd -g $GID domjudge \
+  && useradd -u $UID -g $GID -m domjudge \
   && groupadd domjudge-run \
   && for id in $(seq 0 4); do useradd -d /nonexistent -g nogroup -s /bin/false "domjudge-run-$id"; done
 
