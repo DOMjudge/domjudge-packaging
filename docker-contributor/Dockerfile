@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
   DJ_SKIP_MAKE=0 \
   DJ_DB_INSTALL_BARE=0 \
   PHPSUPPORTED="7.2 7.3 7.4 8.0 8.1 8.2" \
-  DEFAULTPHPVERSION="8.2" \
+  DEFAULTPHPVERSION="8.1" \
   APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
 # Install required packages and clean up afterwards to make this image layer smaller
