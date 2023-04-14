@@ -101,17 +101,6 @@ else
 fi
 echo "[ok] Database ready"; echo
 
-if [ ! -f /home/domjudge/.netrc ]
-then
-  initial_admin_password=$(cat /domjudge/etc/initial_admin_password.secret)
-  cat > /home/domjudge/.netrc <<EOF
-machine localhost
-login admin
-password $initial_admin_password
-EOF
-  chown domjudge: /home/domjudge/.netrc
-fi
-
 echo "[..] Fixing restapi path"
 sed -i 's/localhost\/domjudge/localhost/' etc/restapi.secret
 echo "[ok] Changed restapi URL from http://localhost/domjudge to http://localhost"
