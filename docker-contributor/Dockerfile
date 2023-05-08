@@ -34,11 +34,8 @@ RUN apt update \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
-    php-pear php-dev software-properties-common pkg-config libcairo2-dev python3-dev \
+    php-pear php-dev software-properties-common python3-pygments rst2pdf \
     && rm -rf /var/lib/apt/lists/*
-
-# Needed for building the docs
-RUN pip3 install pygments && pip3 install rst2pdf
 
 # Forward nginx request and error logs to standard output/error. Also create directory for PHP-FPM socket
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
@@ -83,11 +80,6 @@ RUN for VERSION in $PHPSUPPORTED; do \
     done
 RUN update-alternatives --set php-fpm /usr/sbin/php-fpm${DEFAULTPHPVERSION}
 
-# Add exposed volume
-VOLUME ["/domjudge"]
-
-WORKDIR /domjudge
-
 # Add PHP configuration
 RUN mkdir /php-config
 COPY ["php-config", "/php-config"]
@@ -113,6 +105,8 @@ COPY ["supervisord.conf", "/etc/supervisor/"]
 COPY ["supervisor", "/etc/supervisor/conf.d/"]
 COPY ["sudoers-domjudge", "/etc/sudoers.d/domjudge"]
 RUN chmod 440 /etc/sudoers.d/domjudge
+
+USER domjudge
 
 # Expose HTTP port
 EXPOSE 80

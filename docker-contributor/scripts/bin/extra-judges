@@ -7,6 +7,6 @@ then
 fi
 
 for id in `seq 2 3`; do
-  supervisorctl $1 judgedaemon$id
+  sudo supervisorctl $1 judgedaemon$id
 done
 
