@@ -168,7 +168,7 @@ echo "[..] Adding sudoers configuration"
 sudo cp etc/sudoers-domjudge /etc/sudoers.d/
 echo "[ok] Sudoers configuration added"; echo
 
-sudo sed -i "s|/domjudge|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemon.conf
-sudo sed -i "s|/domjudge|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemonextra.conf
+sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemon.conf
+sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemonextra.conf
 
 exec sudo supervisord -n -c /etc/supervisor/supervisord.conf
