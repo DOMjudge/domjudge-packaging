@@ -34,7 +34,7 @@ RUN apt update \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
-    php-pear php-dev software-properties-common \
+    php-pear php-dev software-properties-common pkg-config libcairo2-dev python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Needed for building the docs
