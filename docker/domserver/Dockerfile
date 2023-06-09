@@ -56,7 +56,7 @@ RUN apt update \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
-	ca-certificates python3-yaml \
+	ca-certificates python3-yaml python3-requests \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install composer
