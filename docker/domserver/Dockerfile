@@ -1,4 +1,4 @@
-FROM debian:stable-slim AS domserver-build
+FROM debian:bullseye-slim AS domserver-build
 LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -35,7 +35,7 @@ COPY domserver/build.sh /domjudge-src/build.sh
 RUN /domjudge-src/build.sh
 
 # Now create an image with the actual build in it
-FROM debian:stable-slim
+FROM debian:bullseye-slim
 LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
