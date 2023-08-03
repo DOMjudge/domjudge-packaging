@@ -7,16 +7,16 @@ stages:
   - deploy
 
 variables:
+  FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: "true" # see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1736
   GITLABCI_VERSION:    "2.1"
   GITLABCI_IMAGE:      "gitlabci"
-  CI_PRE_CLONE_SCRIPT: "umask 0022" # required until feature flag FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR is set to true on GitLab.com, see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1736
   CONTRIBUTOR_IMAGE:   "domjudge/domjudge-contributor"
   DOMJUDGE_VERSION:
     value:             "M.m.pp"
     description:       "The DOMjudge version, Change this variable to 7.3.3 to release the 7.3.3 dockers. The file should be available on the domjudge.org webserver."
   DOMJUDGE_LATEST:
     value:             "true"
-    description:       "Whether this is the latest release"    
+    description:       "Whether this is the latest release"
 
 # Docker Login steps
 .release_template: &release_docker
@@ -129,5 +129,20 @@ check-pr-DOMjudge:
     - HUBURL="https://registry.hub.docker.com/v2/repositories/domjudge/domserver/tags"
     - apk add jq curl
     - TAG=$(curl $HUBURL|jq '.results | sort_by(.name) | .[length-2].name')
+    - TAG=${TAG//\"}
     - cd docker
-    - sh ./build.sh ${TAG//\"}
+    - sh ./build.sh "$TAG"
+    - |
+      # check that there are no world-writable files
+      # (this is mainly a regression test for FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR)
+      # ignore symbolic links, because they always have mode "rwxrwxrwx"
+      # ignore directories with restricted deletion flag (e.g. /tmp), because they are fine
+      # ignore character devices (e.g. /chroot/domjudge/dev/* in image domjudge/judgehost are fine)
+      for IMG in domserver judgehost; do
+        files=$(docker run --rm --pull=never "domjudge/$IMG:$TAG" find / -xdev -perm -o+w ! -type l ! \( -type d -a -perm -+t \) ! -type c)
+        if [ -n "$files" ]; then
+          echo "error: image docker/$IMG contains world-writable files:" >&2
+          printf "%s\n" "$files" >&2
+          exit 1
+        fi
+      done

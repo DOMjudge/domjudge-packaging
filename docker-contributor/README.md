@@ -37,10 +37,10 @@ Next, if you are on Linux make sure you have cgroups enabled. See the [DOMjudge 
 Now you can run DOMjudge itself using the following command:
 
 ```bash
-docker run -v [path-to-domjudge-checkout]:/domjudge -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e MYSQL_HOST=mariadb -e MYSQL_USER=domjudge -e MYSQL_DATABASE=domjudge -e MYSQL_PASSWORD=djpw -e MYSQL_ROOT_PASSWORD=rootpw -p 12345:80 --name domjudge --privileged domjudge/domjudge-contributor
+docker run -v [path-to-domjudge-checkout]:[path-to-domjudge-checkout] -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e PROJECT_DIR=[path-to-domjudge-checkout] -p 12345:80 --name domjudge --privileged domjudge/domjudge-contributor
 ```
 
-Make sure you replace `[path-to-domjudge-checkout]` with the path to your local DOMjudge checkout. On recent macOS and Windows Docker builds, you should add `:cached` at the end of the `/domjudge` volume (i.e. `-v [path-to-domjudge-checkout]:/domjudge:cached`) to speed up the webserver a lot.
+Make sure you replace `[path-to-domjudge-checkout]` with the path to your local DOMjudge checkout. On recent macOS and Windows Docker builds, you should add `:cached` at the end of the volume (i.e. `-v [path-to-domjudge-checkout]:[path-to-domjudge-checkout]:cached`) to speed up the webserver a lot.
 
 The above command will start the container, set up DOMjudge for a maintainer install, set up the database and create a chroot to be used by the judgedaemons. It will then start nginx, PHP-FPM and two judgedaemons using supervisord.
 
@@ -128,7 +128,7 @@ Xdebug has the following settings:
 
 ### Accessing the judgings
 
-Because the chroot script copies some special devices into every chroot used for judging and Docker does not support having these special devices on volumes, a bind-mount is created for `/domjudge/output/judgings`. Thus, if you want to access the contents of this directory, use `docker exec -it domjudge bash` to get access into the container and go to that directory.
+Because the chroot script copies some special devices into every chroot used for judging and Docker does not support having these special devices on volumes, a bind-mount is created for `[path-to-domjudge-checkout]/output/judgings`. Thus, if you want to access the contents of this directory, use `docker exec -it domjudge bash` to get access into the container and go to that directory.
 
 ## Building the image
 

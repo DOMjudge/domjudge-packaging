@@ -1,5 +1,5 @@
 ARG ARCH=
-FROM "${ARCH}ubuntu:focal"
+FROM "${ARCH}ubuntu:jammy"
 LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -21,9 +21,9 @@ RUN apt update \
     && apt install --no-install-recommends --no-install-suggests -y \
     dumb-init autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
-    nginx php7.4 php7.4-cli php7.4-fpm php7.4-zip \
-    php7.4-gd php7.4-curl php7.4-mysql php7.4-json php7.4-intl \
-    php7.4-gmp php7.4-xml php7.4-mbstring php7.4-xdebug php7.4-pcov \
+    nginx php8.1 php8.1-cli php8.1-fpm php8.1-zip \
+    php8.1-gd php8.1-curl php8.1-mysql php8.1-intl \
+    php8.1-gmp php8.1-xml php8.1-mbstring php8.1-xdebug php8.1-pcov \
     bsdmainutils ntp \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
@@ -34,11 +34,8 @@ RUN apt update \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
     enscript lpr ca-certificates less vim \
-    php-pear php-dev software-properties-common \
+    php-pear php-dev software-properties-common python3-pygments rst2pdf gpg-agent tex-gyre \
     && rm -rf /var/lib/apt/lists/*
-
-# Needed for building the docs
-RUN pip3 install pygments && pip3 install rst2pdf
 
 # Forward nginx request and error logs to standard output/error. Also create directory for PHP-FPM socket
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
@@ -60,7 +57,7 @@ RUN apt update && \
 # Install all supported PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt update
 RUN for VERSION in $PHPSUPPORTED; do \
-        if [ "${VERSION}" != "7.4" ]; then \
+        if [ "${VERSION}" != "8.1" ]; then \
             $APTINSTALL php${VERSION}; \
         fi; \
     done
@@ -68,7 +65,7 @@ RUN PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-"); \
     for PACKAGE in $PACKAGES; do \
         PACKAGEALLVERSIONS="" && \
         for VERSION in $PHPSUPPORTED; do \
-            if [ "${VERSION}" != "7.4" ]; then \
+            if [ "${VERSION}" != "8.1" ]; then \
                 PACKAGEALLVERSIONS="$PACKAGEALLVERSIONS php${VERSION}-${PACKAGE#php*-}"; \
             fi; \
         done; \
@@ -82,11 +79,6 @@ RUN for VERSION in $PHPSUPPORTED; do \
         update-alternatives --install /usr/sbin/php-fpm php-fpm /usr/sbin/php-fpm${VERSION} ${PRIORTIY}; \
     done
 RUN update-alternatives --set php-fpm /usr/sbin/php-fpm${DEFAULTPHPVERSION}
-
-# Add exposed volume
-VOLUME ["/domjudge"]
-
-WORKDIR /domjudge
 
 # Add PHP configuration
 RUN mkdir /php-config
@@ -113,6 +105,8 @@ COPY ["supervisord.conf", "/etc/supervisor/"]
 COPY ["supervisor", "/etc/supervisor/conf.d/"]
 COPY ["sudoers-domjudge", "/etc/sudoers.d/domjudge"]
 RUN chmod 440 /etc/sudoers.d/domjudge
+
+USER domjudge
 
 # Expose HTTP port
 EXPOSE 80
