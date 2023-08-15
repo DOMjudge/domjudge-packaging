@@ -105,7 +105,10 @@ release-contributor-latest:
 
 release-DOMjudge:
   <<: *registry_dockerhub
-  when: manual
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      # when: always # is a default value
+    - when: manual
   allow_failure: false
   only:
     - main
