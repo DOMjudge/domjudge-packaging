@@ -23,7 +23,7 @@ done
 
 # Configure php
 
-php_folder=$(echo "/etc/php/7."?"/")
+php_folder=$(echo "/etc/php/8."?"/")
 php_version=$(basename "$php_folder")
 
 if [ ! -d "$php_folder" ]

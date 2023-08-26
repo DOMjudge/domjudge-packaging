@@ -1,9 +1,12 @@
 #!/bin/sh -eu
 
+# Use venv to use latest Sphinx. 6.1.0 or higher is required to build DOMjudge docs.
+. /venv/bin/activate
+
 cd /domjudge-src/domjudge*
 chown -R domjudge: .
 # If we used a local source tarball, it might not have been built yet
-sudo -u domjudge make dist
+sudo -u domjudge sh -c '. /venv/bin/activate && make dist'
 sudo -u domjudge ./configure -with-baseurl=http://localhost/
 
 # Passwords should not be included in the built image. We create empty files here to prevent passwords from being generated.
@@ -25,5 +28,5 @@ then
 	rm /opt/domjudge/domserver/webapp/.env.local /opt/domjudge/domserver/webapp/.env.local.php
 fi
 
-sudo -u domjudge make docs
+sudo -u domjudge sh -c '. /venv/bin/activate && make docs'
 make install-docs

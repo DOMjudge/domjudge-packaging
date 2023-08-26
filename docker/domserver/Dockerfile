@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim AS domserver-build
+FROM debian:bookworm-slim AS domserver-build
 LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,12 +12,15 @@ RUN apt update \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
-	python3-sphinx python3-sphinx-rtd-theme python3-pygments rst2pdf fontconfig python3-yaml \
+	python3-venv fontconfig \
 	texlive-latex-recommended texlive-latex-extra \
-	texlive-fonts-recommended texlive-lang-european latexmk \
+	texlive-fonts-recommended texlive-lang-european latexmk tex-gyre \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
 	enscript lpr ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
+
+# Use venv to install latest Sphinx. 6.1.0 or higher is required to build DOMjudge docs.
+RUN python3 -m venv /venv && . /venv/bin/activate && pip3 install sphinx sphinx-rtd-theme rst2pdf
 
 # Set up user
 RUN useradd -m domjudge
@@ -35,7 +38,7 @@ COPY domserver/build.sh /domjudge-src/build.sh
 RUN /domjudge-src/build.sh
 
 # Now create an image with the actual build in it
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
