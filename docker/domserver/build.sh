@@ -1,6 +1,7 @@
 #!/bin/sh -eu
 
 # Use venv to use latest Sphinx. 6.1.0 or higher is required to build DOMjudge docs.
+# shellcheck source=/dev/null
 . /venv/bin/activate
 
 cd /domjudge-src/domjudge*
