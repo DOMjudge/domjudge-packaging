@@ -1,9 +1,5 @@
 #!/bin/sh -eu
 
-# Use venv to use latest Sphinx. 6.1.0 or higher is required to build DOMjudge docs.
-# shellcheck source=/dev/null
-. /venv/bin/activate
-
 cd /domjudge-src/domjudge*
 chown -R domjudge: .
 # If we used a local source tarball, it might not have been built yet
@@ -30,4 +26,7 @@ then
 fi
 
 sudo -u domjudge sh -c '. /venv/bin/activate && make docs'
+# Use Python venv to use the latest Sphinx to build DOMjudge docs.
+# shellcheck source=/dev/null
+. /venv/bin/activate
 make install-docs
