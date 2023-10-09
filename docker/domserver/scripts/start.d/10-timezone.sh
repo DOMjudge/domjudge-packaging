@@ -6,7 +6,7 @@ dpkg-reconfigure -f noninteractive tzdata
 echo "[ok] Container timezone set to: ${CONTAINER_TIMEZONE}"; echo
 
 # Configure php
-php_folder=$(echo "/etc/php/7."?"/")
+php_folder=$(echo "/etc/php/8."?"/")
 
 cat > "$php_folder/fpm/conf.d/99-timezone.ini" <<- EOF 
 [Date]
