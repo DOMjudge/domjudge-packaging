@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #
-# ARG_POSITIONAL_SINGLE([git-repository],[Github repository to download the affiliations from (optional)],[robertdijk/icpc-logos])
+# ARG_POSITIONAL_SINGLE([git-repository],[Github repository to download the affiliations from (optional)],[WISVCH/icpc-logos])
 # ARG_HELP([Import logos and affiliations from a github repo])
 # ARGBASH_GO()
 # needed because of Argbash --> m4_ignore([
@@ -29,7 +29,7 @@ begins_with_short_option()
 
 # THE DEFAULTS INITIALIZATION - POSITIONALS
 _positionals=()
-_arg_git_repository="robertdijk/icpc-logos"
+_arg_git_repository="WISVCH/icpc-logos"
 # THE DEFAULTS INITIALIZATION - OPTIONALS
 
 
@@ -37,7 +37,7 @@ print_help()
 {
 	printf '%s\n' "Import logos and affiliations from a github repo"
 	printf 'Usage: %s [-h|--help] [<git-repository>]\n' "$0"
-	printf '\t%s\n' "<git-repository>: Github repository to download the affiliations from (optional) (default: 'robertdijk/icpc-logos')"
+	printf '\t%s\n' "<git-repository>: Github repository to download the affiliations from (optional) (default: 'WISVCH/icpc-logos')"
 	printf '\t%s\n' "-h, --help: Prints help"
 }
 
