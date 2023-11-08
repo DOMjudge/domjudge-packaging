@@ -12,7 +12,7 @@ RUN apt update \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
-	python3-venv fontconfig \
+	python3-venv python3-yaml fontconfig \
 	texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european latexmk tex-gyre \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
