@@ -24,7 +24,7 @@ RUN apt update \
     nginx php8.1 php8.1-cli php8.1-fpm php8.1-zip \
     php8.1-gd php8.1-curl php8.1-mysql php8.1-intl \
     php8.1-gmp php8.1-xml php8.1-mbstring php8.1-xdebug php8.1-pcov \
-    bsdmainutils ntp \
+    bsdmainutils ntp lsof \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
     texlive-latex-recommended texlive-latex-extra \
