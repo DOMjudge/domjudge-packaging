@@ -1,7 +1,12 @@
 #!/bin/bash
-if [[ -d /domjudge/webapp/var/log ]]
+if [ -z "$PROJECT_DIR" ]
 then
-    tail -F /domjudge/webapp/var/log/dev.log
+  PROJECT_DIR=/domjudge
+fi
+
+if [[ -d "${PROJECT_DIR}/webapp/var/log" ]]
+then
+    tail -F "${PROJECT_DIR}/webapp/var/log/dev.log"
 else
-    tail -F /domjudge/webapp/var/logs/dev.log
+    tail -F "${PROJECT_DIR}/webapp/var/logs/dev.log"
 fi
