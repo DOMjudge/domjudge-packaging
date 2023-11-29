@@ -21,10 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        id: qemu
+        uses: docker/setup-qemu-action@v3
         with:
           image: tonistiigi/binfmt:latest
           platforms: all
@@ -34,7 +35,7 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Inspect builder
         run: |
@@ -45,20 +46,33 @@ jobs:
           echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to ALiYun Shanghai Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.cn-shanghai.aliyuncs.com
+          username: ${{ secrets.ALIYUN_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_REGISTRY_TOKEN }}
 
       - name: Download DOMjudge
         run: |
           bash ./docker/download.sh ${{ github.event.inputs.version }} ${{ github.event.inputs.repo }} ${{ github.event.inputs.commit_id }}
 
       - name: Build and Push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
+        env:
+          registry_namespace: dup4
+          image_name: domjudge-domserver
+          tag: ${{ github.event.inputs.version }}
         with:
           context: ./docker
           file: ./docker/domserver/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: dup4/domjudge-domserver:${{ github.event.inputs.version }}
+          tags: |
+            ${{ env.registry_namespace }}/${{ env.image_name }}:${{ env.tag }}
+            registry.cn-shanghai.aliyuncs.com/${{ env.registry_namespace }}/${{ env.image_name }}:${{ env.tag }}
