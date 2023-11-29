@@ -34,10 +34,10 @@ fi
 
 # Set correct settings
 sed -ri -e "s/^user.*/user www-data;/" /etc/nginx/nginx.conf
-sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
-	-e "s/^post_max_size.*/post_max_size = 100M/" \
+sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 512M/" \
+	-e "s/^post_max_size.*/post_max_size = 512M/" \
 	-e "s/^memory_limit.*/memory_limit = 2G/" \
-	-e "s/^max_file_uploads.*/max_file_uploads = 200/" \
+	-e "s/^max_file_uploads.*/max_file_uploads = 512/" \
 	-e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
 	 "$php_folder/fpm/php.ini"
 
