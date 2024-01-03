@@ -37,7 +37,7 @@ Next, if you are on Linux make sure you have cgroups enabled. See the [DOMjudge 
 Now you can run DOMjudge itself using the following command:
 
 ```bash
-docker run -v [path-to-domjudge-checkout]:[path-to-domjudge-checkout] -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e PROJECT_DIR=[path-to-domjudge-checkout] -p 12345:80 --name domjudge --privileged domjudge/domjudge-contributor
+docker run -v [path-to-domjudge-checkout]:[path-to-domjudge-checkout] -v /sys/fs/cgroup:/sys/fs/cgroup:ro --link dj-mariadb:mariadb -it -e UID="$(id -u)" -e GID="$(id -g)" -e PROJECT_DIR=[path-to-domjudge-checkout] -p 12345:80 --name domjudge --privileged domjudge/domjudge-contributor
 ```
 
 Make sure you replace `[path-to-domjudge-checkout]` with the path to your local DOMjudge checkout. On recent macOS and Windows Docker builds, you should add `:cached` at the end of the volume (i.e. `-v [path-to-domjudge-checkout]:[path-to-domjudge-checkout]:cached`) to speed up the webserver a lot.
