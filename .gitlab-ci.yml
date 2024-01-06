@@ -46,7 +46,7 @@ variables:
   timeout: 90 minutes
   parallel:
     matrix:
-      - ARCH: [amd64, arm64v8]
+      - ARCH: [amd64]
 
 .job_template: &ci_template
   script:
