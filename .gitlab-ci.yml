@@ -78,6 +78,7 @@ check-pr-contributor:
   <<: *matrix_contributor_template
   script:
     - cd docker-contributor
+    - docker run --privileged --rm tonistiigi/binfmt --install all
     - docker pull $CONTRIBUTOR_IMAGE:${ARCH} || true
     - docker build --build-arg ARCH=${ARCH}/ .
 
@@ -89,6 +90,7 @@ release-contributor-arch:
       - main
   script:
     - cd docker-contributor
+    - docker run --privileged --rm tonistiigi/binfmt --install all
     - docker pull $CONTRIBUTOR_IMAGE:${ARCH} || true
     - docker build -t $CONTRIBUTOR_IMAGE:${ARCH} --build-arg ARCH=${ARCH}/ .
     - docker push $CONTRIBUTOR_IMAGE:${ARCH}
