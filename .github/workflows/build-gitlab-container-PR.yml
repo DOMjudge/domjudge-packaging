@@ -1,0 +1,42 @@
+name: 'Build GitLab CI container (PR)'
+
+on:
+  push:
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  pr-gitlab:
+    if: ${{ github.repository != 'domjudge/domjudge-packaging' || github.ref != 'main' }} 
+    name: PR GitLab image
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use the same PHP config as the contributor containers
+        run: cp -r docker-{contributor,gitlabci}/php-config
+
+      - name: Log in to GitHub Container registry (possibly at fork)
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: "./docker-gitlabci" 
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
