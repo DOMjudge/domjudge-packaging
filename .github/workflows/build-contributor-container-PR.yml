@@ -1,0 +1,42 @@
+name: 'Build Contributor container (PR)'
+# For speedup to do this in parallel: https://docs.docker.com/build/ci/github-actions/multi-platform/
+# Loosely based on: https://docs.docker.com/build/ci/github-actions/push-multi-registries/
+
+on:
+  push:
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  pr-contributor:
+    if: ${{ github.repository != 'domjudge/domjudge-packaging' || github.ref != 'main' }} 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: docker-contributor
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

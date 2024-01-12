@@ -1,0 +1,35 @@
+name: 'Build Contributor container (Release)'
+# For speedup to do this in parallel: https://docs.docker.com/build/ci/github-actions/multi-platform/
+# Loosely based on: https://docs.docker.com/build/ci/github-actions/push-multi-registries/
+
+on:
+  push:
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  release-contributor:
+    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'main' }} 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: docker-contributor
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: domjudge/domjudge-contributor:latest
