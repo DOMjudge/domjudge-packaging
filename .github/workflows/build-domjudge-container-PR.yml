@@ -11,7 +11,7 @@ env:
 
 jobs:
   pr-domjudge:
-    if: ${{ github.repository != 'domjudge/domjudge-packaging' || github.ref != 'main' }} 
+    if: ${{ github.repository != 'domjudge/domjudge-packaging' || github.ref != 'refs/heads/main' }} 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,7 +35,7 @@ jobs:
       - name: Get an unique tag for when people PR often
         run: |
           GHR=${{ github.ref }}
-          echo "PR_TAG=${GHR///}" >> $GITHUB_ENV
+          echo "PR_TAG=${GHR///}${{ github.actor }}" >> $GITHUB_ENV
 
       - name: If needed overwrite the DOMJUDGE_VERSION for this run
         run: |
@@ -62,10 +62,10 @@ jobs:
       - name: Build and push
         run: |
           for IMG in domserver judgehost default-judgehost-chroot; do
-            IMAGE_NAME="${{ github.actor }}/$IMG:${{ env.DOMJUDGE_VERSION }}"
-            docker image tag "$IMAGE_NAME" ghcr.io/${{ github.actor }}/$IMG:${{ env.PR_TAG }}
-            docker image tag "$IMAGE_NAME" ${{ github.actor }}/$IMG:${{ env.PR_TAG }}
-            docker push ghcr.io/${{ github.actor }}/$IMG:${{ env.PR_TAG }}
+            IMAGE_NAME="${{ github.repository_owner }}/$IMG:${{ env.DOMJUDGE_VERSION }}"
+            docker image tag "$IMAGE_NAME" ghcr.io/${{ github.repository_owner }}/$IMG:${{ env.PR_TAG }}
+            docker image tag "$IMAGE_NAME" ${{ github.repository_owner }}/$IMG:${{ env.PR_TAG }}
+            docker push ghcr.io/${{ github.repository_owner }}/$IMG:${{ env.PR_TAG }}
           done
 
       - name: Check for wrong permisions
@@ -73,9 +73,9 @@ jobs:
           docker image list
           set -x
           for IMG in domserver judgehost; do
-            files=$(docker run --rm --pull=never "${{ github.actor }}/$IMG:${{ env.PR_TAG }}" find / -xdev -perm -o+w ! -type l ! \( -type d -a -perm -+t \) ! -type c)
+            files=$(docker run --rm --pull=never "${{ github.repository_owner }}/$IMG:${{ env.PR_TAG }}" find / -xdev -perm -o+w ! -type l ! \( -type d -a -perm -+t \) ! -type c)
             if [ -n "$files" ]; then
-              echo "error: image ${{ github.actor }}/$IMG:${{ env.PR_TAG }} contains world-writable files:" >&2
+              echo "error: image ${{ github.repository_owner }}/$IMG:${{ env.PR_TAG }} contains world-writable files:" >&2
               printf "%s\n" "$files" >&2
               exit 1
             fi
