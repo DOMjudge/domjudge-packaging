@@ -12,7 +12,7 @@ env:
 
 jobs:
   release-domjudge:
-    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'main' }} 
+    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -60,6 +60,7 @@ jobs:
             docker push domjudge/$IMG:${{ env.DOMJUDGE_VERSION }}
             if [ ${{ env.DOMJUDGE_LATEST }} = "true" ]; then
               docker tag domjudge/$IMG:${{ env.DOMJUDGE_VERSION }} domjudge/$IMG:latest
-              docker push domjudge/$IMG:latest
+              docker push domjudge/$IMG
             fi
           done
+

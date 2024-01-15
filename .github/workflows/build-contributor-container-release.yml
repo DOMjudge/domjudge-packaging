@@ -10,7 +10,7 @@ on:
 
 jobs:
   release-contributor:
-    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'main' }} 
+    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'refs/heads/main' }} 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,3 +33,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: domjudge/domjudge-contributor:latest
+

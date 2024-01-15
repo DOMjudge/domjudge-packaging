@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - main
+
 jobs:
   build-gitlab:
-    if: ${{ github.repository == domjudge/domjudge-packaging && github.ref == main }} 
+    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'refs/heads/main' }} 
     name: Build GitLab image
     runs-on: ubuntu-latest
     permissions:
@@ -38,3 +39,4 @@ jobs:
           push: true
           tags: "domjudge/gitlabci:22.04"
           labels: ${{ steps.meta.outputs.labels }}
+
