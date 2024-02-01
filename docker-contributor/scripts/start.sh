@@ -10,8 +10,8 @@ function file_or_env {
 }
 
 echo "[..] Changing user/group ID"
-groupmod -g "${GID}" domjudge
-usermod -u "${UID}" domjudge
+sudo groupmod -g "${GID}" domjudge
+sudo usermod -u "${UID}" domjudge
 echo "[ok] User ID set to ${UID} and group ID set to ${GID}"; echo
 
 echo "[..] Setting timezone"
