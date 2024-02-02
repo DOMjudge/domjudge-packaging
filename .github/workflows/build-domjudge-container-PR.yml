@@ -11,7 +11,10 @@ env:
 
 jobs:
   pr-domjudge:
-    if: ${{ github.repository != 'domjudge/domjudge-packaging' || github.ref != 'refs/heads/main' }} 
+    if: ${{ !(github.repository == 'domjudge/domjudge-packaging' &&
+              github.ref == 'refs/heads/main') &&
+            (github.event_name == 'pull_request_target' ||
+             github.event.pull_request.head.repo.full_name != github.repository) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

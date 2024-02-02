@@ -8,7 +8,10 @@ on:
 
 jobs:
   pr-gitlab:
-    if: ${{ github.repository != 'domjudge/domjudge-packaging' || github.ref != 'refs/heads/main' }} 
+    if: ${{ !(github.repository == 'domjudge/domjudge-packaging' &&
+              github.ref == 'refs/heads/main') &&
+            (github.event_name == 'pull_request_target' ||
+             github.event.pull_request.head.repo.full_name != github.repository) }}
     name: PR GitLab image
     runs-on: ubuntu-latest
     permissions:
