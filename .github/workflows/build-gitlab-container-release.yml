@@ -1,4 +1,4 @@
-name: 'Build GitLab CI container (Accepted)'
+name: 'Build GitLab CI container (Release)'
 
 on:
   push:
