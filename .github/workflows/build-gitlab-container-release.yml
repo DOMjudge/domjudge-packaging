@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-gitlab:
-    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'refs/heads/main' }} 
+    if: ${{ github.repository == 'domjudge/domjudge-packaging' }}
     name: Build GitLab image
     runs-on: ubuntu-latest
     permissions:
