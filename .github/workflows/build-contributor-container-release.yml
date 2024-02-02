@@ -4,13 +4,12 @@ name: 'Build Contributor container (Release)'
 
 on:
   push:
-  pull_request_target:
     branches:
       - main
 
 jobs:
   release-contributor:
-    if: ${{ github.repository == 'domjudge/domjudge-packaging' && github.ref == 'refs/heads/main' }} 
+    if: ${{ github.repository == 'domjudge/domjudge-packaging' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
