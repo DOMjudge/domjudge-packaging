@@ -10,7 +10,7 @@ jobs:
   pr-gitlab:
     if: ${{ !(github.repository == 'domjudge/domjudge-packaging' &&
               github.ref == 'refs/heads/main') &&
-            github.event.action != 'enqueued' &&
+            !contains(github.ref, 'gh-readonly-queue') &&
             (github.event_name == 'pull_request_target' ||
              github.event.pull_request.head.repo.full_name != github.repository) }}
     name: PR GitLab image
