@@ -25,3 +25,20 @@ services:
       - MYSQL_HOST=mariadb
     ports:
       - 12345:80
+# When using the Traefik reverse proxy container, uncomment the lines below.
+#     labels:
+#       - traefik.enable=true
+#       - traefik.http.services.domjudge.loadbalancer.server.port=80
+#       - traefik.http.routers.domjudge.rule=Host(`domjudge.example.com`)
+#       - traefik.http.routers.domjudge.entrypoints=web
+#       - traefik.http.routers.domjudgesecure.rule=Host(`domjudge.example.com`)
+#       - traefik.http.routers.domjudgesecure.entrypoints=websecure
+#       - traefik.http.routers.domjudgesecure.tls=true
+#       - traefik.http.routers.domjudgesecure.tls.certresolver=myresolver
+#       - traefik.docker.network=proxy_network
+#     networks:
+#       - default
+#       - proxy_network
+# networks:
+#   proxy_network:
+#     external: true
