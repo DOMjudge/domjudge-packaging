@@ -1,6 +1,7 @@
 name: 'Build domjudge container (PR)'
 
 on:
+  push:
   pull_request_target:
     branches:
       - main
