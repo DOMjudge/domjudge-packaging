@@ -63,7 +63,7 @@ jobs:
           for IMG in domserver judgehost default-judgehost-chroot; do
             IMAGE_NAME="domjudge/$IMG:${{ env.DOMJUDGE_VERSION }}"
             docker image tag "$IMAGE_NAME" ghcr.io/domjudge/$IMG:${{ env.PR_TAG }}
-            docker image tag "$IMAGE_NAME" domjudge/$IMG:${{ env.PR_TAG }}
+            #docker image tag "$IMAGE_NAME" domjudge/$IMG:${{ env.PR_TAG }}
             docker push ghcr.io/domjudge/$IMG:${{ env.PR_TAG }}
           done
 
