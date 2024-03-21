@@ -1,7 +1,6 @@
 name: 'Build domjudge container (PR)'
 
 on:
-  push:
   pull_request_target:
     branches:
       - main
@@ -11,11 +10,6 @@ env:
 
 jobs:
   pr-domjudge:
-    if: ${{ !(github.repository == 'domjudge/domjudge-packaging' &&
-              github.ref == 'refs/heads/main') &&
-            !contains(github.ref, 'gh-readonly-queue') &&
-            (github.event_name == 'pull_request_target' ||
-             github.event.pull_request.head.repo.full_name != github.repository) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
