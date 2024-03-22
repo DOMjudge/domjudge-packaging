@@ -11,11 +11,6 @@ env:
 
 jobs:
   pr-domjudge:
-    if: ${{ !(github.repository == 'domjudge/domjudge-packaging' &&
-              github.ref == 'refs/heads/main') &&
-            !contains(github.ref, 'gh-readonly-queue') &&
-            (github.event_name == 'pull_request_target' ||
-             github.event.pull_request.head.repo.full_name != github.repository) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -58,7 +53,7 @@ jobs:
         run: |
           cd docker
           set -x
-          sh ./build.sh "${{ env.DOMJUDGE_VERSION }}" ${{ github.actor }}
+          sh ./build.sh "${{ env.DOMJUDGE_VERSION }}" domjudge
           set +x
 
       - run: docker image list
@@ -66,10 +61,11 @@ jobs:
       - name: Build and push
         run: |
           for IMG in domserver judgehost default-judgehost-chroot; do
-            IMAGE_NAME="${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.DOMJUDGE_VERSION }}"
-            docker image tag "$IMAGE_NAME" ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
-            docker image tag "$IMAGE_NAME" ${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
-            docker push ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
+            IMAGE_NAME="domjudge/$IMG:${{ env.DOMJUDGE_VERSION }}"
+            echo "$IMAGE_NAME"
+            docker image tag "$IMAGE_NAME" ghcr.io/domjudge/$IMG:${{ env.PR_TAG }}
+            #docker image tag "$IMAGE_NAME" domjudge/$IMG:${{ env.PR_TAG }}
+            docker push ghcr.io/domjudge/$IMG:${{ env.PR_TAG }}
           done
 
       - name: Check for wrong permisions
