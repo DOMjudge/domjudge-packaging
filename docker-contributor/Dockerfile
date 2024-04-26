@@ -16,11 +16,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
   DJ_DB_INSTALL_BARE=0 \
   PHPSUPPORTED="8.1 8.2 8.3" \
   DEFAULTPHPVERSION="8.3" \
-  APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+  APTINSTALL="apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
 # Install required packages and clean up afterwards to make this image layer smaller
-RUN apt update \
-    && apt install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
     dumb-init autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
     nginx php8.3 php8.3-cli php8.3-fpm php8.3-zip \
@@ -53,14 +53,14 @@ RUN groupadd -g $GID domjudge \
   && for id in $(seq 0 4); do useradd -d /nonexistent -g nogroup -s /bin/false "domjudge-run-$id"; done
 
 # Install composer
-RUN apt update && \
-    apt install --no-install-recommends --no-install-suggests -y ca-certificates \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Install all supported PHP versions
-RUN add-apt-repository ppa:ondrej/php -y && apt update
+RUN add-apt-repository ppa:ondrej/php -y && apt-get update
 RUN for VERSION in $PHPSUPPORTED; do \
         if [ "${VERSION}" != "8.3" ]; then \
             $APTINSTALL php${VERSION}; \
