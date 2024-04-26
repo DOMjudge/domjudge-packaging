@@ -57,13 +57,13 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     && mv /composer.phar /usr/local/bin/composer
 
 # Install all supported PHP versions
-RUN add-apt-repository ppa:ondrej/php -y && apt-get update
-RUN for VERSION in $PHPSUPPORTED; do \
+RUN add-apt-repository ppa:ondrej/php -y && apt-get update && \
+    for VERSION in $PHPSUPPORTED; do \
         if [ "${VERSION}" != "8.3" ]; then \
             $APTINSTALL php${VERSION}; \
         fi; \
-    done
-RUN PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-"); \
+    done && \
+    PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-") && \
     for PACKAGE in $PACKAGES; do \
         PACKAGEALLVERSIONS="" && \
         for VERSION in $PHPSUPPORTED; do \
@@ -72,8 +72,9 @@ RUN PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-"); \
             fi; \
         done; \
         $APTINSTALL $PACKAGEALLVERSIONS; \
-    done
-RUN update-alternatives --set php /usr/bin/php${DEFAULTPHPVERSION}
+    done && \
+    update-alternatives --set php /usr/bin/php${DEFAULTPHPVERSION} && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set up alternatives for PHP-FPM
 RUN for VERSION in $PHPSUPPORTED; do \
@@ -88,7 +89,7 @@ COPY ["php-config", "/php-config"]
 RUN for VERSION in $PHPSUPPORTED; do \
         cp -Rf /php-config/* /etc/php/${VERSION}/cli/conf.d; \
         cp -Rf /php-config/* /etc/php/${VERSION}/fpm/conf.d; \
-    done; \ 
+    done; \
     rm -Rf /php-config
 
 # Disable Xdebug by default
