@@ -1,8 +1,8 @@
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PHPSUPPORTED="7.4 8.0 8.1 8.2"
-ENV APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
-RUN apt update && apt install -y \
+ENV APTINSTALL="apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+RUN apt-get update && apt-get install -y \
   acl make zip unzip apache2-utils bsdmainutils libcurl4-gnutls-dev \
   libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk ghc fp-compiler libcgroup-dev \
@@ -29,7 +29,7 @@ RUN apt update && apt install -y \
 RUN composer -n require justinrainbow/json-schema
 
 # Install other PHP versions
-RUN add-apt-repository ppa:ondrej/php -y && apt update && \
+RUN add-apt-repository ppa:ondrej/php -y && apt-get update && \
     PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-") && \
     for VERSION in $PHPSUPPORTED; do \
         $APTINSTALL php${VERSION} && \

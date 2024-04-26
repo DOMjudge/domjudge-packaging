@@ -54,7 +54,7 @@ jobs:
           if [ ${{ env.DOMJUDGE_VERSION }} != "M.m.p" ]; then
             exit 0
           fi
-          sudo apt update; sudo apt install -y jq curl
+          sudo apt-get update; sudo apt-get install -y jq curl
           set -x
             HUBURL="https://registry.hub.docker.com/v2/repositories/domjudge/domserver/tags"
             TAG=$(curl $HUBURL|jq '.results | sort_by(.name) | .[-2].name')

@@ -54,7 +54,7 @@ jobs:
             echo "I don't know which version to pick!"
             exit 1
           fi
-          sudo apt update; sudo apt install jq curl -y
+          sudo apt-get update; sudo apt-get install jq curl -y
           set -x
             HUBURL="https://registry.hub.docker.com/v2/repositories/domjudge/domserver/tags"
             TAG=$(curl $HUBURL|jq '.results | sort_by(.name) | .[-2].name')
