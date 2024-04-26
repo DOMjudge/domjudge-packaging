@@ -1,5 +1,5 @@
 ARG ARCH=
-FROM "${ARCH}ubuntu:jammy"
+FROM "${ARCH}ubuntu:noble"
 LABEL maintainer="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
   FPM_MAX_CHILDREN=40 \
   DJ_SKIP_MAKE=0 \
   DJ_DB_INSTALL_BARE=0 \
-  PHPSUPPORTED="8.0 8.1 8.2 8.3" \
+  PHPSUPPORTED="8.1 8.2 8.3" \
   DEFAULTPHPVERSION="8.3" \
   APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
@@ -23,9 +23,9 @@ RUN apt update \
     && apt install --no-install-recommends --no-install-suggests -y \
     dumb-init autoconf automake git acl \
     gcc g++ make zip unzip mariadb-client \
-    nginx php8.1 php8.1-cli php8.1-fpm php8.1-zip \
-    php8.1-gd php8.1-curl php8.1-mysql php8.1-intl \
-    php8.1-gmp php8.1-xml php8.1-mbstring php8.1-xdebug php8.1-pcov \
+    nginx php8.3 php8.3-cli php8.3-fpm php8.3-zip \
+    php8.3-gd php8.3-curl php8.3-mysql php8.3-intl \
+    php8.3-gmp php8.3-xml php8.3-mbstring php8.3-xdebug php8.3-pcov \
     bsdmainutils ntp lsof \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
@@ -44,6 +44,8 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log \
   && mkdir -p /run/php
 
+# Remove default ubuntu user
+RUN userdel ubuntu && groupdel ubuntu || true
 # Set up users
 RUN groupadd -g $GID domjudge \
   && useradd -u $UID -g $GID -m domjudge \
@@ -60,7 +62,7 @@ RUN apt update && \
 # Install all supported PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt update
 RUN for VERSION in $PHPSUPPORTED; do \
-        if [ "${VERSION}" != "8.1" ]; then \
+        if [ "${VERSION}" != "8.3" ]; then \
             $APTINSTALL php${VERSION}; \
         fi; \
     done
@@ -68,7 +70,7 @@ RUN PACKAGES=$(dpkg-query -f '${binary:Package}\n' -W|grep "^php.*-"); \
     for PACKAGE in $PACKAGES; do \
         PACKAGEALLVERSIONS="" && \
         for VERSION in $PHPSUPPORTED; do \
-            if [ "${VERSION}" != "8.1" ]; then \
+            if [ "${VERSION}" != "8.3" ]; then \
                 PACKAGEALLVERSIONS="$PACKAGEALLVERSIONS php${VERSION}-${PACKAGE#php*-}"; \
             fi; \
         done; \
