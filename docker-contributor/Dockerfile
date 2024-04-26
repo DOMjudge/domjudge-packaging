@@ -53,10 +53,7 @@ RUN groupadd -g $GID domjudge \
   && for id in $(seq 0 4); do useradd -d /nonexistent -g nogroup -s /bin/false "domjudge-run-$id"; done
 
 # Install composer
-RUN apt-get update && \
-    apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
-	&& rm -rf /var/lib/apt/lists/* \
-    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
     && mv /composer.phar /usr/local/bin/composer
 
 # Install all supported PHP versions
