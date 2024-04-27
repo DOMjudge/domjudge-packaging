@@ -3,6 +3,8 @@ name: 'Build Contributor container (Release)'
 # Loosely based on: https://docs.docker.com/build/ci/github-actions/push-multi-registries/
 
 on:
+  schedule:
+    - cron: "5 4 * * 5"
   push:
     branches:
       - main
