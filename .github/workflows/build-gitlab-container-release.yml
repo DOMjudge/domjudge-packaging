@@ -1,6 +1,8 @@
 name: 'Build GitLab CI container (Release)'
 
 on:
+  schedule:
+    - cron: "4 3 * * 5"
   push:
     branches:
       - main
@@ -14,26 +16,26 @@ jobs:
       packages: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Use the same PHP config as the contributor containers
         run: cp -r docker-{contributor,gitlabci}/php-config
 
       - name: Log in to Docker Container registry
-        if: github.ref == 'refs/heads/main'
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@v5
         with:
           images: domjudge/gitlabci
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        uses: docker/build-push-action@v5
         with:
           context: "./docker-gitlabci" 
           push: true
