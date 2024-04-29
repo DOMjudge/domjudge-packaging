@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PHPSUPPORTED="7.4 8.0 8.2 8.3"
+ENV PHPSUPPORTED="7.4 8.0 8.1 8.2"
 ENV APTINSTALL="apt install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 RUN apt update && apt install -y \
   acl make zip unzip apache2-utils bsdmainutils libcurl4-gnutls-dev \
