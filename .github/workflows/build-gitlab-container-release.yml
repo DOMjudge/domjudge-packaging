@@ -39,6 +39,6 @@ jobs:
         with:
           context: "./docker-gitlabci" 
           push: true
-          tags: "domjudge/gitlabci:22.04"
+          tags: "domjudge/gitlabci:24.04"
           labels: ${{ steps.meta.outputs.labels }}
 
