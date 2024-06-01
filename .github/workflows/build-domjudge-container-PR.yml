@@ -66,10 +66,12 @@ jobs:
       - name: Build and push
         run: |
           for IMG in domserver judgehost default-judgehost-chroot; do
+            echo "::group::$IMG"
             IMAGE_NAME="${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.DOMJUDGE_VERSION }}"
             docker image tag "$IMAGE_NAME" ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
             docker image tag "$IMAGE_NAME" ${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
             docker push ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
+            echo "::endgroup::"
           done
 
       - name: Check for wrong permisions
