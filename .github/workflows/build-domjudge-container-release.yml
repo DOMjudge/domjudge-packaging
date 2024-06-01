@@ -4,6 +4,16 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      DOMJUDGE_VERSION:
+        description: 'Version of DOMjudge to build'
+        required: true
+        default: 'M.m.p'
+      DOMJUDGE_LATEST:
+        description: 'Overwrite the latest tag'
+        required: true
+        default: 'true'
 
 env:
   DOMJUDGE_VERSION: M.m.p
@@ -28,6 +38,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: If manually dispatched use input variables
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "DOMJUDGE_VERSION=${{ inputs.DOMJUDGE_VERSION }}" >> $GITHUB_ENV
+          echo "DOMJUDGE_LATEST=${{ inputs.DOMJUDGE_LATEST }}" >> $GITHUB_ENV
 
       - name: If needed overwrite the DOMJUDGE_VERSION for this run
         run: |
