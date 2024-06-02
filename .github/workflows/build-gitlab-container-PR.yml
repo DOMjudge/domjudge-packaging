@@ -8,11 +8,13 @@ on:
 
 jobs:
   pr-gitlab:
-    if: ${{ !(github.repository == 'domjudge/domjudge-packaging' &&
-              github.ref == 'refs/heads/main') &&
-            !contains(github.ref, 'gh-readonly-queue') &&
-            (github.event_name == 'pull_request' ||
-             github.event.pull_request.head.repo.full_name != github.repository) }}
+    # Stop processing if this is a merge-queue
+    # Stop processing if this is not against our repo
+    # Always run if this PR is not from our organization
+    # Or run if this PR is not `main` (So notQueue && ourRepo && (notPROurOrg || notMain))
+    if : ${{ !contains(github.ref, 'gh-readonly-queue') &&
+             github.repository == 'domjudge/domjudge-packaging' &&
+             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref == 'main') }}
     name: PR GitLab image
     runs-on: ubuntu-latest
     permissions:
