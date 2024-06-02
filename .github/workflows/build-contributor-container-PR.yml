@@ -4,9 +4,15 @@ name: 'Build Contributor container (PR)'
 
 on:
   push:
+    paths:
+      - docker-contributor
+      - .github/workflows/build-contributor-container-PR.yml
   pull_request:
     branches:
       - main
+    paths:
+      - docker-contributor
+      - .github/workflows/build-contributor-container-PR.yml
 
 jobs:
   pr-contributor:
