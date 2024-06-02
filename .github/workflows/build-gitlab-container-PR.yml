@@ -2,9 +2,17 @@ name: 'Build GitLab CI container (PR)'
 
 on:
   push:
+    paths:
+      - docker-contributor/php-config
+      - docker-gitlabci
+      - .github/workflows/build-gitlab-container-PR.yml
   pull_request:
     branches:
       - main
+    paths:
+      - docker-contributor/php-config
+      - docker-gitlabci
+      - .github/workflows/build-gitlab-container-PR.yml
 
 jobs:
   pr-gitlab:
