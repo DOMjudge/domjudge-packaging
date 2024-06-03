@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install required packages for running of judgehost
 RUN apt update \
 	&& apt install --no-install-recommends --no-install-suggests -y \
-	dumb-init \
+	dumb-init pkg-config \
 	acl lsof zip unzip supervisor sudo procps libcgroup2 \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
 	php-gmp php-xml php-mbstring python3 \
