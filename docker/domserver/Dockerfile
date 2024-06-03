@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install required packages for build of domserver
 RUN apt update \
 	&& apt install --no-install-recommends --no-install-suggests -y \
-	autoconf automake git \
+	autoconf automake git pkg-config \
 	gcc g++ make acl zip unzip \
 	php-cli php-zip \
 	php-gd php-curl php-mysql php-json php-intl \
