@@ -2,6 +2,7 @@ FROM debian:bookworm-slim AS domserver-build
 LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Install required packages for build of domserver
 RUN apt-get update \
