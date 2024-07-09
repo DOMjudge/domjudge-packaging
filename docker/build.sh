@@ -1,44 +1,4 @@
-#!/bin/sh -eux
-
-# Placeholders to annotate the Github actions logs
-trace_on () { true; }
-trace_off () { true; }
-section_start () { true; }
-section_end () { true; }
-
-if [ -n "${CI+x}" ]
-then
-	if [ -n "${GITHUB_ACTION+x}" ]
-	set -x
-	then
-		# Functions to annotate the Github actions logs
-		trace_on () { set -x; }
-		trace_off () {
-			{ set +x; } 2>/dev/null
-		}
-		
-		section_start_internal () {
-			echo "::group::$1"
-			trace_on
-		}
-		
-		section_end_internal () {
-			echo "::endgroup::"
-			trace_on
-		}
-		
-		section_start () {
-			trace_off
-			section_start_internal "$@"
-		}
-		section_end () {
-			trace_off
-			section_end_internal
-		}
-	else
-		export PS4='(${0}:${LINENO}): - [$?] $ '
-	fi
-fi
+#!/bin/sh -eu
 
 if [ "$#" -eq 0 ] || [ "$#" -gt 2 ]
 then
@@ -48,25 +8,52 @@ then
 	exit 1
 fi
 
-VERSION="$1"
-NAMESPACE="domjudge"
-if [ -n "${2+x}" ]
+# Placeholders for grouping log lines
+# (the body is a nested function declaration so it won't appear in the trace when using `set -x`)
+section_start() { _() { :; }; }
+section_end() { _() { :; }; }
+
+if [ -n "${CI+x}" ]
 then
-	NAMESPACE="$2"
+	if [ -n "${GITHUB_ACTION+x}" ]
+	then
+		# Functions for grouping log lines on GitHub Actions
+		trace_on() { set -x; }
+		# trace_off is manually inlined so it won't appear in the trace
+		section_start() {
+			{ set +x; } 2>/dev/null # trace_off
+			echo "::group::$1"
+			trace_on
+		}
+		section_end() {
+			{ set +x; } 2>/dev/null # trace_off
+			echo "::endgroup::"
+			trace_on
+		}
+		# Redirect stderr to stdout as a workaround so they won't be out-of-order; see
+		# https://github.com/orgs/community/discussions/116552
+		# https://web.archive.org/web/20220430214837/https://github.community/t/stdout-stderr-output-not-in-correct-order-in-logs/16335
+		# (GitHub Actions displays stderr in the same style as stdout anyway, so
+		# there is no harm in us merging them.)
+		exec 2>&1
+	fi
+	set -x
 fi
 
+section_start "Variables"
+VERSION="$1"
+NAMESPACE="${2-domjudge}"
 URL=https://www.domjudge.org/releases/domjudge-${VERSION}.tar.gz
 FILE=domjudge.tar.gz
+section_end
 
 section_start "Download DOMjudge tarball"
 echo "[..] Downloading DOMjudge version ${VERSION}..."
-
 if ! wget --quiet "${URL}" -O ${FILE}
 then
 	echo "[!!] DOMjudge version ${VERSION} file not found on https://www.domjudge.org/releases"
 	exit 1
 fi
-
 echo "[ok] DOMjudge version ${VERSION} downloaded as domjudge.tar.gz"; echo
 section_end
 

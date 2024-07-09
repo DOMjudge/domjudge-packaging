@@ -65,9 +65,7 @@ jobs:
       - name: Build the container
         run: |
           cd docker
-          set -x
-          sh ./build.sh "${{ env.DOMJUDGE_VERSION }}"
-          set +x
+          ./build.sh "${{ env.DOMJUDGE_VERSION }}"
 
       - name: Build and push
         run: |
