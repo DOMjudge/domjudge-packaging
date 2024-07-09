@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y \
   # Code coverage for unit test \
   php-pear php-dev \
   # Needed NPM packages \
-  && npm install -g pa11y puppeteer
+  && npm install -g pa11y puppeteer \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install needed global PHP modules
 RUN composer -n require justinrainbow/json-schema
