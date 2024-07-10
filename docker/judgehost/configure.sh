@@ -1,8 +1,5 @@
 #!/bin/bash -e
 
-useradd -m domjudge
-chown -R domjudge: /opt/domjudge
-
 chmod 755 /scripts/start.sh
 for script in /scripts/bin/*
 do
