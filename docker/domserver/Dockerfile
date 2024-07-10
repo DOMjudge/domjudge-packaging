@@ -51,6 +51,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	FPM_MAX_CHILDREN=40 \
 	DJ_DB_INSTALL_BARE=0
 
+# Set up user
+RUN useradd -m domjudge
+
 # Install required packages for running of domserver
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
