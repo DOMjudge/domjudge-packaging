@@ -10,6 +10,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	DOMJUDGE_CREATE_WRITABLE_TEMP_DIR=0 \
 	RUN_USER_UID_GID=62860
 
+# Set up user
+RUN groupadd domjudge -g2004
+RUN useradd -m domjudge -u2004 -g2004
+
 # Install required packages for running of judgehost
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
