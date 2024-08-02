@@ -4,7 +4,8 @@ LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Set up user
-RUN useradd -m domjudge
+RUN groupadd domjudge -g2004
+RUN useradd -m domjudge -u2004 -g2004
 
 # Install required packages for build of domserver
 RUN apt-get update \
