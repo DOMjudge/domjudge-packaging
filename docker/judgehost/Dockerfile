@@ -28,6 +28,15 @@ ADD chroot.tar.gz /
 ADD judgehost.tar.gz /
 RUN cp /opt/domjudge/judgehost/etc/sudoers-domjudge /etc/sudoers.d/
 
+# Check that the ownership of some well-known directory is correctly set to "domjudge"
+# (the ownership will be incorrect if the UID is different in the .tar.gz archives from the previous build stage, added above)
+RUN current_uid="$(id -u domjudge)" \
+	&& archive_uid="$(stat -c %u /opt/domjudge/judgehost/run)" \
+	&& [ "$current_uid" = "$archive_uid" ] \
+	|| { echo "error: expected owner UID of /opt/domjudge/judgehost/run to be $current_uid (domjudge), but it is $archive_uid ($(id -un "$archive_uid" || echo no such user))" >&2; \
+		echo "hint: check that the UID of user 'domjudge' is the same in both build stages" >&2; \
+		exit 1; }
+
 # Add scripts
 COPY judgehost/scripts /scripts/
 

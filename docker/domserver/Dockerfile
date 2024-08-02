@@ -60,6 +60,14 @@ RUN apt-get update \
 	ca-certificates python3-yaml python3-requests \
 	&& rm -rf /var/lib/apt/lists/*
 
+# Check the UID and GID of the domjudge user are the same as in the previous build stage
+# (otherwise the COPY directives below won't set the correct ownership)
+COPY --from=domserver-build /etc/passwd /tmp/domserver-build-etc-passwd
+RUN sed -i -n '/^domjudge:/p' /tmp/domserver-build-etc-passwd \
+	&& sed -n '/^domjudge:/p' /etc/passwd | diff /tmp/domserver-build-etc-passwd - \
+	|| { echo "error: UID/GID of 'domjudge' differ from previous build stage; they must be the same for COPY to work" >&2; exit 1; } \
+	&& rm /tmp/domserver-build-etc-passwd
+
 # Copy domserver
 COPY --from=domserver-build /opt/domjudge/domserver /opt/domjudge/domserver
 COPY --from=domserver-build /opt/domjudge/doc /opt/domjudge/doc
