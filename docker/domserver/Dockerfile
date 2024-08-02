@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	autoconf automake git pkg-config \
-	gcc g++ make acl zip unzip \
+	gcc g++ make acl zip unzip composer \
 	php-cli php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring \
@@ -24,11 +24,6 @@ RUN python3 -m venv /venv && . /venv/bin/activate && pip3 install sphinx sphinx-
 
 # Set up user
 RUN useradd -m domjudge
-
-# Install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-	&& php composer-setup.php \
-	&& mv /composer.phar /usr/local/bin/composer
 
 # Add DOMjudge source code and build script
 ADD domjudge.tar.gz /domjudge-src
@@ -58,17 +53,12 @@ RUN useradd -m domjudge
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	acl curl zip unzip supervisor mariadb-client pv apache2-utils \
-	nginx php-cli php-fpm php-zip php-bcmath \
+	nginx php-cli php-fpm php-zip php-bcmath composer \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
 	ca-certificates python3-yaml python3-requests \
 	&& rm -rf /var/lib/apt/lists/*
-
-# Install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-	&& php composer-setup.php \
-	&& mv /composer.phar /usr/local/bin/composer
 
 # Copy domserver
 COPY --from=domserver-build /opt/domjudge/domserver /opt/domjudge/domserver
