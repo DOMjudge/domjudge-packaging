@@ -4,14 +4,14 @@ on:
   push:
     paths:
       - docker-contributor/php-config
-      - docker-gitlabci
+      - docker-gitlabci/**
       - .github/workflows/build-gitlab-container-PR.yml
   pull_request:
     branches:
       - main
     paths:
       - docker-contributor/php-config
-      - docker-gitlabci
+      - docker-gitlabci/**
       - .github/workflows/build-gitlab-container-PR.yml
 
 jobs:
