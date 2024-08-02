@@ -10,7 +10,7 @@ RUN apt-get update \
 	gcc g++ make zip unzip \
 	php-cli php-zip lsb-release debootstrap \
 	php-gd php-curl php-mysql php-json \
-	php-gmp php-xml php-mbstring \
+	php-gmp php-xml php-mbstring composer \
 	sudo bsdmainutils ntp libcgroup-dev procps \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
 	ca-certificates \
@@ -18,12 +18,6 @@ RUN apt-get update \
 
 # Set up user
 RUN useradd -m domjudge
-
-# Install composer
-
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-	&& php composer-setup.php \
-	&& mv /composer.phar /usr/local/bin/composer
 
 # Add DOMjudge source code and build script
 ADD domjudge.tar.gz /domjudge-src
