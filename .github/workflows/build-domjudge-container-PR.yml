@@ -4,13 +4,13 @@ on:
   push:
     paths:
       - .github/workflows/build-domjudge-container-PR.yml
-      - docker
+      - docker/**
   pull_request:
     branches:
       - main
     paths:
       - .github/workflows/build-domjudge-container-PR.yml
-      - docker
+      - docker/**
 
 env:
   DOMJUDGE_VERSION: M.m.p
