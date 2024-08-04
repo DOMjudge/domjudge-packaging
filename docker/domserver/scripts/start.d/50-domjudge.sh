@@ -42,50 +42,8 @@ else
 fi
 
 # Generate secrets
-if [[ -f etc/gen_all_secrets ]]
-then
-	# DOMjudge >= 7.2.1
-	(cd etc && ./gen_all_secrets)
-	# (Note: running 'etc/gen_all_secrets' does not work before commit DOMjudge/domjudge@9bac55144600)
-elif [[ -f webapp/config/load_db_secrets.php ]]
-then
-	# DOMjudge 7.2.0
-	# This version does not install gen_all_secrets and gensymfonysecret, so we have to inline them here (fixed in commit DOMjudge/domjudge@d523a965f8e0)
-	if [[ ! -f etc/restapi.secret ]]; then
-		etc/genrestapicredentials | (umask 077 && cat > etc/restapi.secret)
-	fi
-	if [[ ! -f etc/initial_admin_password.secret ]]; then
-		etc/genadminpassword | (umask 077 && cat > etc/initial_admin_password.secret)
-	fi
-	if [[ ! -f etc/symfony_app.secret ]]; then
-		{
-			# From etc/gensymfonysecret
-			head -c20 /dev/urandom | base64 | head -c20 | tr '/+' 'Aa'
-			echo
-		} | (umask 077 && cat > etc/symfony_app.secret)
-	fi
-else
-	# DOMjudge 7.1
-	if [[ ! -f etc/restapi.secret ]]; then
-		etc/genrestapicredentials | (umask 077 && cat > etc/restapi.secret)
-	fi
-	if [[ ! -f etc/initial_admin_password.secret ]]; then
-		etc/genadminpassword | (umask 077 && cat > etc/initial_admin_password.secret)
-	fi
-	# This version needs the database settings and app secret to be in webapp/.env.local
-	# It is generated using etc/gensymfonyenv on DOMjudge 7.1, but that script is not installed so we inline it here
-	if [[ ! -f webapp/.env.local ]]; then
-		{
-			SECRET=$(head -c20 /dev/urandom | base64 | head -c20 | tr '/+' 'Aa')
-			echo "# Generated on $(hostname), $(date)."
-			echo
-			echo "# Uncomment the following line to run the application in development mode"
-			echo "#APP_ENV=dev"
-			echo "APP_SECRET=$SECRET"
-			echo "DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}"
-		} | (umask 077 && cat > webapp/.env.local)
-	fi
-fi
+(cd etc && ./gen_all_secrets)
+# (Note: running 'etc/gen_all_secrets' does not work before commit DOMjudge/domjudge@9bac55144600)
 
 # Add the Docker gateway as a trusted proxy
 if grep -q TRUSTED_PROXIES webapp/.env.local > /dev/null 2>&1
@@ -162,20 +120,6 @@ done
 
 echo "real_ip_header    X-Forwarded-For;" >> ${NGINX_CONFIG_FILE}
 echo "real_ip_recursive on;" >> ${NGINX_CONFIG_FILE}
-
-if [[ ! -f webapp/config/load_db_secrets.php ]]
-then
-	# DOMjudge 7.1 dumps the environment into webapp/.env.local.php for improved speed
-	# We also do that here (with some additional setup to get composer to work)
-	echo '{"config": {"vendor-dir": "lib/vendor"}, "extra": {"symfony": {"root-dir": "webapp/"}}}' > composer.json
-	touch webapp/.env
-	composer symfony:dump-env prod
-	rm composer.json
-	if [[ ! -s webapp/.env ]]; then
-		rm webapp/.env
-	fi
-	chmod og= webapp/.env.local.php
-fi
 
 # Set up permissions
 chown -R www-data: webapp/public/images
