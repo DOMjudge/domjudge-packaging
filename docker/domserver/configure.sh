@@ -3,11 +3,6 @@
 # Create PHP FPM socket dir, change permissions for some domjudge directories and fix scripts
 mkdir -p /run/php
 chown -R www-data: /opt/domjudge/domserver/tmp
-# for DOMjudge <= 7.2 (submitdir was removed in commit DOMjudge/domjudge@d66725038)
-if [ -d /opt/domjudge/domserver/submissions ]
-then
-	chown -R www-data: /opt/domjudge/domserver/submissions
-fi
 
 chmod 755 /scripts/start.sh
 for script in /scripts/bin/*
