@@ -22,9 +22,12 @@ RUN apt-get update && apt-get install -y \
   npm \
   # Code coverage for unit test \
   php-pear php-dev \
-  # Needed NPM packages \
-  && npm install -g pa11y puppeteer \
   && rm -rf /var/lib/apt/lists/*
+
+# Install needed NPM packages and download chrome for the domjudge user
+RUN su domjudge -c "npm install pa11y puppeteer && \
+                    npx puppeteer browsers install chrome && \
+                    npm cache clean"
 
 # Install needed global PHP modules
 RUN composer -n require justinrainbow/json-schema
@@ -47,9 +50,6 @@ RUN useradd -m domjudge
 RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0
 RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
 RUN groupadd domjudge-run
-
-# Download chrome for the domjudge user
-RUN su domjudge -c "npx puppeteer browsers install chrome"
 
 # Update dictionary to latest version
 ENV GITHUBDICTIONARY="https://raw.githubusercontent.com/codespell-project/codespell/master/codespell_lib/data/dictionary.txt"
