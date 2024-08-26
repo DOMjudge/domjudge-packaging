@@ -2,6 +2,11 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PHPSUPPORTED="7.4 8.0 8.1 8.2"
 ENV APTINSTALL="apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+RUN useradd -m domjudge
+RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0
+RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
+RUN groupadd domjudge-run
+
 RUN apt-get update && apt-get install -y \
   acl make zip unzip apache2-utils bsdmainutils libcurl4-gnutls-dev \
   libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
@@ -25,9 +30,10 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Install needed NPM packages and download chrome for the domjudge user
-RUN su domjudge -c "npm install pa11y puppeteer && \
+RUN su domjudge -c "cd /home/domjudge && \
+                    npm install pa11y puppeteer && \
                     npx puppeteer browsers install chrome && \
-                    npm cache clean"
+                    npm cache clean --force"
 
 # Install needed global PHP modules
 RUN composer -n require justinrainbow/json-schema
@@ -45,11 +51,6 @@ RUN add-apt-repository ppa:ondrej/php -y && apt-get update && \
 
 # Put the gitlab user in sudo
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-RUN useradd -m domjudge
-RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0
-RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
-RUN groupadd domjudge-run
 
 # Update dictionary to latest version
 ENV GITHUBDICTIONARY="https://raw.githubusercontent.com/codespell-project/codespell/master/codespell_lib/data/dictionary.txt"
