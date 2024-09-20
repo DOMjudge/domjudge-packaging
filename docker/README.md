@@ -263,8 +263,10 @@ where `version` is the DOMjudge version to create the images for, e.g. `5.3.0`.
 
 To build domjudge with local sources, run
 ```bash
-  tar --exclude-vcs -czf <path to domjudge-packaging>/docker/domjudge.tar.gz <domjudge source directory>
-  cd <path to domjudge-packaging>/docker
+  dj_packaging_dir=<path to domjudge-packaging>
+  dj_source_dir =<domjudge source directory>
+  tar --exclude-vcs -czf "${dj_packaging_dir}/docker/domjudge.tar.gz" -C $(dirname "$dj_source_dir") $(basename "$dj_source_dir")
+  cd ${dj_packaging_dir}/docker
   docker build -t domjudge -f domserver/Dockerfile .
 ```
 Note that the source directory name has to match `domjudge-*`.
