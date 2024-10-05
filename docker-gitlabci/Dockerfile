@@ -7,7 +7,8 @@ RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0
 RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-1
 RUN groupadd domjudge-run
 
-RUN apt-get update && apt-get install -y \
+RUN apt-add-repository ppa:pypy/ppa -y \
+  apt-get update && apt-get -y install \
   acl make zip unzip apache2-utils bsdmainutils libcurl4-gnutls-dev \
   libjsoncpp-dev libmagic-dev autoconf automake bats sudo debootstrap procps \
   gcc g++ default-jre-headless default-jdk-headless ghc fp-compiler libcgroup-dev \

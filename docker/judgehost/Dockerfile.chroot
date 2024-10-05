@@ -1,6 +1,7 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get -y install \
+RUN apt-add-repository ppa:pypy/ppa -y \
+  apt-get update && apt-get -y install \
   ca-certificates default-jre-headless pypy3 locales \
   && rm -rf /var/lib/apt/lists/*
 
