@@ -1,0 +1,2 @@
+#!/bin/bash
+supervisorctl tail -f apache2 stderr
