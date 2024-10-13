@@ -1,0 +1,14 @@
+#!/bin/bash
+WEBSERVER=$1
+if [ "${WEBSERVER}" = "nginx" ]
+then
+  sudo supervisorctl stop apache2
+  sudo supervisorctl start nginx
+elif [ "${WEBSERVER}" = "apache2" ]
+then
+  sudo supervisorctl stop nginx
+  sudo supervisorctl start apache2
+else
+  echo "Usage: $0 [apache2|nginx]"
+  exit 1
+fi

@@ -9,7 +9,7 @@ The container includes the following:
  * Set up or update the database.
  * Set up the webserver.
  * Create a chroot.
-* PHP-FPM and nginx for running the web interface.
+* PHP-FPM and apache2 or nginx for running the web interface.
 * Two running judgedaemons using a chroot.
 * Scripts for reading the log files of the webserver and the judgedaemons.
 * A script to create a dummy DOMjudge user and submit all test submissions.
@@ -67,6 +67,7 @@ The following environment variables are supported by the container:
 * `MYSQL_DATABASE` (defaults to `domjudge`): set the database to use.
 * `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
 * `DJ_SKIP_MAKE` (defaults to `0`): set to `1` to skip the maintainer setup and install commands. This will speed up the startup process of the container and is useful if this is already done before.
+* `DEFAULTWEBSERVER` (defaults to `nginx`): set to `apache2` to use the Apache2 httpd server as default webserver.
 
 #### Passwords through files
 
@@ -97,6 +98,8 @@ If you have named your container something other than `domjudge`, be sure to cha
 
 The following commands are available:
 
+* `apache2-access-log`: tail the access log of apache2.
+* `apache2-error-log`: tail the error log of apache2.
 * `nginx-access-log`: tail the access log of nginx.
 * `nginx-error-log`: tail the error log of nginx.
 * `judgedaemon-log 0` and `judgedaemon-log 1`: tail the log of the first / second judgeaemon.
@@ -105,6 +108,7 @@ The following commands are available:
 * `xdebug-enable`: enable Xdebug debugging. See note below
 * `xdebug-disable`: disable Xdebug debugging. See note below
 * `switch-php <version>`: switch to using the given PHP version.
+* `switch-webserver <apache2|nginx>`: switch to using the given webserver.
 
 Of course, you can always run `docker exec -it domjudge bash` to get a bash shell inside the container.
 
@@ -114,7 +118,7 @@ To restart any of the services, run the following:
 docker exec -it domjudge supervisorctl restart [service]
 ```
 
-where `[service]` is one of `nginx`, `php`, `judgedaemon0` or `judgedaemon1`.
+where `[service]` is one of `apache2`, `nginx`, `php`, `judgedaemon0` or `judgedaemon1`.
 
 ### Xdebug
 

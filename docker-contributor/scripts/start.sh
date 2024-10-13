@@ -149,6 +149,23 @@ sudo sed -i '/error_log/d' $NGINX_CONFIG_FILE
 # Use debug front controller
 sudo sed -i 's/app\.php/app_dev.php/g' $NGINX_CONFIG_FILE
 sudo sed -i 's/app\\\.php/app\\_dev.php/g' $NGINX_CONFIG_FILE
+
+# Configure Apache2
+APACHE2_CONFIG_FILE=/etc/apache2/conf-available/domjudge.conf
+sudo cp etc/apache.conf $APACHE2_CONFIG_FILE
+sudo a2enmod proxy_fcgi setenvif rewrite
+sudo cp "/etc/apache2/conf-available/php$DEFAULTPHPVERSION-fpm.conf" /etc/apache2/conf-available/php-domjudge-fpm.conf
+sudo sed -i 's/proxy:unix:.*|/proxy:unix:\/var\/run\/php-fpm-domjudge.sock|/' /etc/apache2/conf-available/php-domjudge-fpm.conf
+sudo a2enconf php-domjudge-fpm domjudge
+sudo rm /etc/apache2/sites-enabled/000-default.conf
+# Run DOMjudge in root
+sudo sed -i '/^#<VirtualHost \*>/,/^#<\/VirtualHost>/ s/#//' $APACHE2_CONFIG_FILE
+sudo sed -i 's/^Alias \/domjudge/#Alias \/domjudge/' $APACHE2_CONFIG_FILE
+# Run as user and group 'domjudge'
+sudo sed -i 's/<VirtualHost \*>/User domjudge\nGroup domjudge\n<VirtualHost \*>/' $APACHE2_CONFIG_FILE
+# Redirect logs to stdout/stderr
+sudo sed -i 's/<VirtualHost \*>/TransferLog \/dev\/stdout\nErrorLog \/dev\/stderr\n<VirtualHost \*>/' $APACHE2_CONFIG_FILE
+
 # Set up permissions (make sure the script does not stop if this fails, as this will happen on macOS / Windows)
 sudo chown domjudge: "${PROJECT_DIR}/webapp/var"
 echo "[ok] Webserver config installed"; echo
@@ -175,5 +192,15 @@ echo "[ok] Sudoers configuration added"; echo
 
 sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemon.conf
 sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemonextra.conf
+
+echo "[..] Configuring default webserver"
+if [ "${DEFAULTWEBSERVER}" = "apache2" ] || [ "${DEFAULTWEBSERVER}" = "nginx" ]
+then
+  sudo sed -i "s|autostart=false|autostart=true|" "/etc/supervisor/conf.d/$DEFAULTWEBSERVER.conf"
+else
+  echo "Unsupported webserver '$DEFAULTWEBSERVER'"
+  exit 1
+fi
+echo "[ok] Configured default webserver"; echo
 
 exec sudo supervisord -n -c /etc/supervisor/supervisord.conf
