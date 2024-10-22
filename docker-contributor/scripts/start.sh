@@ -157,7 +157,7 @@ sudo a2enmod proxy_fcgi setenvif rewrite
 sudo cp "/etc/apache2/conf-available/php$DEFAULTPHPVERSION-fpm.conf" /etc/apache2/conf-available/php-domjudge-fpm.conf
 sudo sed -i 's/proxy:unix:.*|/proxy:unix:\/var\/run\/php-fpm-domjudge.sock|/' /etc/apache2/conf-available/php-domjudge-fpm.conf
 sudo a2enconf php-domjudge-fpm domjudge
-sudo rm /etc/apache2/sites-enabled/000-default.conf
+sudo rm -f /etc/apache2/sites-enabled/000-default.conf
 # Run DOMjudge in root
 sudo sed -i '/^#<VirtualHost \*>/,/^#<\/VirtualHost>/ s/#//' $APACHE2_CONFIG_FILE
 sudo sed -i 's/^Alias \/domjudge/#Alias \/domjudge/' $APACHE2_CONFIG_FILE
