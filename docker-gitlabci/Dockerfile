@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PHPSUPPORTED="7.4 8.0 8.1 8.2"
+ENV PHPSUPPORTED="7.4 8.0 8.1 8.2 8.4"
 ENV APTINSTALL="apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 RUN useradd -m domjudge
 RUN useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run-0

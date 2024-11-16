@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
   FPM_MAX_CHILDREN=40 \
   DJ_SKIP_MAKE=0 \
   DJ_DB_INSTALL_BARE=0 \
-  PHPSUPPORTED="8.1 8.2 8.3" \
+  PHPSUPPORTED="8.1 8.2 8.3 8.4" \
   DEFAULTPHPVERSION="8.3" \
   DEFAULTWEBSERVER="nginx" \
   APTINSTALL="apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
