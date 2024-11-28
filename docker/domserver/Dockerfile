@@ -3,6 +3,10 @@ LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set up user
+RUN groupadd domjudge -g2004
+RUN useradd -m domjudge -u2004 -g2004
+
 # Install required packages for build of domserver
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
@@ -21,9 +25,6 @@ RUN apt-get update \
 
 # Use venv to install latest Sphinx. 6.1.0 or higher is required to build DOMjudge docs.
 RUN python3 -m venv /venv && . /venv/bin/activate && pip3 install sphinx sphinx-rtd-theme rst2pdf
-
-# Set up user
-RUN useradd -m domjudge
 
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -58,17 +59,12 @@ RUN useradd -m domjudge
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	acl curl zip unzip supervisor mariadb-client apache2-utils \
-	nginx php-cli php-fpm php-zip \
+	nginx php-cli php-fpm php-zip composer \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
 	ca-certificates python3-yaml python3-requests \
 	&& rm -rf /var/lib/apt/lists/*
-
-# Install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-	&& php composer-setup.php \
-	&& mv /composer.phar /usr/local/bin/composer
 
 # Copy domserver
 COPY --from=domserver-build /opt/domjudge/domserver /opt/domjudge/domserver
