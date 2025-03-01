@@ -36,7 +36,7 @@ RUN apt-get update \
     default-jre-headless default-jdk-headless \
     supervisor apache2-utils lsb-release \
     libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
-    enscript lpr ca-certificates less vim \
+    enscript lpr ca-certificates less vim pv \
     php-pear php-dev software-properties-common python3-pygments rst2pdf gpg-agent tex-gyre \
     && rm -rf /var/lib/apt/lists/*
 
