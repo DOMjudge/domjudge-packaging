@@ -33,6 +33,10 @@ These containers do not include MySQL / MariaDB; the [MariaDB](https://hub.docke
 
 These images are available on the [Docker Hub](https://hub.docker.com) as `domjudge/domserver` and `domjudge/judgehost`.
 
+#### Docker-compose
+See https://github.com/DOMjudge/domjudge-packaging/blob/main/docker/docker-compose.yml for a docker-compose example which automates the steps below.
+When using the optional Traefik reverse proxy, deploy the stack defined in https://github.com/DOMjudge/domjudge-packaging/blob/main/docker/docker-compose-traefik.yml first and uncomment the relevant lines in the `docker-compose.yml` file.
+
 ### DOMjudge network
 For isolation, create a Docker network which will be used for the communication between DOMjudge-related containers.
 ```bash
@@ -178,10 +182,6 @@ docker exec -it domserver supervisorctl restart [service]
 ```
 
 where `[service]` is one of `nginx` or `php`.
-
-#### Docker-compose
-See https://github.com/DOMjudge/domjudge-packaging/blob/main/docker/docker-compose.yml for a docker-compose example which automates the steps above.
-When using the optional Traefik reverse proxy, deploy the stack defined in https://github.com/DOMjudge/domjudge-packaging/blob/main/docker/docker-compose-traefik.yml first and uncomment the relevant lines in the `docker-compose.yml` file.
 
 ### Judgehost container
 
