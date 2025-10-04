@@ -27,7 +27,7 @@ RUN apt-get update \
     nginx composer php8.3 php8.3-cli php8.3-fpm php8.3-zip \
     php8.3-gd php8.3-curl php8.3-mysql php8.3-intl \
     php8.3-gmp php8.3-xml php8.3-mbstring php8.3-xdebug php8.3-pcov php8.3-bcmath \
-    bsdmainutils ntp lsof \
+    bsdmainutils lsof \
     linuxdoc-tools linuxdoc-tools-text groff \
     python3-sphinx python3-sphinx-rtd-theme python3-pip fontconfig python3-yaml \
     texlive-latex-recommended texlive-latex-extra \
