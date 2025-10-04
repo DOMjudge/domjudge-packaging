@@ -19,6 +19,9 @@ RUN apt-get update \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
 
+# Set up user
+RUN useradd -m domjudge
+
 # Add DOMjudge source code and build script
 ADD domjudge.tar.gz /domjudge-src
 ADD judgehost/build.sh /domjudge-src
