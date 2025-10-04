@@ -13,7 +13,7 @@ RUN apt-get update \
 	gcc g++ make acl zip unzip composer \
 	php-cli php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
-	php-gmp php-xml php-mbstring \
+	php-gmp php-xml php-mbstring composer \
 	sudo bsdmainutils ntp libcgroup-dev procps \
 	python3-venv fontconfig \
 	texlive-latex-recommended texlive-latex-extra \
@@ -24,6 +24,9 @@ RUN apt-get update \
 
 # Use venv to install latest Sphinx. 6.1.0 or higher is required to build DOMjudge docs.
 RUN python3 -m venv /venv && . /venv/bin/activate && pip3 install sphinx sphinx-rtd-theme rst2pdf
+
+# Set up user
+RUN useradd -m domjudge
 
 # Add DOMjudge source code and build script
 ADD domjudge.tar.gz /domjudge-src
@@ -53,7 +56,7 @@ RUN useradd -m domjudge
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	acl curl zip unzip supervisor mariadb-client pv apache2-utils \
-	nginx php-cli php-fpm php-zip php-bcmath composer \
+	nginx composer php-cli php-fpm php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
