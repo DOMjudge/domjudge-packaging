@@ -14,7 +14,7 @@ RUN apt-get update \
 	php-cli php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring composer \
-	sudo bsdmainutils ntp libcgroup-dev procps \
+	sudo bsdmainutils libcgroup-dev procps \
 	python3-venv fontconfig \
 	texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european latexmk tex-gyre \
