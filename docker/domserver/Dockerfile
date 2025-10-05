@@ -8,7 +8,7 @@ RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	autoconf automake git pkg-config \
 	gcc g++ make acl zip unzip \
-	php-cli php-zip \
+	php-cli php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring \
 	sudo bsdmainutils ntp libcgroup-dev procps \
