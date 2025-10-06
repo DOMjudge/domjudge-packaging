@@ -58,7 +58,7 @@ RUN useradd -m domjudge
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	acl curl zip unzip supervisor mariadb-client pv apache2-utils \
-	nginx php-cli php-fpm php-zip \
+	nginx php-cli php-fpm php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
 	enscript lpr \
