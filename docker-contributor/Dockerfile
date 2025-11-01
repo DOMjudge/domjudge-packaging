@@ -24,7 +24,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
     curl dumb-init autoconf automake git acl yarnpkg \
     gcc g++ make zip unzip mariadb-client \
-    nginx php8.3 php8.3-cli php8.3-fpm php8.3-zip \
+    nginx composer php8.3 php8.3-cli php8.3-fpm php8.3-zip \
     php8.3-gd php8.3-curl php8.3-mysql php8.3-intl \
     php8.3-gmp php8.3-xml php8.3-mbstring php8.3-xdebug php8.3-pcov php8.3-bcmath \
     bsdmainutils ntp lsof \
@@ -52,10 +52,6 @@ RUN groupadd -g $GID domjudge \
   && useradd -u $UID -g $GID -m domjudge \
   && groupadd domjudge-run \
   && for id in $(seq 0 4); do useradd -d /nonexistent -g nogroup -s /bin/false "domjudge-run-$id"; done
-
-# Install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php \
-    && mv /composer.phar /usr/local/bin/composer
 
 # Install all supported PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt-get update && \
