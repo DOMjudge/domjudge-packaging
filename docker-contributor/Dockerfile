@@ -22,7 +22,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install required packages and clean up afterwards to make this image layer smaller
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
-    curl dumb-init autoconf automake git acl \
+    curl dumb-init autoconf automake git acl yarnpkg \
     gcc g++ make zip unzip mariadb-client \
     nginx php8.3 php8.3-cli php8.3-fpm php8.3-zip \
     php8.3-gd php8.3-curl php8.3-mysql php8.3-intl \
