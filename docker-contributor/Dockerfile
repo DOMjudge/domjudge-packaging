@@ -91,18 +91,15 @@ RUN for VERSION in $PHPSUPPORTED; do \
 
 # Install blackfire probe
 RUN for VERSION in $PHPSUPPORTED; do \
-          # Blackfire is not available yet for PHP 8.4
-          if [ "${VERSION}" != "8.4" ]; then \
-              version=$(php${VERSION} -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION.(PHP_ZTS ? '-zts' : '');") \
-              && architecture=$(uname -m) \
-              && curl -v -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/$architecture/$version \
-              && mkdir -p /tmp/blackfire \
-              && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
-              && mv /tmp/blackfire/blackfire-*.so $(php${VERSION} -r "echo ini_get ('extension_dir');")/blackfire.so \
-              && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8307\n" > /etc/php/${VERSION}/fpm/conf.d/blackfire.ini \
-              && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8307\n" > /etc/php/${VERSION}/cli/conf.d/blackfire.ini \
-              && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz; \
-        fi; \
+        version=$(php${VERSION} -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION.(PHP_ZTS ? '-zts' : '');") \
+        && architecture=$(uname -m) \
+        && curl -v -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/$architecture/$version \
+        && mkdir -p /tmp/blackfire \
+        && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
+        && mv /tmp/blackfire/blackfire-*.so $(php${VERSION} -r "echo ini_get ('extension_dir');")/blackfire.so \
+        && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8307\n" > /etc/php/${VERSION}/fpm/conf.d/blackfire.ini \
+        && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8307\n" > /etc/php/${VERSION}/cli/conf.d/blackfire.ini \
+        && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz; \
     done
 
 # Disable Xdebug by default
