@@ -48,6 +48,9 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
 
+      - name: Building an example chroot
+        run: docker-gitlabci/build_ci_chroot.sh
+
       - name: Build and push Docker images
         uses: docker/build-push-action@v5
         with:
