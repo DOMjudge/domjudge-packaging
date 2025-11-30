@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
   npm \
   # Code coverage for unit test \
   php-pear php-dev \
+  && apt purge php8.3-redis \
   && rm -rf /var/lib/apt/lists/*
 
 # Install needed NPM packages and download chrome for the domjudge user
