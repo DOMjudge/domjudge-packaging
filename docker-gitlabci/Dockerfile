@@ -63,3 +63,8 @@ RUN wget $GITHUBDICTIONARY -O $CODESPELLDICTLOCATION
 # Do some extra setup
 RUN mkdir -p /run/php \
  && rm /etc/php/*/fpm/pool.d/www.conf
+
+# Cache the chroot
+RUN wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip \
+ && unzip domjudge-main.zip && cd domjudge-main/misc-tools && make dj_make_chroot \
+ && ./dj_make_chroot
