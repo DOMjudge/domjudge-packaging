@@ -38,7 +38,7 @@ RUN su domjudge -c "cd /home/domjudge && \
                     npm cache clean --force"
 
 # Install needed global PHP modules
-RUN composer -n require justinrainbow/json-schema
+RUN composer -n require justinrainbow/json-schema phpcompatibility/php-compatibility:dev-develop
 
 # Install other PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt-get update && \
