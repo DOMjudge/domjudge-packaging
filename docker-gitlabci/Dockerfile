@@ -37,8 +37,8 @@ RUN su domjudge -c "cd /home/domjudge && \
                     npx puppeteer browsers install chrome && \
                     npm cache clean --force"
 
-# Install needed global PHP modules
-RUN composer -n require justinrainbow/json-schema phpcompatibility/php-compatibility:dev-develop
+# Install needed global PHP modules, squizlabs/php_codesniffer is soft requirement for phpcompatibility/php-compatibility
+RUN composer -n require justinrainbow/json-schema phpcompatibility/php-compatibility:dev-develop squizlabs/php_codesniffer
 RUN composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 
 # Install other PHP versions
