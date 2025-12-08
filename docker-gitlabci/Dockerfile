@@ -39,6 +39,7 @@ RUN su domjudge -c "cd /home/domjudge && \
 
 # Install needed global PHP modules
 RUN composer -n require justinrainbow/json-schema phpcompatibility/php-compatibility:dev-develop
+RUN composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 
 # Install other PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt-get update && \
