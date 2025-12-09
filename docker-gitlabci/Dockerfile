@@ -69,8 +69,8 @@ RUN du -sh /* || true
 # Cache the chroot
 RUN pwd && wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip
 RUN pwd && unzip main.zip
-RUN pwd && cd domjudge-main/misc-tools && make configure
-RUN pwd && make dj_make_chroot
+RUN pwd && cd domjudge-main && make configure
+RUN pwd && cd misc-tools && make dj_make_chroot
 RUN pwd && ./dj_make_chroot
 RUN pwd && cd ../.. && rm -rf domjudge-main
 
