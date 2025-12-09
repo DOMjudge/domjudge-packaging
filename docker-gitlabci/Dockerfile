@@ -64,7 +64,7 @@ RUN wget $GITHUBDICTIONARY -O $CODESPELLDICTLOCATION
 RUN mkdir -p /run/php \
  && rm /etc/php/*/fpm/pool.d/www.conf
 
-RUN du -sh /*
+RUN du -sh /* || true
 
 # Cache the chroot
 RUN wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip \
@@ -73,4 +73,4 @@ RUN wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip \
  && ./dj_make_chroot \
  && cd ../.. && rm -rf domjudge-main
 
-RUN du -sh /*
+RUN du -sh /* || true
