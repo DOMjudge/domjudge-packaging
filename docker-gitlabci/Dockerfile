@@ -67,11 +67,11 @@ RUN mkdir -p /run/php \
 RUN du -sh /* || true
 
 # Cache the chroot
-RUN pwd && wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip
-RUN pwd && unzip main.zip
-RUN pwd && cd domjudge-main && make configure
-RUN pwd && cd misc-tools && make dj_make_chroot
-RUN pwd && ./dj_make_chroot
-RUN pwd && cd ../.. && rm -rf domjudge-main
+RUN cd /                         && wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip
+RUN cd /                         && unzip main.zip
+RUN cd /domjudge-main            && make configure
+RUN cd /domjudge-main/misc-tools && make dj_make_chroot
+RUN cd /domjudge-main/misc-tools && ./dj_make_chroot
+RUN                                 rm -rf /domjudge-main
 
 RUN du -sh /* || true
