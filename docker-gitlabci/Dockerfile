@@ -70,6 +70,7 @@ RUN du -sh /* || true
 RUN cd /                         && wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip
 RUN cd /                         && unzip main.zip
 RUN cd /domjudge-main            && make configure
+RUN cd /domjudge-main            && ./configure --with-domjudge-user=domjudge
 RUN cd /domjudge-main/misc-tools && make dj_make_chroot
 RUN cd /domjudge-main/misc-tools && ./dj_make_chroot
 RUN                                 rm -rf /domjudge-main
