@@ -20,6 +20,16 @@ else
 	REGISTRY=$2
 fi
 
+echo "[..] Building an example chroot..."
+wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip
+unzip main.zip
+cd domjudge-main
+  make configure
+  ./configure --with-domjudge-user=domjudge --with-judgehost_chrootdir=`pwd`/chroot
+cd misc-tools
+  make dj_make_chroot
+  sudo ./dj_make_chroot
+
 echo "[..] Building Docker image for Gitlab CI..."
 cp -r ../docker-contributor/php-config ./
 docker build -t "${REGISTRY}:${VERSION}" . 
