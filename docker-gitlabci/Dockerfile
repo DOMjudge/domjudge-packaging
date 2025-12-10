@@ -64,4 +64,4 @@ RUN wget $GITHUBDICTIONARY -O $CODESPELLDICTLOCATION
 RUN mkdir -p /run/php \
  && rm /etc/php/*/fpm/pool.d/www.conf
 
-COPY ["chroot", "/chroot"]
+COPY ["chroot", "/"]
