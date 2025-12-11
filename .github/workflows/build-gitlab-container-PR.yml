@@ -50,6 +50,7 @@ jobs:
 
       - name: Building an example chroot...
         run: |
+          sudo apt install make pkg-config sudo debootstrap libcgroup-dev php-cli php-curl php-json php-xml php-zip lsof procps gcc g++ libcgroup-dev make acl zip unzip pv mariadb-server nginx php php-fpm php-gd php-cli php-intl php-mbstring php-mysql php-curl php-json php-xml php-zip composer ntp python3-yaml php-bcmath
           wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip
           unzip main.zip
           cd domjudge-main
