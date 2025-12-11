@@ -60,6 +60,8 @@ jobs:
             make dj_make_chroot
             sudo ./dj_make_chroot
 
+      - run: |
+        find . --name chroot
       - name: Build and push Docker images
         uses: docker/build-push-action@v5
         with:
