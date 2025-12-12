@@ -65,3 +65,4 @@ RUN mkdir -p /run/php \
  && rm /etc/php/*/fpm/pool.d/www.conf
 
 COPY ["domjudge-main/chroot.tar", "/"]
+ADD ["domjudge-main/chroot.tar", "/"]
