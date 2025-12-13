@@ -60,7 +60,7 @@ jobs:
             cd misc-tools
               make dj_make_chroot
               sudo ./dj_make_chroot
-              sudo tar cf "$(pwd)/chroot" chroot.tar
+              sudo tar -cvf chroot.tar "$(pwd)/chroot"
 
       - run: |
           sudo find . -name chroot
