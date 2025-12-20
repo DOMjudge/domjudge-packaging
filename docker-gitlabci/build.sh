@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+# This script is not used in GHA CI
 if [[ -n ${CI} ]]
 then
         set -euxo pipefail
