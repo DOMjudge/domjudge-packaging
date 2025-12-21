@@ -39,7 +39,9 @@ RUN su domjudge -c "cd /home/domjudge && \
 
 # Install needed global PHP modules, squizlabs/php_codesniffer is soft requirement for phpcompatibility/php-compatibility
 RUN composer -n require justinrainbow/json-schema phpcompatibility/php-compatibility:dev-develop squizlabs/php_codesniffer
-RUN composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true && composer install # Make sure the plugin runs
+RUN export COMPOSER_ALLOW_SUPERUSER=1 && \ 
+    composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true && \
+    composer install # Make sure the plugin runs
 
 # Install other PHP versions
 RUN add-apt-repository ppa:ondrej/php -y && apt-get update && \
