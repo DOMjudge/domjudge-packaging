@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim AS domserver-build
+FROM ubuntu:24.04 AS domserver-build
 LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -36,7 +36,7 @@ COPY domserver/build.sh /domjudge-src/build.sh
 RUN /domjudge-src/build.sh
 
 # Now create an image with the actual build in it
-FROM debian:bookworm-slim
+FROM ubuntu:24.04
 LABEL org.opencontainers.image.authors="DOMjudge team <team@domjudge.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
