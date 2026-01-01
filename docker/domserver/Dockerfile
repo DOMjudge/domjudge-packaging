@@ -15,15 +15,12 @@ RUN apt-get update \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring composer \
 	sudo bsdmainutils libcgroup-dev procps \
-	python3-venv fontconfig \
+	python3-sphinx python3-sphinx-rtd-theme fontconfig \
 	texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european latexmk tex-gyre \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
 	enscript lpr ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
-
-# Use venv to install latest Sphinx. 6.1.0 or higher is required to build DOMjudge docs.
-RUN python3 -m venv /venv && . /venv/bin/activate && pip3 install sphinx sphinx-rtd-theme rst2pdf
 
 # Set up user
 RUN useradd -m domjudge
