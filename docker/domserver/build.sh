@@ -9,11 +9,8 @@ sudo -u domjudge ./configure -with-baseurl=http://localhost/ --disable-judgehost
 # Passwords should not be included in the built image. We create empty files here to prevent passwords from being generated.
 sudo -u domjudge touch etc/dbpasswords.secret etc/restapi.secret etc/symfony_app.secret etc/initial_admin_password.secret
 
-sudo -u domjudge make domserver
-make install-domserver
+sudo -u domjudge make domserver docs
+make install-domserver install-docs
 
 # Remove installed password files
 rm /opt/domjudge/domserver/etc/*.secret
-
-sudo -u domjudge sh -c 'make docs'
-make install-docs
