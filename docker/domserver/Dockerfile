@@ -9,17 +9,15 @@ RUN useradd -m domjudge
 # Install required packages for build of domserver
 RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
-	autoconf automake git pkg-config \
-	gcc g++ make acl zip unzip composer \
+	autoconf automake git make \
+	acl zip unzip \
 	php-cli php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
-	php-gmp php-xml php-mbstring composer \
-	sudo bsdmainutils libcgroup-dev procps \
+	php-gmp php-xml php-mbstring composer sudo \
 	python3-sphinx python3-sphinx-rtd-theme fontconfig \
 	texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european latexmk tex-gyre \
-	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
-	enscript lpr ca-certificates \
+	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Set up user
@@ -56,8 +54,7 @@ RUN apt-get update \
 	nginx composer php-cli php-fpm php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
 	php-gmp php-xml php-mbstring php-ldap \
-	enscript lpr \
-	ca-certificates python3-yaml python3-requests \
+	enscript lpr python3-yaml python3-requests \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Check the UID and GID of the domjudge user are the same as in the previous build stage
