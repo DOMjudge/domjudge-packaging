@@ -1,8 +1,11 @@
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get -y install \
-  ca-certificates locales \
-  default-jre-headless gcc g++ pypy3
+  ca-certificates gnat mawk bash gcc g++ \
+  mono-mcs gfortran default-jre-headless \
+  nodejs kotlin lua5.4 fp-compiler perl-base \
+  dash swi-prolog-core-packages pypy3 ocaml \
+  r-base-core ruby rustc scala locales \
   && rm -rf /var/lib/apt/lists/*
 
 RUN chmod a-s \

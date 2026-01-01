@@ -1,0 +1,30 @@
+FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get -y install \
+  ca-certificates default-jre-headless pypy3 locales \
+  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+  apt-get install -y software-properties-common && \
+  add-apt-repository ppa:pypy/ppa && \
+  apt-get update && apt-get -y install pypy3 \
+  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl zip unzip && \
+  curl -s https://get.sdkman.io | bash && \
+  bash -c ". /root/.sdkman/bin/sdkman-init.sh && sdk install kotlin" && \
+  mv /root/.sdkman/candidates/kotlin/current/lib/* /usr/local/lib/ && \
+  mv /root/.sdkman/candidates/kotlin/current/bin/* /usr/local/bin/
+
+RUN chmod a-s \
+  /usr/bin/wall \
+  /usr/bin/newgrp \
+  /usr/bin/chage \
+  /usr/bin/chfn \
+  /usr/bin/chsh \
+  /usr/bin/expiry \
+  /usr/bin/gpasswd \
+  /usr/bin/passwd \
+  /bin/su \
+  /bin/mount \
+  /bin/umount \
+  /sbin/unix_chkpwd \
+  || true
