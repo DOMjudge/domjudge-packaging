@@ -59,7 +59,7 @@ section_end
 
 section_start "Build domserver container"
 echo "[..] Building Docker image for domserver..."
-./build-domjudge.sh "${NAMESPACE}/domserver:${VERSION}"
+./build-domserver.sh "${NAMESPACE}/domserver:${VERSION}"
 echo "[ok] Done building Docker image for domserver"
 section_end
 
