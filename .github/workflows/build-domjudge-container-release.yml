@@ -66,10 +66,12 @@ jobs:
         run: |
           cd docker
           ./build.sh "${{ env.DOMJUDGE_VERSION }}"
+          cd ../docker-chroot
+          ./build.sh "${{ env.DOMJUDGE_VERSION }}"
 
       - name: Build and push
         run: |
-          for IMG in domserver judgehost default-judgehost-chroot; do
+          for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot full-judgehost-chroot; do
             docker push domjudge/$IMG:${{ env.DOMJUDGE_VERSION }}
             if [ ${{ env.DOMJUDGE_LATEST }} = "true" ]; then
               docker tag domjudge/$IMG:${{ env.DOMJUDGE_VERSION }} domjudge/$IMG:latest
