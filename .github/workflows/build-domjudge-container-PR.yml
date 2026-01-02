@@ -66,10 +66,12 @@ jobs:
         run: |
           cd docker
           ./build.sh "${{ env.DOMJUDGE_VERSION }}"
+          cd ../docker-chroot
+          ./build.sh "${{ env.DOMJUDGE_VERSION }}"
 
       - name: Build and push
         run: |
-          for IMG in domserver judgehost default-judgehost-chroot; do
+          for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot full-judgehost-chroot; do
             echo "::group::$IMG"
             IMAGE_NAME="${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.DOMJUDGE_VERSION }}"
             docker image tag "$IMAGE_NAME" ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
