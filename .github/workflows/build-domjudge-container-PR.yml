@@ -1,6 +1,7 @@
 name: 'Build domjudge container (PR)'
 
 on:
+  merge_group:
   push:
     paths:
       - .github/workflows/build-domjudge-container-PR.yml
