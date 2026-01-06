@@ -20,9 +20,6 @@ RUN apt-get update \
 	enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
-# Set up user
-RUN useradd -m domjudge
-
 # Add DOMjudge source code and build script
 ADD domjudge.tar.gz /domjudge-src
 COPY domserver/build.sh /domjudge-src/build.sh
