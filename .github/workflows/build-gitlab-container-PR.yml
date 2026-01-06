@@ -1,6 +1,7 @@
 name: 'Build GitLab CI container (PR)'
 
 on:
+  merge_group:
   push:
     paths:
       - docker-contributor/php-config

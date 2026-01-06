@@ -3,6 +3,7 @@ name: 'Build Contributor container (PR)'
 # Loosely based on: https://docs.docker.com/build/ci/github-actions/push-multi-registries/
 
 on:
+  merge_group:
   push:
     paths:
       - docker-contributor/**
