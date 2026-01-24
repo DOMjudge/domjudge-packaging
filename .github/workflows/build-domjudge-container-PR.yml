@@ -1,5 +1,9 @@
 name: 'Build domjudge container (PR)'
 
+permissions:
+  contents: read
+  packages: write
+
 on:
   merge_group:
   push:
@@ -77,6 +81,7 @@ jobs:
             IMAGE_NAME="${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.DOMJUDGE_VERSION }}"
             docker image tag "$IMAGE_NAME" ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
             docker image tag "$IMAGE_NAME" ${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
+            docker push ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }} || true
             echo "::endgroup::"
           done
 
