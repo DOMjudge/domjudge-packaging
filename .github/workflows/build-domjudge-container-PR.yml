@@ -95,3 +95,14 @@ jobs:
             fi
           done
 
+      - name: Check the created domserver container
+        run: |
+          DOCKER_NETWORK=djn
+          DOCKER_DB=dj-mariadb
+          DOCKER_DOMSERVER=domserver
+          MYSQL_ROOT_PASSWORD=rootpw # ggignore
+          MYSQL_USER=domjudge
+          MYSQL_PASSWORD=djpw        # ggignore
+          MYSQL_DATABASE=domjudge
+          DJ_DB_BARE=0
+          set -xe
