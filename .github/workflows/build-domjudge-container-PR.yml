@@ -106,3 +106,31 @@ jobs:
           MYSQL_DATABASE=domjudge
           DJ_DB_BARE=0
           set -xe
+          # See README.md
+          docker network create "$DOCKER_NETWORK"
+          MYSQL_SETTINGS="-e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -e MYSQL_USER=$MYSQL_USER -e MYSQL_PASSWORD=$MYSQL_PASSWORD -e MYSQL_DATABASE=$MYSQL_DATABASE"
+          # Start the database container
+          docker run -d --name "$DOCKER_DB" --net "$DOCKER_NETWORK" $MYSQL_SETTINGS -p 13306:3306 mariadb                                                          --max-connections=1000 --max_allowed_packet=256M
+          # Booting seems to take 10s, directly display the logs when they come in.
+          timeout --preserve-status 15 docker logs -f "$DOCKER_DB" || true
+          # It seems we can't find the SQL server
+          # Inspect the network
+          docker network ls
+          docker network inspect "$DOCKER_NETWORK"
+          docker exec -t "$DOCKER_DB" getent hosts "$DOCKER_DOMSERVER"
+          # Show that we see the port on the host
+          ss -tulpn
+          # Connect to SQL
+          docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD"                     -e "SHOW DATABASES;"
+          docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SHOW TABLES;"
+      - name: Collect docker logs on failure
+        if: ${{ !cancelled() }}
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: '/tmp/docker-logs'
+      - name: Upload all logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Logs
+          path: /tmp/docker-logs
