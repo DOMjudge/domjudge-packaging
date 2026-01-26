@@ -153,6 +153,14 @@ jobs:
           for service in php nginx; do
             docker exec domserver supervisorctl restart "$service"
           done
+          # Get more detailed health info
+          docker ps
+          docker inspect dj-mariadb
+          docker inspect domserver
+          HEALTH=$(docker inspect domserver | jq '.[0].State.Health.Status')
+          if [ "$HEALTH" != '"healthy"' ]; then
+            exit 1
+          fi
       - name: Collect docker logs on failure
         if: ${{ !cancelled() }}
         uses: jwalton/gh-docker-logs@v2
