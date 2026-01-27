@@ -39,6 +39,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	MYSQL_PASSWORD=domjudge \
 	MYSQL_ROOT_PASSWORD=domjudge \
 	FPM_MAX_CHILDREN=40 \
+	FPM_MEMORY_LIMIT=2G \
 	DJ_DB_INSTALL_BARE=0
 
 # Set up user
