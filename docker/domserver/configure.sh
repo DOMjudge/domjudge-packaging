@@ -29,7 +29,7 @@ fi
 sed -ri -e "s/^user.*/user www-data;/" /etc/nginx/nginx.conf
 sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = 100M/" \
 	-e "s/^post_max_size.*/post_max_size = 100M/" \
-	-e "s/^memory_limit.*/memory_limit = 2G/" \
+	-e "s/^memory_limit.*/memory_limit = ${FPM_MEMORY_LIMIT}/" \
 	-e "s/^max_file_uploads.*/max_file_uploads = 200/" \
 	-e "s#^;date\.timezone.*#date.timezone = ${CONTAINER_TIMEZONE}#" \
 	 "$php_folder/fpm/php.ini"
@@ -52,7 +52,9 @@ then
 		ln -s /opt/domjudge/domserver/etc/domjudge-fpm.conf "$php_folder/fpm/pool.d/domjudge.conf"
 	fi
 	# Change pm.max_children
-	sed --follow-symlinks -i "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" "$php_folder/fpm/pool.d/domjudge.conf"
+	sed --follow-symlinks -ri -e "s/^pm\.max_children = .*$/pm.max_children = ${FPM_MAX_CHILDREN}/" \
+		-e "s/^php_admin_value\[memory_limit\].*/php_admin_value[memory_limit] = ${FPM_MEMORY_LIMIT}/" \
+		 "$php_folder/fpm/pool.d/domjudge.conf"
 else
 	# Replace nginx php socket location
 	sed -i "s!server unix:.*!server unix:/var/run/php/php$php_version-fpm.sock;!" /etc/nginx/sites-enabled/default
