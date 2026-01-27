@@ -68,6 +68,7 @@ The following environment variables are supported by the container:
 * `FPM_MAX_CHILDREN` (defaults to `40`): the maximum number of PHP FPM children to spawn.
 * `DJ_SKIP_MAKE` (defaults to `0`): set to `1` to skip the maintainer setup and install commands. This will speed up the startup process of the container and is useful if this is already done before.
 * `DEFAULTWEBSERVER` (defaults to `nginx`): set to `apache2` to use the Apache2 httpd server as default webserver.
+* `NUMBER_INITIAL_JUDGEDAEMONS` (defaults to `2`): set to any positive number to regulate the number of initial judgedaemons.
 
 #### Passwords through files
 

@@ -17,6 +17,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
   PHPSUPPORTED="8.1 8.2 8.3 8.4 8.5" \
   DEFAULTPHPVERSION="8.5" \
   DEFAULTWEBSERVER="nginx" \
+  NUMBER_INITIAL_JUDGEDAEMONS="2" \
   APTINSTALL="apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
 # Install required packages and clean up afterwards to make this image layer smaller
