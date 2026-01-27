@@ -193,6 +193,16 @@ echo "[ok] Sudoers configuration added"; echo
 sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemon.conf
 sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemonextra.conf
 
+echo "[..] Configuring number of judgedaemons"
+if [ "${NUMBER_INITIAL_JUDGEDAEMONS}" -gt 0 ]
+then
+  sudo sed -i "s|numprocs=0|numprocs=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemon.conf"
+  sudo sed -i "s|numprocs_start=0|numprocs_start=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemonextra.conf"
+else
+  echo "Unsupported number of judgedaemons: ${NUMBER_INITIAL_JUDGEDAEMONS}"
+  exit 1
+fi
+
 echo "[..] Configuring default webserver"
 if [ "${DEFAULTWEBSERVER}" = "apache2" ] || [ "${DEFAULTWEBSERVER}" = "nginx" ]
 then
