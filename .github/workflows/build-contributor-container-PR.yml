@@ -23,7 +23,7 @@ jobs:
     # Or run if this PR is not `main` (So notQueue && ourRepo && (notPROurOrg || notMain))
     if : ${{ !contains(github.ref, 'gh-readonly-queue') &&
              github.repository == 'domjudge/domjudge-packaging' &&
-             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref == 'main') }}
+             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
