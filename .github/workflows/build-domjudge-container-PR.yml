@@ -78,7 +78,7 @@ jobs:
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and push
+      - name: Mark as skipped
         if: steps.filter.outputs.should_run == 'false'
         run: echo "Skip job, no important files changed"
 
