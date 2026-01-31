@@ -18,22 +18,75 @@ on:
 
 jobs:
   pr-contributor:
-    # Stop processing if this is a merge-queue
-    # Stop processing if this is not against our repo
-    # Always run if this PR is not from our organization
-    # Or run if this PR is not `main` (So notQueue && ourRepo && (notPROurOrg || notMain))
-    if : ${{ !contains(github.ref, 'gh-readonly-queue') &&
-             github.repository == 'domjudge/domjudge-packaging' &&
-             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Detect changed files and compute condition
+        id: filter
+        run: |
+          set -eux
+          # Exit early if this is main@domjudge/domjudge-packaging as
+          # we have another workflow to run
+          if [[ "${GITHUB_EVENT_NAME}}" == "push" ]] &&
+             [[ "${{ github.repository }}" == "domjudge/domjudge-packaging" ]] &&
+             [[ "${{ github.ref }}" == "main" ]]; then
+            echo "should_run=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          OREF="failure"
+          CREF="failure"
+          # Hardcode the organization and target branch to us
+          # Alternative is to use:
+          # - "${{ github.event.pull_request.base.repo.clone_url }}"
+          # - "${{ github.event.pull_request.base.ref }}"
+          # - "${{ github.event.repository.default_branch }}"
+          # For more info see: `cat "$GITHUB_EVENT_PATH"
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            OREF="${{ github.event.pull_request.base.ref }}"
+            CREF="${{ github.event.pull_request.head.ref }}"
+            git remote add organization "${{ github.event.pull_request.base.repo.clone_url }}"
+            git remote add contributor  "${{ github.event.pull_request.head.repo.clone_url }}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            TMP="${{ github.event.ref }}"
+            OREF="${{ github.event.repository.default_branch }}"
+            CREF="${TMP##refs\/heads\/}"
+            git remote add organization "${{ github.event.repository.clone_url }}"
+            git remote add contributor  "${{ github.event.repository.clone_url }}"
+          fi
+          git fetch organization
+          git fetch contributor
+          CHANGED=$(git diff --name-only "organization/$OREF" "contributor/$CREF")
+          echo "changed_files: $CHANGED"
+          if [[ "${GITHUB_EVENT_NAME}" == "merge_group" ]]; then
+            # We only wait in this state for the tests from the PR trigger to finish
+            # This should also give 0 changed files so this is mostly explanation of the
+            # 'interesting' GHA flow.
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          elif echo "$CHANGED" | grep -q "^docker-contributor"; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          elif echo "$CHANGED" | grep -q "^.github/workflows/build-contributor-container-PR"; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            # None of the interesting files changed
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push
+        if: steps.filter.outputs.should_run == 'false'
+        run: echo "Skip job, no important files changed"
+
       - name: Set up QEMU
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-buildx-action@v3
+
       - name: Login to GitHub container registry
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -41,12 +94,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
+        if: steps.filter.outputs.should_run == 'true'
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ghcr.io/${{ github.repository }}
 
       - name: Build and push
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/build-push-action@v5
         with:
           context: docker-contributor

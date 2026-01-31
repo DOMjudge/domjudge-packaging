@@ -23,25 +23,75 @@ env:
 
 jobs:
   pr-domjudge:
-    # Stop processing if this is a merge-queue
-    # Stop processing if this is not against our repo
-    # Always run if this PR is not from our organization
-    # Or run if this PR is not `main` (So notQueue && ourRepo && (notPROurOrg || notMain))
-    if : ${{ !contains(github.ref, 'gh-readonly-queue') &&
-             github.repository == 'domjudge/domjudge-packaging' &&
-             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect changed files and compute condition
+        id: filter
+        run: |
+          set -eux
+          # Exit early if this is main@domjudge/domjudge-packaging as
+          # we have another workflow to run
+          if [[ "${GITHUB_EVENT_NAME}}" == "push" ]] &&
+             [[ "${{ github.repository }}" == "domjudge/domjudge-packaging" ]] &&
+             [[ "${{ github.ref }}" == "main" ]]; then
+            echo "should_run=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          OREF="failure"
+          CREF="failure"
+          # Hardcode the organization and target branch to us
+          # Alternative is to use:
+          # - "${{ github.event.pull_request.base.repo.clone_url }}"
+          # - "${{ github.event.pull_request.base.ref }}"
+          # - "${{ github.event.repository.default_branch }}"
+          # For more info see: `cat "$GITHUB_EVENT_PATH"
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            OREF="${{ github.event.pull_request.base.ref }}"
+            CREF="${{ github.event.pull_request.head.ref }}"
+            git remote add organization "${{ github.event.pull_request.base.repo.clone_url }}"
+            git remote add contributor  "${{ github.event.pull_request.head.repo.clone_url }}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            TMP="${{ github.event.ref }}"
+            OREF="${{ github.event.repository.default_branch }}"
+            CREF="${TMP##refs\/heads\/}"
+            git remote add organization "${{ github.event.repository.clone_url }}"
+            git remote add contributor  "${{ github.event.repository.clone_url }}"
+          fi
+          git fetch organization
+          git fetch contributor
+          CHANGED=$(git diff --name-only "organization/$OREF" "contributor/$CREF")
+          echo "changed_files: $CHANGED"
+          if [[ "${GITHUB_EVENT_NAME}" == "merge_group" ]]; then
+            # We only wait in this state for the tests from the PR trigger to finish
+            # This should also give 0 changed files so this is mostly explanation of the
+            # 'interesting' GHA flow.
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          elif echo "$CHANGED" | grep -q "^docker"; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          elif echo "$CHANGED" | grep -q "^.github/workflows/build-domjudge-container-PR.yml"; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            # None of the interesting files changed
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push
+        if: steps.filter.outputs.should_run == 'false'
+        run: echo "Skip job, no important files changed"
+
       - name: Set up QEMU
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub container registry
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -49,13 +99,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - run: docker system prune -a -f
+        if: steps.filter.outputs.should_run == 'true'
 
       - name: Get an unique tag for when people PR often
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           GHR=${{ github.ref }}
           echo "PR_TAG=${GHR///}${{ github.actor }}" >> $GITHUB_ENV
 
       - name: If needed overwrite the DOMJUDGE_VERSION for this run
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           if [ ${{ env.DOMJUDGE_VERSION }} != "M.m.p" ]; then
             exit 0
@@ -69,6 +122,7 @@ jobs:
           echo "DOMJUDGE_VERSION=$DJ_TAG" >> $GITHUB_ENV
 
       - name: Build the container
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           cd docker
           ./build.sh "${{ env.DOMJUDGE_VERSION }}"
@@ -76,6 +130,7 @@ jobs:
           ./build.sh "${{ env.DOMJUDGE_VERSION }}"
 
       - name: Build and push
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot full-judgehost-chroot; do
             echo "::group::$IMG"
@@ -87,8 +142,10 @@ jobs:
           done
 
       - run: docker image list
+        if: steps.filter.outputs.should_run == 'true'
 
       - name: Check for wrong permisions
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           docker image list
           set -x
@@ -102,6 +159,7 @@ jobs:
           done
 
       - name: Check the created domserver container
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           DOCKER_NETWORK=djn
           DOCKER_DB=dj-mariadb
@@ -162,11 +220,13 @@ jobs:
           if [ "$HEALTH" != '"healthy"' ]; then
             exit 1
           fi
+
       - name: Collect docker logs on failure
         if: ${{ !cancelled() }}
         uses: jwalton/gh-docker-logs@v2
         with:
           dest: '/tmp/docker-logs'
+
       - name: Upload all logs
         if: always()
         uses: actions/upload-artifact@v4
