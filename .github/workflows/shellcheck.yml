@@ -1,8 +1,9 @@
 name: 'Shellcheck'
 
 on:
+  merge_group:
   push:
-    branches:
+    branches-ignore:
       - main
   pull_request:
     branches:
