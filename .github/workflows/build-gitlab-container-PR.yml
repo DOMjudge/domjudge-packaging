@@ -2,41 +2,44 @@ name: 'Build GitLab CI container (PR)'
 
 on:
   merge_group:
-  push:
-    paths:
-      - docker-contributor/php-config
-      - docker-gitlabci/**
-      - .github/workflows/build-gitlab-container-PR.yml
+    # We can't limit the files as below as this is a required check so should run
+    # We exit early in case no relevant file changed
+    types: [checks_requested]
   pull_request:
     branches:
       - main
+  push:
+    # We don't start the job if no relevant file changed
     paths:
-      - docker-contributor/php-config
+      # This is an `either`, so any file listed here will trigger
+      - docker-contributor/php-config**
       - docker-gitlabci/**
       - .github/workflows/build-gitlab-container-PR.yml
 
 jobs:
   pr-gitlab:
-    # Stop processing if this is a merge-queue
-    # Stop processing if this is not against our repo
-    # Always run if this PR is not from our organization
-    # Or run if this PR is not `main` (So notQueue && ourRepo && (notPROurOrg || notMain))
-    if : ${{ !contains(github.ref, 'gh-readonly-queue') &&
-             github.repository == 'domjudge/domjudge-packaging' &&
-             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
     name: PR GitLab image
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect changed files and compute condition
+        id: filter
+        uses: ./.github/actions/helper-detect-changed-files
+        with:
+          trigger-files: "docker-contributor/php-config docker-gitlabci .github/workflows/build-gitlab-container-PR.yml"
+
+      - name: Mark as skipped
+        if: steps.filter.outputs.should_run == 'false'
+        run: echo "Skip job, no important files changed"
+
       - name: Use the same PHP config as the contributor containers
+        if: steps.filter.outputs.should_run == 'true'
         run: cp -r docker-{contributor,gitlabci}/php-config
 
       - name: Log in to GitHub Container registry (possibly at fork)
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -44,19 +47,21 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
+        if: steps.filter.outputs.should_run == 'true'
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
 
       - name: Building an example chroot
+        if: steps.filter.outputs.should_run == 'true'
         run: docker-gitlabci/build_ci_chroot.sh
 
       - name: Build and push Docker images
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/build-push-action@v5
         with:
           context: "./docker-gitlabci" 
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
