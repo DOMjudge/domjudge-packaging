@@ -1,17 +1,15 @@
 name: 'Shellcheck'
 
 on:
+  merge_group:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   shellcheck:
     name: Shellcheck
     runs-on: ubuntu-latest
+    if: ${{ !(github.repository == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
     steps:
       - uses: actions/checkout@v2
       - name: Run ShellCheck
