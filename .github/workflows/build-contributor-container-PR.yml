@@ -10,8 +10,6 @@ on:
     branches:
       - main
   push:
-    branches-ignore:
-      - main
     # We don't start the job if no relevant file changed
     paths:
       # This is an `either`, so any file listed here will trigger
