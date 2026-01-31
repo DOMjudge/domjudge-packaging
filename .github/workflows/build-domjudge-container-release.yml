@@ -1,6 +1,8 @@
 name: 'Build domjudge container (Release)'
 
 on:
+  schedule:
+    - cron: "5 13 * * 5"
   push:
     branches:
       - main
@@ -69,7 +71,24 @@ jobs:
           cd ../docker-chroot
           ./build.sh "${{ env.DOMJUDGE_VERSION }}"
 
-      - name: Build and push
+      - name: Check the created domserver container
+        run: .github/jobs/check-domjudge-container.sh ${{ env.DOMJUDGE_VERSION }} "domjudge"
+
+      - name: Collect docker logs on failure
+        if: ${{ !cancelled() }}
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: '/tmp/docker-logs'
+
+      - name: Upload all logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Logs
+          path: /tmp/docker-logs
+
+      - name: Push final container
+        # We assume that we tested the container here and if anything is wrong that we exit early
         run: |
           for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot full-judgehost-chroot; do
             docker push domjudge/$IMG:${{ env.DOMJUDGE_VERSION }}
@@ -78,4 +97,3 @@ jobs:
               docker push domjudge/$IMG
             fi
           done
-
