@@ -1,6 +1,8 @@
 name: 'Build domjudge container (Release)'
 
 on:
+  schedule:
+    - cron: "5 13 * * 5"
   push:
     branches:
       - main
