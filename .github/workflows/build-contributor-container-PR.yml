@@ -4,35 +4,47 @@ name: 'Build Contributor container (PR)'
 
 on:
   merge_group:
-  push:
-    paths:
-      - docker-contributor/**
-      - .github/workflows/build-contributor-container-PR.yml
+    # We can't limit the files as below as this is a required check so should run
+    # We exit early in case no relevant file changed
+    types: [checks_requested]
   pull_request:
     branches:
       - main
+  push:
+    # We don't start the job if no relevant file changed
     paths:
+      # This is an `either`, so any file listed here will trigger
       - docker-contributor/**
       - .github/workflows/build-contributor-container-PR.yml
 
 jobs:
   pr-contributor:
-    # Stop processing if this is a merge-queue
-    # Stop processing if this is not against our repo
-    # Always run if this PR is not from our organization
-    # Or run if this PR is not `main` (So notQueue && ourRepo && (notPROurOrg || notMain))
-    if : ${{ !contains(github.ref, 'gh-readonly-queue') &&
-             github.repository == 'domjudge/domjudge-packaging' &&
-             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
+    name: PR Contributor image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Detect changed files and compute condition
+        id: filter
+        uses: ./.github/actions/helper-detect-changed-files
+        with:
+          trigger-files: "docker-contributor .github/workflows/build-contributor-container-PR"
+
+      - name: Mark as skipped
+        if: steps.filter.outputs.should_run == 'false'
+        run: echo "Skip job, no important files changed"
+
       - name: Set up QEMU
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-buildx-action@v3
+
       - name: Login to GitHub container registry
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -40,12 +52,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
+        if: steps.filter.outputs.should_run == 'true'
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ghcr.io/${{ github.repository }}
 
       - name: Build and push
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/build-push-action@v5
         with:
           context: docker-contributor

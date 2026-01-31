@@ -1,4 +1,4 @@
-name: 'Build domjudge container (PR)'
+name: 'Build DOMjudge container(s) (PR)'
 
 permissions:
   contents: read
@@ -6,41 +6,50 @@ permissions:
 
 on:
   merge_group:
-  push:
-    paths:
-      - .github/workflows/build-domjudge-container-PR.yml
-      - docker/**
+    # We can't limit the files as below as this is a required check so should run
+    # We exit early in case no relevant file changed
+    types: [checks_requested]
   pull_request:
     branches:
       - main
+  push:
+    # We don't start the job if no relevant file changed
     paths:
-      - .github/workflows/build-domjudge-container-PR.yml
+      # This is an `either`, so any file listed here will trigger
       - docker/**
+      - .github/workflows/build-domjudge-container-PR.yml
 
 env:
   DOMJUDGE_VERSION: M.m.p
 
 jobs:
   pr-domjudge:
-    # Stop processing if this is a merge-queue
-    # Stop processing if this is not against our repo
-    # Always run if this PR is not from our organization
-    # Or run if this PR is not `main` (So notQueue && ourRepo && (notPROurOrg || notMain))
-    if : ${{ !contains(github.ref, 'gh-readonly-queue') &&
-             github.repository == 'domjudge/domjudge-packaging' &&
-             !(github.event.pull_request.head.repo.full_name == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
+    name: PR DOMjudge docker image(s)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect changed files and compute condition
+        id: filter
+        uses: ./.github/actions/helper-detect-changed-files
+        with:
+          trigger-files: "docker .github/workflows/build-domjudge-container-PR.yml"
+
+      - name: Mark as skipped
+        if: steps.filter.outputs.should_run == 'false'
+        run: echo "Skip job, no important files changed"
+
       - name: Set up QEMU
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub container registry
+        if: steps.filter.outputs.should_run == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -48,13 +57,17 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - run: docker system prune -a -f
+        if: steps.filter.outputs.should_run == 'true'
 
       - name: Get an unique tag for when people PR often
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           GHR=${{ github.ref }}
-          echo "PR_TAG=${GHR///}${{ github.actor }}" >> $GITHUB_ENV
+          GHA=${{ github.actor }}
+          echo "PR_TAG=${GHR///}${GHA//[\]\[]/}" >> $GITHUB_ENV
 
       - name: If needed overwrite the DOMJUDGE_VERSION for this run
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           if [ ${{ env.DOMJUDGE_VERSION }} != "M.m.p" ]; then
             exit 0
@@ -68,17 +81,19 @@ jobs:
           echo "DOMJUDGE_VERSION=$DJ_TAG" >> $GITHUB_ENV
 
       - name: Build the container
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           cd docker
-          ./build.sh "${{ env.DOMJUDGE_VERSION }}"
+          ./build.sh "${{ env.DOMJUDGE_VERSION }}" "${GITHUB_REPOSITORY_OWNER@L}"
           cd ../docker-chroot
-          ./build.sh "${{ env.DOMJUDGE_VERSION }}"
+          ./build.sh "${{ env.DOMJUDGE_VERSION }}" "${GITHUB_REPOSITORY_OWNER@L}"
 
       - name: Build and push
+        if: steps.filter.outputs.should_run == 'true'
         run: |
           for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot full-judgehost-chroot; do
-            echo "::group::$IMG"
-            IMAGE_NAME="${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.DOMJUDGE_VERSION }}"
+            echo "::group::${IMG}"
+            IMAGE_NAME="${GITHUB_REPOSITORY_OWNER@L}/${IMG}:${{ env.DOMJUDGE_VERSION }}"
             docker image tag "$IMAGE_NAME" ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
             docker image tag "$IMAGE_NAME" ${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
             docker push ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }} || true
@@ -86,8 +101,10 @@ jobs:
           done
 
       - run: docker image list
+        if: steps.filter.outputs.should_run == 'true'
 
       - name: Check the created domserver container
+        if: steps.filter.outputs.should_run == 'true'
         run: .github/jobs/check-domjudge-container.sh ${{ env.PR_TAG }} ${GITHUB_REPOSITORY_OWNER@L}
 
       - name: Collect docker logs on failure
