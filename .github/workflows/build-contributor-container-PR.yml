@@ -4,14 +4,17 @@ name: 'Build Contributor container (PR)'
 
 on:
   merge_group:
-  push:
-    paths:
-      - docker-contributor/**
-      - .github/workflows/build-contributor-container-PR.yml
+  # We can't limit the files as below as this is a required check so should run
+  # We exit early in case no relevant file changed
   pull_request:
     branches:
       - main
+  push:
+    branches-ignore:
+      - main
+    # We don't start the job if no relevant file changed
     paths:
+      # This is an `either`, so any file listed here will trigger
       - docker-contributor/**
       - .github/workflows/build-contributor-container-PR.yml
 

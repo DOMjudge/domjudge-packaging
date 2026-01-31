@@ -6,16 +6,19 @@ permissions:
 
 on:
   merge_group:
-  push:
-    paths:
-      - .github/workflows/build-domjudge-container-PR.yml
-      - docker/**
+  # We can't limit the files as below as this is a required check so should run
+  # We exit early in case no relevant file changed
   pull_request:
     branches:
       - main
+  push:
+    branches-ignore:
+      - main
+    # We don't start the job if no relevant file changed
     paths:
-      - .github/workflows/build-domjudge-container-PR.yml
+      # This is an `either`, so any file listed here will trigger
       - docker/**
+      - .github/workflows/build-domjudge-container-PR.yml
 
 env:
   DOMJUDGE_VERSION: M.m.p
