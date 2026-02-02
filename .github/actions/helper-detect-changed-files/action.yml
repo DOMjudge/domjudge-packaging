@@ -33,12 +33,6 @@ runs:
           echo "should_run=false" >> $GITHUB_OUTPUT
           exit 0
         fi
-        if [[ "${GITHUB_EVENT_NAME}" == "push" ]] &&
-           [[ "${GITHUB_REPOSITORY}" == "DOMjudge/domjudge-packaging" ]] &&
-           [[ "${GITHUB_REF_NAME}" == *gh-readonly-queue* ]]; then
-          echo "should_run=false" >> $GITHUB_OUTPUT
-          exit 0
-        fi
         OREF="failure"
         CREF="failure"
         # Hardcode the organization and target branch to us
