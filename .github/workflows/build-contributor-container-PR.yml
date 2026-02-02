@@ -23,6 +23,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - run: exit 0
+
       - name: Detect changed files and compute condition
         id: filter
         uses: ./.github/actions/helper-detect-changed-files
