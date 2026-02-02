@@ -1,0 +1,67 @@
+name: Detect changed files
+
+inputs:
+  trigger-files:
+    required: true
+    type: string
+
+outputs:
+  should_run:
+    value: ${{ steps.filter.outputs.should_run }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Detect changed files and compute condition
+      id: filter
+      shell: bash
+      run: |
+        cat "${GITHUB_EVENT_PATH}"
+        set -eux
+        # Exit early if this is main@domjudge/domjudge-packaging as
+        # we have another workflow to run
+        if [[ "${GITHUB_EVENT_NAME}" == "push" ]] &&
+           [[ "${GITHUB_REPOSITORY}" == "DOMjudge/domjudge-packaging" ]] &&
+           [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+          echo "should_run=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        if [[ "${GITHUB_EVENT_NAME}" == "merge_group" ]]; then
+          # We only wait in this state for the tests from the PR trigger to finish
+          # This should also give 0 changed files so this is mostly explanation of the
+          # 'interesting' GHA flow.
+          echo "should_run=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        OREF="failure"
+        CREF="failure"
+        # Hardcode the organization and target branch to us
+        # Alternative is to use:
+        # - "${{ github.event.pull_request.base.repo.clone_url }}"
+        # - "${{ github.event.pull_request.base.ref }}"
+        # - "${{ github.event.repository.default_branch }}"
+        # For more info see: `cat "$GITHUB_EVENT_PATH"
+        if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+          OREF="${{ github.event.pull_request.base.ref }}"
+          CREF="${{ github.event.pull_request.head.ref }}"
+          git remote add organization "${{ github.event.pull_request.base.repo.clone_url }}"
+          git remote add contributor  "${{ github.event.pull_request.head.repo.clone_url }}"
+        elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+          TMP="${{ github.event.ref }}"
+          OREF="${{ github.event.repository.default_branch }}"
+          CREF="${TMP##refs\/heads\/}"
+          git remote add organization "${{ github.repository.clone_url }}"
+          git remote add contributor  "${{ github.repository.clone_url }}"
+        fi
+        git fetch organization
+        git fetch contributor
+        CHANGED=$(git diff --name-only "organization/$OREF" "contributor/$CREF")
+        echo "changed_files: $CHANGED"
+        for FILE in ${{ inputs.trigger-files }}; do
+          if echo "$CHANGED" | grep -q "^${FILE}"; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+        done
+        # None of the interesting files changed
+        echo "should_run=false" >> $GITHUB_OUTPUT
