@@ -12,6 +12,7 @@ function file_or_env {
 echo "[..] Changing user/group ID"
 sudo groupmod -g "${GID}" domjudge
 sudo usermod -u "${UID}" domjudge
+chown -R "${UID}:${GID}" /home/domjudge
 echo "[ok] User ID set to ${UID} and group ID set to ${GID}"; echo
 
 echo "[..] Setting timezone"
@@ -68,8 +69,8 @@ then
   echo "Skipping maintainer-mode install for DOMjudge"
 else
   echo "[..] Performing maintainer-mode install for DOMjudge"
-  make maintainer-conf CONFIGURE_FLAGS="--with-baseurl=http://localhost/ --with-webserver-group=domjudge"
-  make maintainer-install
+  su - domjudge -c "cd ${PROJECT_DIR} && make maintainer-conf CONFIGURE_FLAGS='--with-baseurl=http://localhost/ --with-webserver-group=domjudge'"
+  su - domjudge -c "cd ${PROJECT_DIR} && make maintainer-install"
   echo "[ok] DOMjudge installed in Maintainer-mode"; echo
 fi
 

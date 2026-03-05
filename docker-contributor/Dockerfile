@@ -120,7 +120,6 @@ COPY ["supervisor", "/etc/supervisor/conf.d/"]
 COPY ["sudoers-domjudge", "/etc/sudoers.d/domjudge"]
 RUN chmod 440 /etc/sudoers.d/domjudge
 
-USER domjudge
 
 # Expose HTTP port
 EXPOSE 80
