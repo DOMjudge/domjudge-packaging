@@ -62,6 +62,9 @@ ENV GITHUBDICTIONARY="https://raw.githubusercontent.com/codespell-project/codesp
 ENV CODESPELLDICTLOCATION="/usr/lib/python3/dist-packages/codespell_lib/data/dictionary.txt"
 RUN wget $GITHUBDICTIONARY -O $CODESPELLDICTLOCATION
 
+# Download HTML validator
+ADD https://www.domjudge.org/vnu.linux.zip vnu.linux.zip
+
 # Do some extra setup
 RUN mkdir -p /run/php \
  && rm /etc/php/*/fpm/pool.d/www.conf
