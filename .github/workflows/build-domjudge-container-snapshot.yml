@@ -1,0 +1,58 @@
+name: 'Build domjudge container (Snapshot)'
+
+on:
+  schedule:
+    - cron: "0 8 * * 5"
+  push:
+    branches:
+      - main
+
+jobs:
+  release-domjudge:
+    if: ${{ github.repository == 'domjudge/domjudge-packaging' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build the container
+        run: |
+          cd docker
+          ./build.sh bleeding domjudge https://www.domjudge.org/snapshot/domjudge-snapshot-$(date "+%Y%m%d").tar.gz
+          cd ../docker-chroot
+          ./build.sh bleeding domjudge https://www.domjudge.org/snapshot/domjudge-snapshot-$(date "+%Y%m%d").tar.gz
+
+      - name: Check the created domserver container
+        run: .github/jobs/check-domjudge-container.sh bleeding  "domjudge"
+
+      - name: Collect docker logs on failure
+        if: ${{ !cancelled() }}
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: '/tmp/docker-logs'
+
+      - name: Upload all logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Logs
+          path: /tmp/docker-logs
+
+      - name: Push final container
+        # We assume that we tested the container here and if anything is wrong that we exit early
+        run: |
+          for IMG in domserver judgehost; do
+            docker push domjudge/$IMG:bleeding
+          done
