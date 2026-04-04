@@ -13,7 +13,7 @@ RUN apt-get update \
 	acl zip unzip \
 	php-cli php-zip php-bcmath \
 	php-gd php-curl php-mysql php-json php-intl \
-	php-gmp php-xml php-mbstring composer sudo \
+	php-gmp php-xml php-mbstring composer yarnpkg sudo \
 	python3-sphinx python3-sphinx-rtd-theme fontconfig \
 	texlive-latex-recommended texlive-latex-extra \
 	texlive-fonts-recommended texlive-lang-european latexmk tex-gyre \
