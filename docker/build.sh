@@ -1,6 +1,6 @@
 #!/bin/sh -eu
 
-if [ "$#" -eq 0 ] || [ "$#" -gt 2 ]
+if [ "$#" -eq 0 ] || [ "$#" -gt 3 ]
 then
 	echo "Usage: $0 domjudge-version <namespace>"
 	echo "	For example: $0 5.3.0"
@@ -43,7 +43,7 @@ fi
 section_start "Variables"
 VERSION="$1"
 NAMESPACE="${2-domjudge}"
-URL=https://www.domjudge.org/releases/domjudge-${VERSION}.tar.gz
+URL="${3-https://www.domjudge.org/releases/domjudge-${VERSION}.tar.gz}"
 FILE=domjudge.tar.gz
 section_end
 
