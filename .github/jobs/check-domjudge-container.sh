@@ -72,6 +72,7 @@ PASS_ADMIN=$(docker exec domserver /opt/domjudge/domserver/webapp/bin/console --
 HTTP_CODE=$(curl -u "admin:${PASS_ADMIN}" -o /dev/null -s -w "%{http_code}\n" http://localhost:12345/base/api/user)
 if [ "$HTTP_CODE" -ne "200" ]; then
   echo "Failed authentication, reset failed or format changed"
+  exit 1
 fi
 
 # Verify that we can restart services
