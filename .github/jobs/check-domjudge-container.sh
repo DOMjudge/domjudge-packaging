@@ -11,11 +11,12 @@ fi
 DOCKER_NETWORK=djn
 DOCKER_DB=dj-mariadb
 DOCKER_DOMSERVER=domserver
+DOCKER_JUDGEHOST=judgehost
 MYSQL_ROOT_PASSWORD=rootpw # ggignore
 MYSQL_USER=domjudge
 MYSQL_PASSWORD=djpw        # ggignore
 MYSQL_DATABASE=domjudge
-DJ_DB_BARE=0
+DJ_DB_BARE=1
 DOMJUDGE_VERSION="$1"
 REPOSITORY_ORGANIZATION="$2"
 
@@ -80,14 +81,12 @@ for service in php nginx; do
   docker exec domserver supervisorctl restart "$service"
 done
 
-# Get more detailed health info
-docker ps
-docker inspect dj-mariadb
-docker inspect domserver
-HEALTH=$(docker inspect domserver | jq '.[0].State.Health.Status')
-if [ "$HEALTH" != '"healthy"' ]; then
-  exit 1
-fi
+# Install examples
+docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "INSERT userrole VALUES (1, 3);"
+docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "UPDATE user SET teamid = 1 WHERE userid = 1;"
+docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SELECT * FROM userrole;"
+docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SELECT * FROM user;"
+docker exec -t "$DOCKER_DOMSERVER" /opt/domjudge/domserver/bin/dj_setup_database -s install-examples
 
 # Search for incorrect permissions
 for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot full-judgehost-chroot; do
@@ -95,6 +94,64 @@ for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot fu
   if [ -n "$files" ]; then
     echo "error: image domjudge/$IMG:${DOMJUDGE_VERSION} contains world-writable files:" >&2
     printf "%s\n" "$files" >&2
+    exit 1
+  fi
+done
+
+# Show cgroup config of host
+cat /proc/cmdline
+
+# Start judgehost to judge the submissions
+docker run -d --pull=never --name "$DOCKER_JUDGEHOST"  -v /sys/fs/cgroup:/sys/fs/cgroup --privileged --cgroupns=host --init --net "$DOCKER_NETWORK" \
+  -e CONTAINER_TIMEZONE="America/Denver" -e DOMSERVER_BASEURL="http://domserver/base/" \
+  -e JUDGEDAEMON_PASSWORD="$PASS_JUDGEHOST" -e JUDGEDAEMON_USERNAME="judgehost" \
+  -e RUN_USER_UID_GID=62861 -e DAEMON_ID=1 \
+  "${REPOSITORY_ORGANIZATION}/judgehost:${DOMJUDGE_VERSION}"
+
+# Inspect the network (again) with new container
+docker network ls
+docker network inspect "$DOCKER_NETWORK"
+docker exec -t "$DOCKER_DOMSERVER" getent hosts "$DOCKER_JUDGEHOST"
+docker exec -t "$DOCKER_JUDGEHOST" getent hosts "$DOCKER_DOMSERVER"
+
+# It seems to take 4min so gather the full output for that time and check if we're finished afterwards.
+timeout --preserve-status 240 docker logs -f "$DOCKER_JUDGEHOST" || true
+
+CNTR=0
+SINCE=0
+mkdir /tmp/docker-logs
+docker logs --since "$SINCE" "$DOCKER_JUDGEHOST" > /tmp/docker-logs/judgehost_log 2> /tmp/docker-logs/judgehost_err
+
+while true; do
+    CNTR=$((CNTR+1))
+    NEW_SINCE=$(date --iso-8601=seconds)
+    LOGS=$(docker logs --since "$SINCE" "$DOCKER_JUDGEHOST" 2>&1)
+    if echo "$LOGS" | grep -q "No submissions in queue (for endpoint default), waiting..."; then
+        break
+    fi
+    if [ "$CNTR" -eq 18 ]; then
+        exit 1
+    fi
+    sleep 10
+    SINCE="$NEW_SINCE"
+done
+
+# Verify that judging worked
+JUDGEMENT_URL="http://localhost:12345/base/api/v4/contests/demo/judgements?result=CORRECT"
+NUMBER_JUDGEMENTS=$(curl -u "admin:${PASS_ADMIN}" "$JUDGEMENT_URL" | jq length)
+if [ "$NUMBER_JUDGEMENTS" -ne "27" ]; then
+  exit 1
+fi
+
+# Get more detailed health info
+docker ps
+docker inspect "$DOCKER_DB"
+docker inspect "$DOCKER_DOMSERVER"
+# We don´t have a health command for the judgehost
+#docker inspect judgehost
+for container in $DOCKER_DB $DOCKER_DOMSERVER; do
+  HEALTH=$(docker inspect "$container" | jq '.[0].State.Health.Status')
+  if [ "$HEALTH" != '"healthy"' ]; then
     exit 1
   fi
 done

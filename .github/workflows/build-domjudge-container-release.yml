@@ -71,7 +71,7 @@ jobs:
           cd ../docker-chroot
           ./build.sh "${{ env.DOMJUDGE_VERSION }}"
 
-      - name: Check the created domserver container
+      - name: Check the created domserver/judgehost containers
         run: .github/jobs/check-domjudge-container.sh ${{ env.DOMJUDGE_VERSION }} "domjudge"
 
       - name: Collect docker logs on failure
