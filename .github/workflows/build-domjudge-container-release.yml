@@ -72,7 +72,7 @@ jobs:
           ./build.sh "${{ env.DOMJUDGE_VERSION }}"
 
       - name: Check the created domserver container
-        run: .github/jobs/check-domjudge-container.sh ${{ env.DOMJUDGE_VERSION }} "domjudge"
+        run: .github/jobs/check-domjudge-container.sh ${{ env.DOMJUDGE_VERSION }} "domjudge .github/jobs/check-domjudge-container.sh"
 
       - name: Collect docker logs on failure
         if: ${{ !cancelled() }}

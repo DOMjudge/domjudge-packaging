@@ -36,6 +36,7 @@ timeout --preserve-status 15 docker logs -f "$DOCKER_DB" || true
 # shellcheck disable=SC2086 # We want the $MYSQL_SETTINGS to be split as those are extra variables
 docker run -d --pull=never --name "$DOCKER_DOMSERVER"  --net "$DOCKER_NETWORK" \
   -e MYSQL_HOST="$DOCKER_DB" -e DJ_DB_INSTALL_BARE="$DJ_DB_BARE" $MYSQL_SETTINGS \
+  -e CONTAINER_TIMEZONE="Iceland" -e FPM_MAX_CHILDREN="20" -e WEBAPP_BASEURL="/base/" \
   -p 12345:80 "${REPOSITORY_ORGANIZATION}/domserver:${DOMJUDGE_VERSION}"
 
 # Inspect the network
@@ -56,7 +57,7 @@ docker exec -t "$DOCKER_DOMSERVER" mysqlshow -u"$MYSQL_USER" -p"$MYSQL_PASSWORD"
 timeout --preserve-status 180 docker logs -f "$DOCKER_DOMSERVER" || true
 
 # Check if the default container comes up correctly
-curl http://localhost:12345/public
+curl http://localhost:12345/base/public
 
 # Gather passwords according to README.md
 PASS_ADMIN=$(docker exec domserver cat /opt/domjudge/domserver/etc/initial_admin_password.secret)
@@ -68,7 +69,7 @@ if [ -z "$PASS_ADMIN" ] || [ -z "$PASS_JUDGEHOST" ]; then
   exit 1
 fi
 PASS_ADMIN=$(docker exec domserver /opt/domjudge/domserver/webapp/bin/console --no-ansi domjudge:reset-user-password admin --no-ansi | sed 's/\\$//' | sed 's/[[:space:]]*$//' | grep admin |  grep -o '[^ ]*$')
-HTTP_CODE=$(curl -u "admin:${PASS_ADMIN}" -o /dev/null -s -w "%{http_code}\n" http://localhost:12345/api/user)
+HTTP_CODE=$(curl -u "admin:${PASS_ADMIN}" -o /dev/null -s -w "%{http_code}\n" http://localhost:12345/base/api/user)
 if [ "$HTTP_CODE" -ne "200" ]; then
   echo "Failed authentication, reset failed or format changed"
 fi
