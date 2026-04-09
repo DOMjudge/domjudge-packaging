@@ -63,7 +63,7 @@ curl http://localhost:12345/base/public
 PASS_ADMIN=$(docker exec domserver cat /opt/domjudge/domserver/etc/initial_admin_password.secret)
 
 # Currently gives [unknown]
-PASS_JUDGEHOST=$(docker exec domserver cat /opt/domjudge/domserver/etc/restapi.secret)
+PASS_JUDGEHOST=$(docker exec domserver cat /opt/domjudge/domserver/etc/restapi.secret | cut -s -f4)
 if [ -z "$PASS_ADMIN" ] || [ -z "$PASS_JUDGEHOST" ]; then
   echo "Gathering passwords failed"
   exit 1
