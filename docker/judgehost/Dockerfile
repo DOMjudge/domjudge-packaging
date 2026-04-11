@@ -19,7 +19,7 @@ RUN apt-get update \
 	dumb-init pkg-config \
 	acl lsof zip unzip sudo procps libcgroup2 \
 	php-cli php-zip php-gd php-curl php-mysql php-json \
-	php-gmp php-xml php-mbstring python3 \
+	php-gmp php-xml php-mbstring php-bcmath python3 \
 	gcc g++ default-jre-headless default-jdk-headless ghc fp-compiler \
 	&& rm -rf /var/lib/apt/lists/*
 
