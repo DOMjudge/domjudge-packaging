@@ -12,6 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !(github.repository == 'domjudge/domjudge-packaging' && github.ref_name == 'main') }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
