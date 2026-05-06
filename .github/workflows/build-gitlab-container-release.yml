@@ -10,6 +10,7 @@ on:
 
 jobs:
   build-gitlab:
+    name: Release GitLab image
     if: ${{ github.repository == 'domjudge/domjudge-packaging' }}
     name: Build GitLab image
     runs-on: ubuntu-latest
