@@ -12,6 +12,7 @@ on:
 
 jobs:
   release-contributor:
+    name: Release Contributor image
     if: ${{ github.repository == 'domjudge/domjudge-packaging' }}
     runs-on: ubuntu-latest
     steps:

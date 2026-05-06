@@ -23,6 +23,7 @@ env:
 
 jobs:
   release-domjudge:
+    name: Release DOMjudge docker image(s)
     if: ${{ github.repository == 'domjudge/domjudge-packaging' }}
     runs-on: ubuntu-latest
     steps:
