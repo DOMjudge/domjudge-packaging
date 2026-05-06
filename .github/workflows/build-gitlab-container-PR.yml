@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Detect changed files and compute condition
         id: filter
@@ -40,7 +40,7 @@ jobs:
 
       - name: Log in to GitHub Container registry (possibly at fork)
         if: steps.filter.outputs.should_run == 'true'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -49,7 +49,7 @@ jobs:
       - name: Extract metadata (tags, labels) for Docker
         if: steps.filter.outputs.should_run == 'true'
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}
 
@@ -59,7 +59,7 @@ jobs:
 
       - name: Build and push Docker images
         if: steps.filter.outputs.should_run == 'true'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: "./docker-gitlabci" 
           push: false
