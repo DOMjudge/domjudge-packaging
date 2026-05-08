@@ -50,7 +50,7 @@ RUN apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 	acl zip curl supervisor mariadb-client pv \
 	nginx composer php-fpm php-zip php-bcmath \
-	php-gd php-mysql php-json php-intl php-gmp \
+	php-ds php-gd php-mysql php-json php-intl php-gmp \
 	php-xml php-mbstring python3-yaml python3-requests enscript lpr \
 	&& rm -rf /var/lib/apt/lists/*
 
