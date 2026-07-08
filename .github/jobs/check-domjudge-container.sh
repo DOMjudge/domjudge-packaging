@@ -51,7 +51,7 @@ ss -tulpn
 # Connect to SQL
 docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD"                     -e "SHOW DATABASES;"
 docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SHOW TABLES;"
-docker exec -t "$DOCKER_DOMSERVER" mysqlshow -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -h"$DOCKER_DB" "$MYSQL_DATABASE"
+docker exec -t "$DOCKER_DOMSERVER" mariadb-show -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -h"$DOCKER_DB" "$MYSQL_DATABASE"
 
 # Show we indeed waited 3*60 seconds for 10*10 seconds checks,
 timeout --preserve-status 180 docker logs -f "$DOCKER_DOMSERVER" || true
