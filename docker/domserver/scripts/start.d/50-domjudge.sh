@@ -144,7 +144,7 @@ DB_UP=9
 while [ $DB_UP -gt 0 ]
 do
 	echo "[..] Checking database connection"
-	if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" > /dev/null 2>&1
+	if ! mariadb-show -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 	then
 		echo "MySQL database ${MYSQL_DATABASE} not yet found on host ${MYSQL_HOST}:${MYSQL_PORT};"
 		(( DB_UP-- ))
@@ -153,7 +153,7 @@ do
 		DB_UP=0
 	fi
 done
-if ! mysqlshow -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" > /dev/null 2>&1
+if ! mariadb-show -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -P "${MYSQL_PORT}" "${MYSQL_DATABASE}" > /dev/null 2>&1
 then
 	echo "MySQL database ${MYSQL_DATABASE} not found on host ${MYSQL_HOST}:${MYSQL_PORT}; exiting"
 	exit 1
