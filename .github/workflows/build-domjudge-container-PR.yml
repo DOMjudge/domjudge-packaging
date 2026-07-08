@@ -103,7 +103,7 @@ jobs:
       - run: docker image list
         if: steps.filter.outputs.should_run == 'true'
 
-      - name: Check the created domserver container
+      - name: Check the created domserver/judgehost containers
         if: steps.filter.outputs.should_run == 'true'
         run: .github/jobs/check-domjudge-container.sh ${{ env.PR_TAG }} ${GITHUB_REPOSITORY_OWNER@L}
 
