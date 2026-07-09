@@ -26,7 +26,7 @@ build-stamp:
 		--with-domjudge_docdir=\$${prefix}/share/doc/domjudge-doc \
 		\
 		--with-domserver_libdir=\$${prefix}/share/domjudge \
-		--with-domserver_libvendordir=\$${prefix}/share/domjudge/lib/vendor \
+		--with-domserver_libvendordir=\$${prefix}/share/domjudge/webapp/vendor \
 		--with-domserver_webappdir=\$${prefix}/share/domjudge/webapp \
 		--with-domserver_logdir=/var/log/domjudge/domserver \
 		\
@@ -89,16 +89,12 @@ install: build
 		mv teams affiliations ../../../../../../var/lib/domjudge/images/
 
 	# Remove so they can be symlinked to system dirs
-	rm -r $(DJDS)/usr/share/domjudge/webapp/var/cache \
+	rm -rf $(DJDS)/usr/share/domjudge/webapp/var/cache \
 		$(DJDS)/usr/share/domjudge/webapp/var/log
 
 	# Makes no sense to include passwords generated on .deb build host
-	rm $(DJDS)/etc/domjudge/*.secret $(DJJH)/etc/domjudge/restapi.secret \
+	rm -f $(DJDS)/etc/domjudge/*.secret $(DJJH)/etc/domjudge/restapi.secret \
 		$(DJDS)/etc/domjudge/gendbpasswords
-
-	# Needs to be web-writable:
-	chgrp www-data $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
-	chmod 0770 $(DJDS)/var/log/domjudge/domserver $(DJDS)/var/cache/domjudge
 
 	# Fixup sudoers file to match our assumptions for user/chroot location
 	sed -i 's#^root #domjudge #;s# root\\:# domjudge\\:#' $(DJJH)/etc/domjudge/sudoers-domjudge
@@ -113,6 +109,11 @@ install: build
 	cp -a debian/src/db_upgrade \
 		$(DJDS)/usr/share/dbconfig-common/scripts/domjudge-domserver/upgrade/mysql/$(DEB_VERSION)
 
+override_dh_fixperms:
+	dh_fixperms -i -X var/cache/domjudge -X var/log/domjudge -X var/lib/domjudge
+	chown :www-data debian/domjudge-domserver/var/log/domjudge/domserver
+	chown :www-data debian/domjudge-domserver/var/cache/domjudge
+
 # Build architecture-independent files here.
 binary-indep: build install
 	dh_testdir -i
@@ -125,7 +126,6 @@ binary-indep: build install
 	dh_lintian -i
 	dh_link -i
 	dh_compress -i -X .pdf
-	dh_fixperms -i -X var/cache/domjudge -X var/log/domjudge -X var/lib/domjudge
 	dh_installdeb -i
 	dh_gencontrol -i
 	dh_md5sums -i
