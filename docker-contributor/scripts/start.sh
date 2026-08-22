@@ -201,8 +201,7 @@ if [ -z "$JUDGEDAEMON_SKIP" ] || [ "$JUDGEDAEMON_SKIP" -eq 0 ]; then
   if [ "${NUMBER_INITIAL_JUDGEDAEMONS}" -gt 0 ]
   then
     sudo sed -i "s|numprocs=0|numprocs=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemon.conf"
-    sudo sed -i "s|numprocs_start=0|numprocs_start=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemonextra.conf"
-  else
+  elif [ "${NUMBER_INITIAL_JUDGEDAEMONS}" -ne 0 ]; then
     echo "Unsupported number of judgedaemons: ${NUMBER_INITIAL_JUDGEDAEMONS}"
     exit 1
   fi
