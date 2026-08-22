@@ -74,11 +74,13 @@ else
   echo "[ok] DOMjudge installed in Maintainer-mode"; echo
 fi
 
-echo "[..] Setting up bind mount and correct permissions for judgings"
-sudo mkdir -p /domjudge-judgings
-sudo mount -o bind /domjudge-judgings "${PROJECT_DIR}/output/judgings"
-sudo chown -R domjudge output
-echo "[ok] Done setting up permissions"
+if [ -z "$JUDGEDAEMON_SKIP" ] || [ "$JUDGEDAEMON_SKIP" -eq 0 ]; then
+  echo "[..] Setting up bind mount and correct permissions for judgings"
+  sudo mkdir -p /domjudge-judgings
+  sudo mount -o bind /domjudge-judgings "${PROJECT_DIR}/output/judgings"
+  sudo chown -R domjudge output
+  echo "[ok] Done setting up permissions"
+fi
 
 # Sometimes when running `docker-compose up` we're too fast at this step
 DB_UP=3
@@ -171,37 +173,39 @@ sudo sed -i 's/<VirtualHost \*>/TransferLog \/dev\/stdout\nErrorLog \/dev\/stder
 sudo chown domjudge: "${PROJECT_DIR}/webapp/var"
 echo "[ok] Webserver config installed"; echo
 
-if [[ ! -d /chroot/domjudge ]]
-then
-  echo "[..] Setting up chroot"
-  sudo bin/dj_make_chroot
-  echo "[ok] Done setting up chroot"; echo
-fi
+if [ -z "$JUDGEDAEMON_SKIP" ] || [ "$JUDGEDAEMON_SKIP" -eq 0 ]; then
+  if [[ ! -d /chroot/domjudge ]]
+  then
+    echo "[..] Setting up chroot"
+    sudo bin/dj_make_chroot
+    echo "[ok] Done setting up chroot"; echo
+  fi
 
-echo "[..] Setting up cgroups"
-if [[ -f bin/create_cgroups ]]
-then
-  sudo bin/create_cgroups
-else
-  sudo judge/create_cgroups
-fi
-echo "[ok] cgroups set up"; echo
+  echo "[..] Setting up cgroups"
+  if [[ -f bin/create_cgroups ]]
+  then
+    sudo bin/create_cgroups
+  else
+    sudo judge/create_cgroups
+  fi
+  echo "[ok] cgroups set up"; echo
 
-echo "[..] Adding sudoers configuration"
-sudo cp etc/sudoers-domjudge /etc/sudoers.d/
-echo "[ok] Sudoers configuration added"; echo
+  echo "[..] Adding sudoers configuration"
+  sudo cp etc/sudoers-domjudge /etc/sudoers.d/
+  echo "[ok] Sudoers configuration added"; echo
 
-sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemon.conf
-sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemonextra.conf
+  sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemon.conf
+  sudo sed -i "s|PROJECT_DIR|${PROJECT_DIR}|" /etc/supervisor/conf.d/judgedaemonextra.conf
 
-echo "[..] Configuring number of judgedaemons"
-if [ "${NUMBER_INITIAL_JUDGEDAEMONS}" -gt 0 ]
-then
-  sudo sed -i "s|numprocs=0|numprocs=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemon.conf"
-  sudo sed -i "s|numprocs_start=0|numprocs_start=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemonextra.conf"
-else
-  echo "Unsupported number of judgedaemons: ${NUMBER_INITIAL_JUDGEDAEMONS}"
-  exit 1
+  echo "[..] Configuring number of judgedaemons"
+  if [ "${NUMBER_INITIAL_JUDGEDAEMONS}" -gt 0 ]
+  then
+    sudo sed -i "s|numprocs=0|numprocs=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemon.conf"
+    sudo sed -i "s|numprocs_start=0|numprocs_start=${NUMBER_INITIAL_JUDGEDAEMONS}|" "/etc/supervisor/conf.d/judgedaemonextra.conf"
+  else
+    echo "Unsupported number of judgedaemons: ${NUMBER_INITIAL_JUDGEDAEMONS}"
+    exit 1
+  fi
 fi
 
 echo "[..] Configuring default webserver"

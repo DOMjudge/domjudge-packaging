@@ -69,6 +69,7 @@ The following environment variables are supported by the container:
 * `DJ_SKIP_MAKE` (defaults to `0`): set to `1` to skip the maintainer setup and install commands. This will speed up the startup process of the container and is useful if this is already done before.
 * `DEFAULTWEBSERVER` (defaults to `nginx`): set to `apache2` to use the Apache2 httpd server as default webserver.
 * `NUMBER_INITIAL_JUDGEDAEMONS` (defaults to `2`): set to any positive number to regulate the number of initial judgedaemons.
+* `JUDGEDAEMON_SKIP` (defaults to ``): set to disable setup of any judgedaemon scripts/settings.
 
 #### Passwords through files
 
