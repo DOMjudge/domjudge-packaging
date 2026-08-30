@@ -69,7 +69,7 @@ then
   echo "Skipping maintainer-mode install for DOMjudge"
 else
   echo "[..] Performing maintainer-mode install for DOMjudge"
-  su - domjudge -c "cd ${PROJECT_DIR} && make maintainer-conf CONFIGURE_FLAGS='--with-baseurl=http://localhost/ --with-webserver-group=domjudge'"
+  su - domjudge -c "cd ${PROJECT_DIR} && make maintainer-conf CONFIGURE_FLAGS='--with-baseurl=http://localhost/ --with-webserver-group=domjudge ${EXTRA_CONFIGURE_FLAGS}'"
   su - domjudge -c "cd ${PROJECT_DIR} && make maintainer-install"
   echo "[ok] DOMjudge installed in Maintainer-mode"; echo
 fi

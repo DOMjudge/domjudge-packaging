@@ -71,6 +71,7 @@ The following environment variables are supported by the container:
 * `NUMBER_INITIAL_JUDGEDAEMONS` (defaults to `2`): set to 0 or any positive number to regulate the number of initial judgedaemons.
 * `JUDGEDAEMON_SKIP` (defaults to ``): set to disable setup of any judgedaemon scripts/settings.
 * `PROJECT_DIR` (defaults to '/domjudge'): set to alternative DOMjudge sources directory.
+* `EXTRA_CONFIGURE_FLAGS` (defaults to ''): set to pass additional configure flags. For example to disable docs generation, alternative webserver alias.
 
 #### Passwords through files
 
