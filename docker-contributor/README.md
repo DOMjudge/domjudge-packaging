@@ -70,6 +70,7 @@ The following environment variables are supported by the container:
 * `DEFAULTWEBSERVER` (defaults to `nginx`): set to `apache2` to use the Apache2 httpd server as default webserver.
 * `NUMBER_INITIAL_JUDGEDAEMONS` (defaults to `2`): set to 0 or any positive number to regulate the number of initial judgedaemons.
 * `JUDGEDAEMON_SKIP` (defaults to ``): set to disable setup of any judgedaemon scripts/settings.
+* `PROJECT_DIR` (defaults to '/domjudge'): set to alternative DOMjudge sources directory.
 
 #### Passwords through files
 
