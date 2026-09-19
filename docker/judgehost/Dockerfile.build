@@ -14,7 +14,7 @@ RUN apt-get update \
 	php-cli php-zip lsb-release debootstrap \
 	php-gd php-curl php-mysql php-json \
 	php-gmp php-xml php-mbstring composer \
-	sudo bsdmainutils ntp libcgroup-dev procps \
+	sudo bsdmainutils libcgroup-dev procps \
 	libcurl4-gnutls-dev libjsoncpp-dev libmagic-dev \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
