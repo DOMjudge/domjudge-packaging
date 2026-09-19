@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install needed NPM packages and download chrome for the domjudge user
 RUN su domjudge -c "cd /home/domjudge && \
-                    npm install pa11y puppeteer && \
+                    npm install pa11y puppeteer@22.15.0 && \
                     npx puppeteer browsers install chrome && \
                     npm cache clean --force"
 
