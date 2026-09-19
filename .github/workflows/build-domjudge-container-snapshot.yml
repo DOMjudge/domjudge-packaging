@@ -35,7 +35,9 @@ jobs:
           ./build.sh bleeding domjudge https://www.domjudge.org/snapshot/domjudge-snapshot-$(date "+%Y%m%d").tar.gz
 
       - name: Check the created domserver container
-        run: .github/jobs/check-domjudge-container.sh bleeding  "domjudge"
+        # Testing with MySQL here would add more CI time and as those containers are not meant to really be used as-is in production
+        # we can skip it here
+        run: .github/jobs/check-domjudge-container.sh bleeding  "domjudge" "mariadb"
 
       - name: Collect docker logs on failure
         if: ${{ !cancelled() }}

@@ -3,8 +3,8 @@
 # This script is only relevant for within the CI, it tests the newly created domserver container
 # Usage: $0 [options]... [command]
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <DOMJUDGE_VERSION> <ORGANIZATION>"
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <DOMJUDGE_VERSION> <ORGANIZATION> <DATABASE_CONTAINER>"
     exit 1
 fi
 
@@ -19,6 +19,7 @@ MYSQL_DATABASE=domjudge
 DJ_DB_BARE=1
 DOMJUDGE_VERSION="$1"
 REPOSITORY_ORGANIZATION="$2"
+DATABASE_CONTAINER="$3"
 
 set -eux
 
@@ -28,7 +29,7 @@ MYSQL_SETTINGS="-e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -e MYSQL_USER=$MYSQL
 
 # Start the database container
 # shellcheck disable=SC2086 # We want the $MYSQL_SETTINGS to be split as those are extra variables
-docker run -d --name "$DOCKER_DB" --net "$DOCKER_NETWORK" $MYSQL_SETTINGS -p 13306:3306 mariadb --max-connections=1000 --max_allowed_packet=256M
+docker run -d --name "$DOCKER_DB" --net "$DOCKER_NETWORK" $MYSQL_SETTINGS -p 13306:3306 $DATABASE_CONTAINER --max-connections=1000 --max_allowed_packet=256M
 
 # Booting seems to take 10s, directly display the logs when they come in.
 timeout --preserve-status 15 docker logs -f "$DOCKER_DB" || true
