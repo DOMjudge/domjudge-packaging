@@ -1,0 +1,24 @@
+# Which files matter to which CI jobs.
+#
+# See reasoning in: https://github.com/domjudge/domjudge/blob/main/.github/paths-filters.yml
+
+ci: &ci
+  - '.github/workflows/changes.yml'
+  - '.github/paths-filters.yml'
+
+product: &product
+  - *ci
+  - '.github/workflows/build-domjudge-container-PR.yml'
+  - '.github/jobs/check-domjudge-container.sh'
+  - 'docker/**'
+
+contributor: &contributor
+  - *ci
+  - '.github/workflows/build-contributor-container-PR.yml'
+  - 'docker-contributor/**'
+
+cicontainer: &cicontainer
+  - *ci
+  - '.github/workflows/build-gitlab-container-PR.yml'
+  - 'docker-contributor/php-config'
+  - 'docker-gitlabci/**'

@@ -1,0 +1,32 @@
+# Reusable job that tells the other workflows which parts of the tree a
+# change touches, so they can skip the jobs it cannot affect. The filters
+# live in .github/paths-filters.yml.
+name: Detect changed paths
+on:
+  workflow_call:
+    outputs:
+      ci-product:
+        value: ${{ jobs.changes.outputs.ci-product }}
+
+jobs:
+  changes:
+    name: Detect changed paths
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      ci-product: ${{ steps.filter.outputs.ci-product }}
+    steps:
+      # paths-filter reads the filter file from the checkout. On a pull
+      # request it lists the changed files through the API; in the merge
+      # queue it diffs the group's base and head, fetching the base commit
+      # itself, so a shallow checkout is enough.
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: .github/paths-filters.yml
+          # Without this the merge queue would be compared against the
+          # default branch, which is wrong for release branches.
+          base: ${{ github.event_name == 'merge_group' && github.event.merge_group.base_sha || '' }}
