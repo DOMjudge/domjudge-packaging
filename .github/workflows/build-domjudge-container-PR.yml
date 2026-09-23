@@ -24,8 +24,10 @@ env:
 
 jobs:
   pr-domjudge:
-    name: PR DOMjudge docker image(s)
+    name: Build PR DOMjudge docker image(s)
     runs-on: ubuntu-latest
+    outputs:
+      dj-version: ${{ env.PR_TAG }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -91,11 +93,16 @@ jobs:
       - name: Build and push
         if: steps.filter.outputs.should_run == 'true'
         run: |
+          mkdir -p /tmp/images
           for IMG in domserver judgehost default-judgehost-chroot icpc-judgehost-chroot full-judgehost-chroot; do
             echo "::group::${IMG}"
             IMAGE_NAME="${GITHUB_REPOSITORY_OWNER@L}/${IMG}:${{ env.DOMJUDGE_VERSION }}"
             docker image tag "$IMAGE_NAME" ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
             docker image tag "$IMAGE_NAME" ${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
+            if "$IMG" = "domserver" || "$IMG" = "judgehost"; then
+              docker save -o /tmp/images/${IMG}.tar ${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }}
+            done
+            # Push fails for forks, and the pulled data should be the same as the 'docker save' above.
             docker push ghcr.io/${GITHUB_REPOSITORY_OWNER@L}/$IMG:${{ env.PR_TAG }} || true
             echo "::endgroup::"
           done
@@ -103,9 +110,40 @@ jobs:
       - run: docker image list
         if: steps.filter.outputs.should_run == 'true'
 
-      - name: Check the created domserver/judgehost containers
+      - name: Upload image artifact for 'container-check' job
         if: steps.filter.outputs.should_run == 'true'
-        run: .github/jobs/check-domjudge-container.sh ${{ env.PR_TAG }} ${GITHUB_REPOSITORY_OWNER@L}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-docker-images
+          path: /tmp/images
+          retention-days: 2
+
+  container-check:
+    name: Test PR DOMjudge docker image(s)
+    runs-on: ubuntu-latest
+    needs: pr-domjudge
+    strategy:
+      matrix:
+        database: ['mariadb', 'mysql']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download built image
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-docker-images
+          path: /tmp/images
+
+      - name: Load image into Docker
+        run: |
+          # Todo, test the actual chroots also
+          for IMG in domserver judgehost; do
+            docker load -i /tmp/images/${IMG}.tar
+          done
+
+      - name: Check the created domserver/judgehost containers
+        run: .github/jobs/check-domjudge-container.sh ${{ needs.pr-domjudge.outputs.dj-version }} ${GITHUB_REPOSITORY_OWNER@L} ${{ matrix.database }}
 
       - name: Collect docker logs on failure
         if: ${{ !cancelled() }}
@@ -117,5 +155,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: Logs
+          name: Logs-${{ matrix.database }}
           path: /tmp/docker-logs
