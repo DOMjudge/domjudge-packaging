@@ -1,4 +1,4 @@
-package-contains-vcs-control-file usr/share/domjudge/lib/vendor
-privacy-breach-generic usr/share/domjudge/lib/vendor
-executable-not-elf-or-script usr/share/domjudge/lib/vendor
+package-contains-vcs-control-file usr/share/domjudge/webapp/vendor
+privacy-breach-generic usr/share/domjudge/webapp/vendor
+executable-not-elf-or-script usr/share/domjudge/webapp/vendor
 maintainer-script-needs-depends-on-ucf postinst
