@@ -1,9 +1,9 @@
 #!/bin/sh
 
-sudo apt install acl composer debootstrap g++ gcc libcgroup-dev lsof make \
-                 mariadb-server nginx ntp php php-bcmath php-cli php-curl \
-                 php-fpm php-gd php-intl php-json php-mbstring php-mysql \
-                 php-xml php-zip pkg-config procps pv python3-yaml sudo unzip zip
+sudo apt-get install acl composer debootstrap g++ gcc libcgroup-dev lsof make \
+                     mariadb-server nginx ntp php php-bcmath php-cli php-curl \
+                     php-fpm php-gd php-intl php-json php-mbstring php-mysql \
+                     php-xml php-zip pkg-config procps pv python3-yaml sudo unzip zip
 
 cd docker-gitlabci || exit 1
   wget https://github.com/DOMjudge/domjudge/archive/refs/heads/main.zip
