@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if command -v mariadb; then
+  mariadb-show $@
+else
+  mysqlshow $@
+fi

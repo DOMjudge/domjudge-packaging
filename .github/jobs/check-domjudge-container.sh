@@ -3,8 +3,8 @@
 # This script is only relevant for within the CI, it tests the newly created domserver container
 # Usage: $0 [options]... [command]
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <DOMJUDGE_VERSION> <ORGANIZATION>"
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <DOMJUDGE_VERSION> <ORGANIZATION> <DATABASE_CONTAINER>"
     exit 1
 fi
 
@@ -19,6 +19,7 @@ MYSQL_DATABASE=domjudge
 DJ_DB_BARE=1
 DOMJUDGE_VERSION="$1"
 REPOSITORY_ORGANIZATION="$2"
+DATABASE_CONTAINER="$3"
 
 set -eux
 
@@ -28,7 +29,7 @@ MYSQL_SETTINGS="-e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -e MYSQL_USER=$MYSQL
 
 # Start the database container
 # shellcheck disable=SC2086 # We want the $MYSQL_SETTINGS to be split as those are extra variables
-docker run -d --name "$DOCKER_DB" --net "$DOCKER_NETWORK" $MYSQL_SETTINGS -p 13306:3306 mariadb --max-connections=1000 --max_allowed_packet=256M
+docker run -d --name "$DOCKER_DB" --net "$DOCKER_NETWORK" $MYSQL_SETTINGS -p 13306:3306 $DATABASE_CONTAINER --max-connections=1000 --max_allowed_packet=256M
 
 # Booting seems to take 10s, directly display the logs when they come in.
 timeout --preserve-status 15 docker logs -f "$DOCKER_DB" || true
@@ -50,9 +51,15 @@ docker exec -t "$DOCKER_DOMSERVER" getent hosts "$DOCKER_DB"
 ss -tulpn
 
 # Connect to SQL
-docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD"                     -e "SHOW DATABASES;"
-docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SHOW TABLES;"
-docker exec -t "$DOCKER_DOMSERVER" mysqlshow -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -h"$DOCKER_DB" "$MYSQL_DATABASE"
+if command -v mariadb; then
+  sqlcommand="mariadb"
+else
+  sqlcommand="mysql"
+fi
+
+docker exec -t "$DOCKER_DB" "$sqlcommand" -uroot -p"$MYSQL_ROOT_PASSWORD"                     -e "SHOW DATABASES;"
+docker exec -t "$DOCKER_DB" "$sqlcommand" -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SHOW TABLES;"
+docker exec -t "$DOCKER_DOMSERVER" sqlshow -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -h"$DOCKER_DB" "$MYSQL_DATABASE"
 
 # Show we indeed waited 3*60 seconds for 10*10 seconds checks,
 timeout --preserve-status 180 docker logs -f "$DOCKER_DOMSERVER" || true
@@ -82,10 +89,10 @@ for service in php nginx; do
 done
 
 # Install examples
-docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "INSERT userrole VALUES (1, 3);"
-docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "UPDATE user SET teamid = 1 WHERE userid = 1;"
-docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SELECT * FROM userrole;"
-docker exec -t "$DOCKER_DB" mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SELECT * FROM user;"
+docker exec -t "$DOCKER_DB" "$sqlcommand" -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "INSERT userrole VALUES (1, 3);"
+docker exec -t "$DOCKER_DB" "$sqlcommand" -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "UPDATE user SET teamid = 1 WHERE userid = 1;"
+docker exec -t "$DOCKER_DB" "$sqlcommand" -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SELECT * FROM userrole;"
+docker exec -t "$DOCKER_DB" "$sqlcommand" -uroot -p"$MYSQL_ROOT_PASSWORD" -D"$MYSQL_DATABASE" -e "SELECT * FROM user;"
 docker exec -t "$DOCKER_DOMSERVER" /opt/domjudge/domserver/bin/dj_setup_database -s install-examples
 
 # Search for incorrect permissions
